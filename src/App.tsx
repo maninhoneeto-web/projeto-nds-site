@@ -194,8 +194,9 @@ export default function App() {
 
   const sendQuoteRequest = (e: React.FormEvent) => {
     e.preventDefault();
-    const phone = "5561999999999";
-    const msg = "Olá NDS CFTV Digital, gostaria de ajuda nos meus equipamentos.";
+    // NUMERO ATUALIZADO AQUI
+    const phone = "5561998308655";
+    const msg = "Olá NDS CFTV Digital, gostaria de um orçamento/ajuda com os equipamentos.";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
