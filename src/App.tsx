@@ -26,31 +26,32 @@ const TABS = [
 const CAMERAS = [
   { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://i.ibb.co/DHwjvCP0/speed-dome-jpg.webp", title: "Speed Dome Preta", model: "Intelbras VIP 8232 PTZ (Black Edition)", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio Preto"] },
   { id: 2, type: 'Bullet', category: 'Externa', img: "https://i.ibb.co/mFvRmwJC/spped-branca-jpg.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
-  { id: 3, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1588666308996-a40026e9de80?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Full Color 24h", model: "Intelbras VHD 3230 B", specs: ["Imagens 100% coloridas à noite", "LED branco visível até 20m", "Menu OSD e protocolo HDCVI", "Resolução Full HD 1080p"] },
-  { id: 4, type: 'Dome', category: 'Interna', img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
+  { id: 3, type: 'Bullet', category: 'Externa', img: "https://i.ibb.co/NntDL42R/bullet-cam-jpg.jpg", title: "Câmera Full Color 24h", model: "Intelbras VHD 3230 B", specs: ["Imagens 100% coloridas à noite", "LED branco visível até 20m", "Menu OSD e protocolo HDCVI", "Resolução Full HD 1080p"] },
+  { id: 4, type: 'Dome', category: 'Interna', img: "https://i.ibb.co/tPFZCjkk/dome-cam-jpg.jpg", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
 ];
 
 const PRODUCTS = {
   smart: [
     { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://i.ibb.co/5xXzRV2n/im-5pr-jpg.webp", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
     { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://i.ibb.co/5xXzRV2n/im-5pr-jpg.webp", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
-    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://i.ibb.co/39m95Y51/mibo-im4-jpg.webp", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
+    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://i.ibb.co/VWwcZpk9/im-7-jpg.jpg", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
     { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://i.ibb.co/k6X68PR6/im-4c-jpg.jpg", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
   ],
   videoporteiro: [
-    { title: "Vídeoporteiro Wi-Fi 7\"", model: "Intelbras WT7", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Monitor Touch Screen de 7\"", "Atendimento e Abertura via App Allo", "Conexão Wi-Fi Integrada no Monitor", "Integração Bivolt, abre 2 Fechaduras"] },
-    { title: "Vídeoporteiro Smart", model: "Intelbras Allo w3", img: "https://images.unsplash.com/photo-1541889816001-f25b29094017?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Visualização Noturna Integrada", "Atendimento direto celular App", "Gravação Automática de Foto e Vídeo", "Alerta de Movimento Constante"] }
+    { title: "Vídeoporteiro Wi-Fi 7\"", model: "Intelbras WT7", img: "https://i.ibb.co/pBxGq3gB/wt-7-jpg.jpg", specs: ["Monitor Touch Screen de 7\"", "Atendimento e Abertura via App Allo", "Conexão Wi-Fi Integrada no Monitor", "Integração Bivolt, abre 2 Fechaduras"] },
+    { title: "Vídeoporteiro Smart", model: "Intelbras Allo w3", img: "https://i.ibb.co/Q7pvk9gS/allo-w3-jpg.jpg", specs: ["Visualização Noturna Integrada", "Atendimento direto celular App", "Gravação Automática de Foto e Vídeo", "Alerta de Movimento Constante"] }
   ],
   dvr: [
-    { title: "NVR Inteligente 32 Canais", model: "Intelbras NVD 3332 P", img: "https://i.ibb.co/Q3k3GvTp/nvr-v-jpg.jpg", specs: ["Suporta câmeras 4K Ultra HD", "16 portas PoE+ Integradas", "Reconhecimento Facial Embutido", "Capacidade para 4 HDs SATA"] },
-    { title: "DVR Multi-HD 16 Canais", model: "Intelbras iMHDX 3116", img: "https://i.ibb.co/Q3k3GvTp/nvr-v-jpg.jpg", specs: ["Compressão H.265+ de Vídeo", "Pentabrído (HDCVI, AHD, Analógico)", "Detecção inteligente de pessoas", "Armazenamento até 14TB"] }
+    { title: "NVR Inteligente 32 Canais", model: "Intelbras NVD 3332 P", img: "https://i.ibb.co/GQgJnjxh/nvr-16-jpg.jpg", specs: ["Suporta câmeras 4K Ultra HD", "16 portas PoE+ Integradas", "Reconhecimento Facial Embutido", "Capacidade para 4 HDs SATA"] },
+    { title: "DVR Multi-HD 16 Canais", model: "Intelbras iMHDX 3116", img: "https://i.ibb.co/Mk9tzk3N/dvr-16-jpg.jpg", specs: ["Compressão H.265+ de Vídeo", "Pentabrído (HDCVI, AHD, Analógico)", "Detecção inteligente de pessoas", "Armazenamento até 14TB"] }
   ],
   acesso: [
-    { title: "Leitor Facial Rápido", model: "Intelbras SS 3430 MF FACE", img: "https://i.ibb.co/V0dN17Gh/fechadura3-intelbras-jpg.webp", specs: ["Tela Touch Screen 4,3\"", "Leitura Mapeada em 0,2s", "Armazena 3.000 Faces", "Detecção Liveness Anti-Fake"] },
-    { title: "Fechadura Digital Biométrica", model: "Intelbras FR 201", img: "https://i.ibb.co/Y4p3gWPT/fech-intelbras-jpg.png", specs: ["Abra por Senha, Tag ou Digital", "Alarme Antiarrombamento", "Painel Touch Integrado", "1 Ano de Bateria (4 pilhas)"] }
+    { title: "Leitor Facial Rápido", model: "Intelbras SS 3430 MF FACE", img: "https://i.ibb.co/1ty3HJnj/bio-3430-jpg.jpg", specs: ["Tela Touch Screen 4,3\"", "Leitura Mapeada em 0,2s", "Armazena 3.000 Faces", "Detecção Liveness Anti-Fake"] },
+    { title: "Fechadura Digital Biométrica", model: "Intelbras FR 201", img: "https://i.ibb.co/Y4p3gWPT/fech-intelbras-jpg.png", specs: ["Abra por Senha, Tag ou Digital", "Alarme Antiarrombamento", "Painel Touch Integrado", "1 Ano de Bateria (4 pilhas)"] },
+    { title: "Fechadura Smart de Sobrepor", model: "Intelbras IFR 1001", img: "https://i.ibb.co/mCJQ0dBC/fr-630-jpg.jpg", specs: ["Acesso via App Connect", "Até 100 senhas cadastradas", "Integração Casa Inteligente", "Aviso de Bateria Fraca"] }
   ],
   cerca: [
-    { title: "Central de Cerca", model: "Intelbras ELC 5002", img: "https://images.unsplash.com/photo-1605814522438-fb8d9753c153?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Descarga de Choque de 18.000V", "Alarme e Cerca na mesma central", "App Móvel para Armar/Desarmar", "Monitoramento Corte de Tensão"] },
+    { title: "Central de Cerca", model: "Intelbras ELC 5002", img: "https://i.ibb.co/0jzzHRCN/cer-ca-jpg.jpg", specs: ["Descarga de Choque de 18.000V", "Alarme e Cerca na mesma central", "App Móvel para Armar/Desarmar", "Monitoramento Corte de Tensão"] },
     { title: "Hastes Industriais", model: "Big Haste Alumínio 25x25", img: "https://i.ibb.co/whM0BptS/haste-alum-jpg.webp", specs: ["Alumínio Industrial Grosso", "Parafusos de Aço Inox", "Isoladores Anti-Trincamento UV", "Blindagem Frontal"] }
   ],
   portao: [
@@ -58,15 +59,16 @@ const PRODUCTS = {
     { title: "Relé Smart Portão", model: "Intelbras IZY Smart", img: "https://i.ibb.co/v6Ftz6ZF/rele-port-jpg.jpg", specs: ["Conecte ao seu Wi-Fi 2.4Ghz", "Abra Portão de Qualquer Lugar", "Compatível com Comando Alexa", "Notificação de Quem Abriu"] }
   ],
   alarme: [
-    { title: "Alarme Modular Wireless", model: "Intelbras AMT 8000", img: "https://images.unsplash.com/photo-1496368077930-c1e31b4e5b44?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Transmissão de 1000 Metros", "64 Zonas Sem Fio Configuráveis", "Sensores Criptografados", "Baterias de Longa Vida Padrão"] }
+    { title: "Alarme Modular Wireless", model: "Intelbras AMT 8000", img: "https://i.ibb.co/Q3mNzqkV/damt-8000-jpg.jpg", specs: ["Transmissão de 1000 Metros", "64 Zonas Sem Fio Configuráveis", "Sensores Criptografados", "Baterias de Longa Vida Padrão"] }
   ],
   ti: [
-    { title: "Switch PoE Gerenciável", model: "Intelbras SG 2404 MR", img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=400&h=300", specs: ["24 Portas de Rede Gigabit", "4 Portas em Fibra SFP", "QoS e Proteções L2 Robustas", "Protocolo Segurança IPv6"] },
-    { title: "Sistema Mesh Empresarial", model: "Intelbras Twibi Force", img: "https://images.unsplash.com/photo-1558223363-233bbda22312?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Wi-Fi Fast Roaming Escala", "Alcance contínuo até 400m²", "128 Conexões Simultâneas", "Wi-Fi AX Estável"] }
+    { title: "Switch PoE Gerenciável", model: "Intelbras SG 2404 MR", img: "https://i.ibb.co/zHn31j0V/swi-tch-jpg.png", specs: ["24 Portas de Rede Gigabit", "4 Portas em Fibra SFP", "QoS e Proteções L2 Robustas", "Protocolo Segurança IPv6"] },
+    { title: "Sistema Mesh Empresarial", model: "Intelbras Twibi Force", img: "https://i.ibb.co/cc79JHGX/tw-ib-jpg.jpg", specs: ["Wi-Fi Fast Roaming Escala", "Alcance contínuo até 400m²", "128 Conexões Simultâneas", "Wi-Fi AX Estável"] },
+    { title: "Mini Rack de Parede 19\"", model: "Rack Max 5U / 8U", img: "https://i.ibb.co/V0kTtHxv/rac-k-jpg.jpg", specs: ["Padrão 19 Polegadas", "Porta de Vidro Temperado", "Ventilação Otimizada", "Proteção para Equipamentos CFTV"] }
   ],
   manutencao: [
-    { title: "Reparo Profundo (Câmeras)", model: "Serviços em Geral", img: "https://images.unsplash.com/photo-1534944415848-0ca1a6ec0409?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Substituição de Lentes", "Refação de Rede Rompida", "Troca Baluns e Conversor", "Alinhamento Físico de Ângulo"] },
-    { title: "Otimização DVR/HD", model: "Serviço Pós-Pânico", img: "https://images.unsplash.com/photo-1616423640778-28d1b53229b1?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Troca de HD Danificado", "Backup de Incidentes Grave", "Recuperação de Senha Mestra", "Integração Celular Novamente"] }
+    { title: "Reparo Profundo (Câmeras)", model: "Serviços em Geral", img: "https://i.ibb.co/kgNmrXsX/ser-vico-jpg.jpg", specs: ["Substituição de Lentes", "Refação de Rede Rompida", "Troca Baluns e Conversor", "Alinhamento Físico de Ângulo"] },
+    { title: "Otimização DVR/HD", model: "Serviço Pós-Pânico", img: "https://i.ibb.co/21zPxnYb/manut-urg-jpg.jpg", specs: ["Troca de HD Danificado", "Backup de Incidentes Grave", "Recuperação de Senha Mestra", "Integração Celular Novamente"] }
   ]
 };
 
@@ -178,7 +180,7 @@ function ProductCard({ id, img, title, model, specs }: { id: string | number, im
 function InteractiveLogo({ isMobile }: { isMobile?: boolean }) {
   return (
     <div className={`flex items-center p-1 rounded-lg ${isMobile ? 'gap-2' : 'gap-3'}`}>
-      <img src="https://i.ibb.co/SXBzSst2/logo-nds-png.jpg" alt="Logo NDS CFTV" className={`${isMobile ? 'h-12' : 'h-24'} max-w-[220px] w-auto object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.4)] relative z-10`} />
+      <img src="https://i.ibb.co/mC43pD9m/logo-nds-png.jpg" alt="Logo NDS CFTV" className={`${isMobile ? 'h-12' : 'h-24'} max-w-[220px] w-auto object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.4)] relative z-10`} />
     </div>
   );
 }
