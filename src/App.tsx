@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle2, Menu, X, ChevronDown, MessageCircle, 
   Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench, HelpCircle,
-  Smartphone, BellRing
+  Smartphone, BellRing, MapPin, ShieldCheck, Instagram
 } from 'lucide-react';
 
 /* ============================
@@ -73,7 +73,7 @@ const PRODUCTS = {
 };
 
 const FAQS = [
-  { q: "A NDS CFTV atende quais regiões?", a: "Nosso foco corporativo e condominial está no DF (Asa Sul, Norte, Águas Claras, Guará, Lago Sul). Atendemos emergências rapidamente nestas zonas." },
+  { q: "A NDS CFTV atende quais regiões?", a: "Temos cobertura e atendimento para todo o Distrito Federal. Contamos com atendimento ultra rápido emergencial nas zonas de Brasília, Asa Sul, Norte, Águas Claras, Guará e Lago Sul." },
   { q: "Qual a garantia nas instalações?", a: "Todos os equipamentos fornecidos (Intelbras) possuem prazo mínimo de 1 ano. Nossos serviços contam com garantia integral de alinhamento e mão de obra de 90 dias." },
   { q: "Posso acessar pelo celular de fora do país?", a: "Sim. A integração via Intelbras Cloud ou No-IP permite visualização segura de qualquer lugar do mundo pelo app iSIC." },
   { q: "Funciona numa queda de energia?", a: "Apenas se solicitada a inclusão de um Nobreak Dedicado para segurança. Sugerimos Nobreaks na central do DVR e do Alarme para 24h sem interrupção." }
@@ -355,6 +355,53 @@ export default function App() {
 
           </AnimatePresence>
         </div>
+
+        {/* RODAPÉ ELEGANTE E TRUST BADGES (Adição Segura) */}
+        <div className="mt-12 pt-10 border-t border-cyan-900/30">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div className="flex items-start gap-4">
+              <div className="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/20 text-cyan-400">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="text-white font-bold mb-1">Mais Segurança</h4>
+                <p className="text-sm text-slate-400">Equipamentos Intelbras autênticos com nota e garantia técnica instalada.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/20 text-cyan-400">
+                <MapPin className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="text-white font-bold mb-1">Cobertura em todo o DF</h4>
+                <p className="text-sm text-slate-400">Atendimento ultra rápido para todo o Distrito Federal (Asa Sul, Norte, Águas Claras, Guará e mais).</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/20 text-cyan-400">
+                <Wrench className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="text-white font-bold mb-1">Suporte Garantido</h4>
+                <p className="text-sm text-slate-400">Assistência pós-venda para reconfigurações, troca de celular e acesso ao App Mibo/ISIC.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-between text-sm text-slate-500 pt-6 border-t border-slate-800/50 pb-20 md:pb-6 gap-4">
+            <p>© {new Date().getFullYear()} NDS CFTV Digital System. Todos os direitos reservados.</p>
+            <div className="flex items-center gap-4">
+              <a href="#" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                <Instagram className="w-4 h-4" /> Instagram
+              </a>
+              <span className="hidden md:inline text-slate-700">|</span>
+              <a onClick={sendQuoteRequest} className="hover:text-cyan-400 transition-colors cursor-pointer">
+                Suporte WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
       </main>
 
       {/* OVERLAY MODAL */}
