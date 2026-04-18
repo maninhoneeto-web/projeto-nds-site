@@ -114,28 +114,19 @@ function FaqItem({ question, answer }: { question: string, answer: string }) {
   );
 }
 
-// O NOVO CÓDIGO DO PRODUCT CARD -> Animações extremas, Fallback e Upload Local
+// O CÓDIGO DO PRODUCT CARD -> Animações extremas, Fallback
 function ProductCard({ id, img, title, model, specs }: { id: string | number, img: string, title: string, model: string, specs: string[] }) {
-  // Inicializa a imagem pegando do PC do usuário ou usando a padrão
   const [imgSrc, setImgSrc] = useState(() => {
     const saved = localStorage.getItem(`img-custom-${id}`);
     return saved || img;
   });
+  
+  const svgFallback = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' width='400' height='300'%3E%3Crect width='400' height='300' fill='%230f172a'/%3E%3Cpath d='M150 100 L250 100 L250 200 L150 200 Z' fill='none' stroke='%2306b6d4' stroke-width='4' stroke-dasharray='10 5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='bold' fill='%2306b6d4'%3EIMAGEM INDISPON%C3%8DVEL%3C/text%3E%3C/svg%3E";
 
-  const svgFallback = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' width='400' height='300'%3E%3Crect width='400' height='300' fill='%230f172a'/%3E%3Cpath d='M150 100 L250 100 L250 200 L150 200 Z' fill='none' stroke='%2306b6d4' stroke-width='4' stroke-dasharray='10 5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='bold' fill='%2306b6d4'%3EADICIONE UMA FOTO%3C/text%3E%3Ctext x='50%25' y='60%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='12' fill='%2364748b'%3E(Clique aqui)%3C/text%3E%3C/svg%3E";
-
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setImgSrc(base64);
-        localStorage.setItem(`img-custom-${id}`, base64);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  useEffect(() => {
+    const saved = localStorage.getItem(`img-custom-${id}`);
+    if (!saved) setImgSrc(img);
+  }, [img, id]);
 
   return (
     <motion.div 
@@ -157,14 +148,6 @@ function ProductCard({ id, img, title, model, specs }: { id: string | number, im
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="w-full h-full object-cover"
         />
-
-        {/* Camada de Upload Local */}
-        <label className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity z-20 cursor-pointer">
-           <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-           <div className="bg-cyan-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-[0_0_15px_#22d3ee]">
-             + Enviar Foto do PC
-           </div>
-        </label>
 
         <motion.div 
           className="absolute top-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee] z-10 pointer-events-none"
@@ -199,20 +182,6 @@ function ProductCard({ id, img, title, model, specs }: { id: string | number, im
 function InteractiveLogo({ isMobile }: { isMobile?: boolean }) {
   const [logoSrc, setLogoSrc] = useState(() => localStorage.getItem('site-logo') || '');
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setLogoSrc(base64);
-        localStorage.setItem('site-logo', base64);
-        window.dispatchEvent(new Event('logo-updated'));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   useEffect(() => {
     const handleSync = () => setLogoSrc(localStorage.getItem('site-logo') || '');
     window.addEventListener('logo-updated', handleSync);
@@ -220,9 +189,7 @@ function InteractiveLogo({ isMobile }: { isMobile?: boolean }) {
   }, []);
 
   return (
-    <label className={`relative group cursor-pointer flex items-center p-1 rounded-lg ${isMobile ? 'gap-2' : 'gap-3'}`}>
-      <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-      
+    <div className={`flex items-center p-1 rounded-lg ${isMobile ? 'gap-2' : 'gap-3'}`}>
       {logoSrc ? (
         <img src={logoSrc} alt="Logo" className={`${isMobile ? 'h-12' : 'h-24'} max-w-[220px] w-auto object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.4)] relative z-10`} />
       ) : (
@@ -240,12 +207,7 @@ function InteractiveLogo({ isMobile }: { isMobile?: boolean }) {
           </div>
         </div>
       )}
-
-      {/* Camada interativa ao hover da logo */}
-      <div className="absolute inset-0 bg-[#0f172a]/80 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center border border-dashed border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.5)] z-20">
-        <span className="text-xs text-white font-bold bg-cyan-600 px-3 py-1.5 rounded shadow-lg whitespace-nowrap">+ Inserir Logo</span>
-      </div>
-    </label>
+    </div>
   );
 }
 
