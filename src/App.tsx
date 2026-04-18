@@ -24,38 +24,38 @@ const TABS = [
 ];
 
 const CAMERAS = [
-  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/51wXwEwXYYL._AC_SL1000_.jpg", title: "Speed Dome Preta", model: "Intelbras VIP 8232 PTZ (Black Edition)", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio Preto"] },
-  { id: 2, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
+  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://i.ibb.co/DHwjvCP0/speed-dome-jpg.webp", title: "Speed Dome Preta", model: "Intelbras VIP 8232 PTZ (Black Edition)", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio Preto"] },
+  { id: 2, type: 'Bullet', category: 'Externa', img: "https://i.ibb.co/mFvRmwJC/spped-branca-jpg.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
   { id: 3, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1588666308996-a40026e9de80?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Full Color 24h", model: "Intelbras VHD 3230 B", specs: ["Imagens 100% coloridas à noite", "LED branco visível até 20m", "Menu OSD e protocolo HDCVI", "Resolução Full HD 1080p"] },
   { id: 4, type: 'Dome', category: 'Interna', img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
 ];
 
 const PRODUCTS = {
   smart: [
-    { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
-    { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
-    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
-    { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://images.unsplash.com/photo-1611689342806-0863700ce1e4?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
+    { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://i.ibb.co/5xXzRV2n/im-5pr-jpg.webp", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
+    { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://i.ibb.co/5xXzRV2n/im-5pr-jpg.webp", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
+    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://i.ibb.co/39m95Y51/mibo-im4-jpg.webp", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
+    { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://i.ibb.co/k6X68PR6/im-4c-jpg.jpg", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
   ],
   videoporteiro: [
     { title: "Vídeoporteiro Wi-Fi 7\"", model: "Intelbras WT7", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Monitor Touch Screen de 7\"", "Atendimento e Abertura via App Allo", "Conexão Wi-Fi Integrada no Monitor", "Integração Bivolt, abre 2 Fechaduras"] },
     { title: "Vídeoporteiro Smart", model: "Intelbras Allo w3", img: "https://images.unsplash.com/photo-1541889816001-f25b29094017?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Visualização Noturna Integrada", "Atendimento direto celular App", "Gravação Automática de Foto e Vídeo", "Alerta de Movimento Constante"] }
   ],
   dvr: [
-    { title: "NVR Inteligente 32 Canais", model: "Intelbras NVD 3332 P", img: "https://images.unsplash.com/photo-1611689342806-0863700ce1e4?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Suporta câmeras 4K Ultra HD", "16 portas PoE+ Integradas", "Reconhecimento Facial Embutido", "Capacidade para 4 HDs SATA"] },
-    { title: "DVR Multi-HD 16 Canais", model: "Intelbras iMHDX 3116", img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Compressão H.265+ de Vídeo", "Pentabrído (HDCVI, AHD, Analógico)", "Detecção inteligente de pessoas", "Armazenamento até 14TB"] }
+    { title: "NVR Inteligente 32 Canais", model: "Intelbras NVD 3332 P", img: "https://i.ibb.co/Q3k3GvTp/nvr-v-jpg.jpg", specs: ["Suporta câmeras 4K Ultra HD", "16 portas PoE+ Integradas", "Reconhecimento Facial Embutido", "Capacidade para 4 HDs SATA"] },
+    { title: "DVR Multi-HD 16 Canais", model: "Intelbras iMHDX 3116", img: "https://i.ibb.co/Q3k3GvTp/nvr-v-jpg.jpg", specs: ["Compressão H.265+ de Vídeo", "Pentabrído (HDCVI, AHD, Analógico)", "Detecção inteligente de pessoas", "Armazenamento até 14TB"] }
   ],
   acesso: [
-    { title: "Leitor Facial Rápido", model: "Intelbras SS 3430 MF FACE", img: "https://images.unsplash.com/photo-1614064641936-3899884a8684?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Tela Touch Screen 4,3\"", "Leitura Mapeada em 0,2s", "Armazena 3.000 Faces", "Detecção Liveness Anti-Fake"] },
-    { title: "Fechadura Digital Biométrica", model: "Intelbras FR 201", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Abra por Senha, Tag ou Digital", "Alarme Antiarrombamento", "Painel Touch Integrado", "1 Ano de Bateria (4 pilhas)"] }
+    { title: "Leitor Facial Rápido", model: "Intelbras SS 3430 MF FACE", img: "https://i.ibb.co/V0dN17Gh/fechadura3-intelbras-jpg.webp", specs: ["Tela Touch Screen 4,3\"", "Leitura Mapeada em 0,2s", "Armazena 3.000 Faces", "Detecção Liveness Anti-Fake"] },
+    { title: "Fechadura Digital Biométrica", model: "Intelbras FR 201", img: "https://i.ibb.co/Y4p3gWPT/fech-intelbras-jpg.png", specs: ["Abra por Senha, Tag ou Digital", "Alarme Antiarrombamento", "Painel Touch Integrado", "1 Ano de Bateria (4 pilhas)"] }
   ],
   cerca: [
     { title: "Central de Cerca", model: "Intelbras ELC 5002", img: "https://images.unsplash.com/photo-1605814522438-fb8d9753c153?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Descarga de Choque de 18.000V", "Alarme e Cerca na mesma central", "App Móvel para Armar/Desarmar", "Monitoramento Corte de Tensão"] },
-    { title: "Hastes Industriais", model: "Big Haste Alumínio 25x25", img: "https://images.unsplash.com/photo-1581092921461-7031e4bf0e5b?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Alumínio Industrial Grosso", "Parafusos de Aço Inox", "Isoladores Anti-Trincamento UV", "Blindagem Frontal"] }
+    { title: "Hastes Industriais", model: "Big Haste Alumínio 25x25", img: "https://i.ibb.co/whM0BptS/haste-alum-jpg.webp", specs: ["Alumínio Industrial Grosso", "Parafusos de Aço Inox", "Isoladores Anti-Trincamento UV", "Blindagem Frontal"] }
   ],
   portao: [
-    { title: "Motor Deslizante Industrial", model: "Intelbras DR 600", img: "https://images.unsplash.com/photo-1622329388339-dae86ebaa7c2?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Abertura Total em 7 segundos", "Para Portões até 600kg", "Corpo 100% de Alumínio", "Rádio Frequência Longa Distância"] },
-    { title: "Relé Smart Portão", model: "Intelbras IZY Smart", img: "https://images.unsplash.com/photo-1541889816001-f25b29094017?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Conecte ao seu Wi-Fi 2.4Ghz", "Abra Portão de Qualquer Lugar", "Compatível com Comando Alexa", "Notificação de Quem Abriu"] }
+    { title: "Motor Deslizante Industrial", model: "Intelbras DR 600", img: "https://i.ibb.co/5xYgSSjV/mtr-int-jpg.webp", specs: ["Abertura Total em 7 segundos", "Para Portões até 600kg", "Corpo 100% de Alumínio", "Rádio Frequência Longa Distância"] },
+    { title: "Relé Smart Portão", model: "Intelbras IZY Smart", img: "https://i.ibb.co/v6Ftz6ZF/rele-port-jpg.jpg", specs: ["Conecte ao seu Wi-Fi 2.4Ghz", "Abra Portão de Qualquer Lugar", "Compatível com Comando Alexa", "Notificação de Quem Abriu"] }
   ],
   alarme: [
     { title: "Alarme Modular Wireless", model: "Intelbras AMT 8000", img: "https://images.unsplash.com/photo-1496368077930-c1e31b4e5b44?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Transmissão de 1000 Metros", "64 Zonas Sem Fio Configuráveis", "Sensores Criptografados", "Baterias de Longa Vida Padrão"] }
@@ -116,17 +116,13 @@ function FaqItem({ question, answer }: { question: string, answer: string }) {
 
 // O CÓDIGO DO PRODUCT CARD -> Animações extremas, Fallback
 function ProductCard({ id, img, title, model, specs }: { id: string | number, img: string, title: string, model: string, specs: string[] }) {
-  const [imgSrc, setImgSrc] = useState(() => {
-    const saved = localStorage.getItem(`img-custom-${id}`);
-    return saved || img;
-  });
+  const [imgSrc, setImgSrc] = useState(img);
   
   const svgFallback = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' width='400' height='300'%3E%3Crect width='400' height='300' fill='%230f172a'/%3E%3Cpath d='M150 100 L250 100 L250 200 L150 200 Z' fill='none' stroke='%2306b6d4' stroke-width='4' stroke-dasharray='10 5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='bold' fill='%2306b6d4'%3EIMAGEM INDISPON%C3%8DVEL%3C/text%3E%3C/svg%3E";
 
   useEffect(() => {
-    const saved = localStorage.getItem(`img-custom-${id}`);
-    if (!saved) setImgSrc(img);
-  }, [img, id]);
+    setImgSrc(img);
+  }, [img]);
 
   return (
     <motion.div 
@@ -180,33 +176,9 @@ function ProductCard({ id, img, title, model, specs }: { id: string | number, im
    COMPONENTES DE LOGO & HEADER
 ============================ */
 function InteractiveLogo({ isMobile }: { isMobile?: boolean }) {
-  const [logoSrc, setLogoSrc] = useState(() => localStorage.getItem('site-logo') || '');
-
-  useEffect(() => {
-    const handleSync = () => setLogoSrc(localStorage.getItem('site-logo') || '');
-    window.addEventListener('logo-updated', handleSync);
-    return () => window.removeEventListener('logo-updated', handleSync);
-  }, []);
-
   return (
     <div className={`flex items-center p-1 rounded-lg ${isMobile ? 'gap-2' : 'gap-3'}`}>
-      {logoSrc ? (
-        <img src={logoSrc} alt="Logo" className={`${isMobile ? 'h-12' : 'h-24'} max-w-[220px] w-auto object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.4)] relative z-10`} />
-      ) : (
-        <div className="flex items-center gap-2 md:gap-3 relative z-10">
-          {isMobile ? (
-            <Shield className="text-cyan-500 w-6 h-6" />
-          ) : (
-            <div className="p-2 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-              <Shield className="text-white w-6 h-6" />
-            </div>
-          )}
-          <div>
-            <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-black text-white tracking-widest`}>NDS<span className="text-cyan-500">CFTV</span></h1>
-            {!isMobile && <p className="text-[10px] uppercase text-cyan-400 tracking-widest font-mono">Digital System</p>}
-          </div>
-        </div>
-      )}
+      <img src="https://i.ibb.co/SXBzSst2/logo-nds-png.jpg" alt="Logo NDS CFTV" className={`${isMobile ? 'h-12' : 'h-24'} max-w-[220px] w-auto object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.4)] relative z-10`} />
     </div>
   );
 }
