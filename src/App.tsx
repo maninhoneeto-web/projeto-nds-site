@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle2, Menu, X, ChevronDown, MessageCircle, 
   Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench, HelpCircle,
-  Smartphone, BellRing, MapPin, ShieldCheck, Instagram
+  Smartphone, BellRing, MapPin, ShieldCheck, Instagram, Star
 } from 'lucide-react';
 
 /* ============================
@@ -390,7 +390,11 @@ export default function App() {
           
           <div className="flex flex-col md:flex-row items-center justify-between text-sm text-slate-500 pt-6 border-t border-slate-800/50 pb-20 md:pb-6 gap-4">
             <p>© {new Date().getFullYear()} NDS CFTV Digital System. Todos os direitos reservados.</p>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap justify-center">
+              <a href="https://g.page/r/CcJR2aqm4LV_EAI/review" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors flex items-center gap-1 text-slate-400">
+                <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" /> Avalie-nos no Google
+              </a>
+              <span className="hidden md:inline text-slate-700">|</span>
               <a href="#" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
                 <Instagram className="w-4 h-4" /> Instagram
               </a>
