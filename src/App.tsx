@@ -25,7 +25,7 @@ const TABS = [
 
 const CAMERAS = [
   { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://i.ibb.co/DHwjvCP0/speed-dome-jpg.webp", title: "Speed Dome Preta", model: "Intelbras VIP 8232 PTZ (Black Edition)", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio Preto"] },
-  { id: 2, type: 'Bullet', category: 'Externa', img: "https://i.ibb.co/6yWwbg3/bullet.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
+  { id: 2, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
   { id: 3, type: 'Bullet', category: 'Externa', img: "https://i.ibb.co/NntDL42R/bullet-cam-jpg.jpg", title: "Câmera Full Color 24h", model: "Intelbras VHD 3230 B", specs: ["Imagens 100% coloridas à noite", "LED branco visível até 20m", "Menu OSD e protocolo HDCVI", "Resolução Full HD 1080p"] },
   { id: 4, type: 'Dome', category: 'Interna', img: "https://i.ibb.co/tPFZCjkk/dome-cam-jpg.jpg", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
 ];
