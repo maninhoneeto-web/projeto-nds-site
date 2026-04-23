@@ -1,8 +1,9 @@
 {
-  "name": "react-example",
+  "name": "nds-cftv-digital",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Website institucional para NDS CFTV Digital System",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
