@@ -1,4 +1,0 @@
-Coloque suas imagens baixadas aqui nesta pasta.
-
-Quando fizer o upload, a imagem deve ficar assim no código dentro do App.tsx:
-img: "/produtos/minha-camera.png"

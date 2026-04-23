@@ -24,7 +24,7 @@ const TABS = [
 ];
 
 const CAMERAS = [
-  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://m.media-amazon.com/images/I/51wXwEwXYYL._AC_SL1000_.jpg", title: "Speed Dome IP PTZ", model: "Intelbras VIP 8232 PTZ", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio"] },
+  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://m.media-amazon.com/images/I/51wXwEwXYYL._AC_SL1000_.jpg", title: "Speed Dome PTZ", model: "Intelbras VIP 8232 PTZ", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio"] },
   { id: 2, type: 'Bullet', category: 'Externa', img: "https://m.media-amazon.com/images/I/41sW95L8HnL._AC_SL1000_.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
   { id: 3, type: 'Bullet', category: 'Externa', img: "https://m.media-amazon.com/images/I/41D1Xro8-XL._AC_SX679_.jpg", title: "Câmera Full Color Inteligente", model: "Intelbras Mibo iM5 SC", specs: ["Imagens 100% coloridas à noite", "Sirene de Alerta Embutida", "Antena Dupla Wi-Fi", "Qualidade Full HD 1080p"] },
   { id: 4, type: 'Dome', category: 'Interna', img: "https://m.media-amazon.com/images/I/41Q8L4sC0tL._AC_SL1000_.jpg", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
@@ -82,7 +82,7 @@ const FAQS = [
 ============================ */
 
 // Componente de Faq Accordion Animado
-function FaqItem({ question, answer }: { key?: string | number, question: string, answer: string }) {
+function FaqItem({ question, answer }: { question: string, answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <motion.div 
@@ -114,57 +114,32 @@ function FaqItem({ question, answer }: { key?: string | number, question: string
   );
 }
 
-// O NOVO CÓDIGO DO PRODUCT CARD -> Animações extremas, Fallback e Upload Local
-function ProductCard({ id, img, title, model, specs }: { key?: string | number, id: string | number, img: string, title: string, model: string, specs: string[] }) {
-  // Inicializa a imagem pegando do PC do usuário ou usando a padrão
-  const [imgSrc, setImgSrc] = useState(() => {
-    const saved = localStorage.getItem(`img-custom-${id}`);
-    return saved || img;
-  });
-
-  const svgFallback = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' width='400' height='300'%3E%3Crect width='400' height='300' fill='%230f172a'/%3E%3Cpath d='M150 100 L250 100 L250 200 L150 200 Z' fill='none' stroke='%2306b6d4' stroke-width='4' stroke-dasharray='10 5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='bold' fill='%2306b6d4'%3EADICIONE UMA FOTO%3C/text%3E%3Ctext x='50%25' y='60%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='12' fill='%2364748b'%3E(Clique aqui)%3C/text%3E%3C/svg%3E";
-
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setImgSrc(base64);
-        localStorage.setItem(`img-custom-${id}`, base64);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
+// O NOVO CÓDIGO DO PRODUCT CARD -> Estático e Blindado para carregar sempre
+function ProductCard({ id, img, title, model, specs }: { id: string | number, img: string, title: string, model: string, specs: string[] }) {
   return (
     <motion.div 
       layout
       whileHover="hover"
       className="bg-[#0f172a]/80 backdrop-blur-xl border border-cyan-500/20 rounded-xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex flex-col items-start relative overflow-hidden group"
     >
-      <div className="absolute top-0 right-0 bg-cyan-600 shadow-[0_0_10px_#0891b2] text-white text-[10px] font-black px-4 py-1 rounded-bl-lg z-20">
-        INTELBRAS
+      <div className="absolute top-0 right-0 bg-cyan-600 shadow-[0_0_10px_#0891b2] text-white text-[10px] font-black px-4 py-1 rounded-bl-lg z-20 uppercase">
+        Intelbras
       </div>
 
-      <div className="w-full h-48 mb-4 overflow-hidden rounded-lg bg-slate-900 border border-slate-800 relative group/img cursor-pointer">
+      <div className="w-full h-48 mb-4 overflow-hidden rounded-lg bg-slate-900 border border-slate-800 relative group/img">
         <motion.img 
-          src={imgSrc}
-          onError={() => setImgSrc(svgFallback)}
+          src={img}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = "https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=400&h=300";
+          }}
+          referrerPolicy="no-referrer"
           variants={{
             hover: { scale: 1.15, rotate: 1, filter: "brightness(1.2) contrast(1.1)" },
           }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="w-full h-full object-cover"
         />
-
-        {/* Camada de Upload Local */}
-        <label className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity z-20 cursor-pointer">
-           <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-           <div className="bg-cyan-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-[0_0_15px_#22d3ee]">
-             + Enviar Foto do PC
-           </div>
-        </label>
 
         <motion.div 
           className="absolute top-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee] z-10 pointer-events-none"
@@ -178,12 +153,12 @@ function ProductCard({ id, img, title, model, specs }: { key?: string | number, 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent z-0 opacity-80 pointer-events-none" />
       </div>
 
-      <h3 className="text-white text-lg font-bold z-10">{title}</h3>
-      <p className="text-cyan-400 text-xs font-mono mb-4 mt-1 border-b border-cyan-900/50 pb-2 w-full z-10">{model}</p>
+      <h3 className="text-white text-lg font-bold z-10 uppercase tracking-tight">{title}</h3>
+      <p className="text-cyan-400 text-[10px] font-mono mb-4 mt-1 border-b border-cyan-900/50 pb-2 w-full z-10 uppercase tracking-widest">{model}</p>
       
       <ul className="flex-1 space-y-2 mb-2 z-10 w-full">
         {specs.map((spec, i) => (
-          <li key={i} className="text-slate-300 text-xs flex items-start gap-2 leading-tight">
+          <li key={i} className="text-slate-300 text-[11px] flex items-start gap-2 leading-tight">
             <span className="text-cyan-500 font-bold mt-[1px]">▸</span>
             {spec}
           </li>
