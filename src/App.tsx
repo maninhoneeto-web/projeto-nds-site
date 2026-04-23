@@ -172,55 +172,23 @@ function ProductCard({ id, img, title, model, specs }: { id: string | number, im
    COMPONENTES DE LOGO & HEADER
 ============================ */
 function InteractiveLogo({ isMobile }: { isMobile?: boolean }) {
-  const [logoSrc, setLogoSrc] = useState(() => localStorage.getItem('site-logo') || '');
-
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setLogoSrc(base64);
-        localStorage.setItem('site-logo', base64);
-        window.dispatchEvent(new Event('logo-updated'));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  useEffect(() => {
-    const handleSync = () => setLogoSrc(localStorage.getItem('site-logo') || '');
-    window.addEventListener('logo-updated', handleSync);
-    return () => window.removeEventListener('logo-updated', handleSync);
-  }, []);
-
+  // Removida lógica de localStorage para evitar erros em navegadores com restrição de cookies
   return (
-    <label className={`relative group cursor-pointer flex items-center p-1 rounded-lg ${isMobile ? 'gap-2' : 'gap-3'}`}>
-      <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-      
-      {logoSrc ? (
-        <img src={logoSrc} alt="Logo" className={`${isMobile ? 'h-12' : 'h-24'} max-w-[220px] w-auto object-contain drop-shadow-[0_0_15px_rgba(6,182,212,0.4)] relative z-10`} />
-      ) : (
-        <div className="flex items-center gap-2 md:gap-3 relative z-10">
-          {isMobile ? (
-            <Shield className="text-cyan-500 w-6 h-6" />
-          ) : (
-            <div className="p-2 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-              <Shield className="text-white w-6 h-6" />
-            </div>
-          )}
-          <div>
-            <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-black text-white tracking-widest`}>NDS<span className="text-cyan-500">CFTV</span></h1>
-            {!isMobile && <p className="text-[10px] uppercase text-cyan-400 tracking-widest font-mono">Digital System</p>}
+    <div className={`relative flex items-center p-1 rounded-lg ${isMobile ? 'gap-2' : 'gap-3'}`}>
+      <div className="flex items-center gap-2 md:gap-3 relative z-10">
+        {isMobile ? (
+          <Shield className="text-cyan-500 w-6 h-6" />
+        ) : (
+          <div className="p-2 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+            <Shield className="text-white w-6 h-6" />
           </div>
+        )}
+        <div>
+          <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-black text-white tracking-widest uppercase`}>NDS<span className="text-cyan-400">CFTV</span></h1>
+          {!isMobile && <p className="text-[10px] uppercase text-cyan-500 tracking-widest font-mono font-bold">Segurança Digital</p>}
         </div>
-      )}
-
-      {/* Camada interativa ao hover da logo */}
-      <div className="absolute inset-0 bg-[#0f172a]/80 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center border border-dashed border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.5)] z-20">
-        <span className="text-xs text-white font-bold bg-cyan-600 px-3 py-1.5 rounded shadow-lg whitespace-nowrap">+ Inserir Logo</span>
       </div>
-    </label>
+    </div>
   );
 }
 
@@ -232,12 +200,11 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const [cameraFilter, setCameraFilter] = useState('Todos');
-  const [showSecretBanners, setShowSecretBanners] = useState(false);
 
   const sendQuoteRequest = (e: React.FormEvent) => {
     e.preventDefault();
-    const phone = "5561999999999";
-    const msg = "Olá NDS CFTV Digital, gostaria de ajuda nos meus equipamentos.";
+    const phone = "5561998308655"; // Número NDS CFTV Digital correto
+    const msg = "Olá NDS! Preciso de um orçamento técnico.";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
@@ -316,8 +283,7 @@ export default function App() {
               </button>
               
               <div 
-                className="text-center text-[10px] text-slate-500 mt-8 pb-2 cursor-pointer hover:text-cyan-400 select-none transition-colors"
-                onClick={() => setShowSecretBanners(true)}
+                className="text-center text-[10px] text-slate-500 mt-8 pb-2 transition-colors"
               >
                 <p className="font-bold tracking-widest text-slate-400 uppercase mb-1">© 2026 NDS Tecnologia</p>
                 <p>Todos os direitos reservados.</p>
@@ -464,37 +430,6 @@ export default function App() {
           Fale Conosco!
         </span>
       </motion.button>
-
-      {/* SECRET BANNERS MODAL (INVISIVEL PARA O CLIENTE) */}
-      <AnimatePresence>
-        {showSecretBanners && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-[#020617]/95 backdrop-blur-md overflow-y-auto"
-          >
-            <div className="bg-slate-900 border border-cyan-500/50 rounded-2xl w-full max-w-4xl p-6 md:p-10 text-white relative my-10 shadow-[0_0_50px_rgba(6,182,212,0.3)]">
-              <button 
-                onClick={() => setShowSecretBanners(false)}
-                className="absolute -top-4 -right-4 bg-red-600 hover:bg-red-500 text-white p-2 rounded-full shadow-lg transition-transform hover:scale-110 z-50"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              
-              <h2 className="text-3xl font-black text-cyan-400 mb-2">Seus Banners</h2>
-              <p className="text-slate-400 mb-6">Aqui estão os banners que geramos. Você pode clicar com o botão direito e salvar no seu computador/celular.</p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <div className="bg-black/50 p-4 border border-slate-700 rounded-xl flex items-center justify-center min-h-[300px]">
-                   <img src="/src/assets/images/banner_seguranca_eletronica_1776723232074.png" alt="Segurança" className="w-full h-auto object-contain rounded-lg shadow-lg" />
-                 </div>
-                 <div className="bg-black/50 p-4 border border-slate-700 rounded-xl flex items-center justify-center min-h-[300px]">
-                   <img src="/src/assets/images/nds_security_banner_1776723057228.png" alt="Tech" className="w-full h-auto object-contain rounded-lg shadow-lg" />
-                 </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
     </div>
   );
