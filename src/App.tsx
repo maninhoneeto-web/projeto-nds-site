@@ -11,7 +11,7 @@ import {
 ============================ */
 const TABS = [
   { id: 'cameras', label: 'Câmeras IP', icon: Camera },
-  { id: 'smart', label: 'Linha Mibo', icon: Smartphone },
+  { id: 'smart', label: 'Linha Mibo', icon: Shield },
   { id: 'videoporteiro', label: 'Vídeo Porteiros', icon: BellRing },
   { id: 'dvr', label: 'Gravadores (DVR/NVR)', icon: Server },
   { id: 'acesso', label: 'Acesso e Biometria', icon: Key },
@@ -24,18 +24,18 @@ const TABS = [
 ];
 
 const CAMERAS = [
-  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/51wXwEwXYYL._AC_SL1000_.jpg", title: "Speed Dome Preta", model: "Intelbras VIP 8232 PTZ (Black Edition)", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio Preto"] },
-  { id: 2, type: 'Bullet', category: 'Externa', img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/41sW95L8HnL._AC_SL1000_.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
+  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://images.unsplash.com/photo-1557597775-5eb7bd517ae7?auto=format&fit=crop&q=80&w=400&h=300", title: "Speed Dome Preta", model: "Intelbras VIP 8232 PTZ (Black Edition)", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio Preto"] },
+  { id: 2, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1557597775-5eb7bd517ae7?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
   { id: 3, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1588666308996-a40026e9de80?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Full Color 24h", model: "Intelbras VHD 3230 B", specs: ["Imagens 100% coloridas à noite", "LED branco visível até 20m", "Menu OSD e protocolo HDCVI", "Resolução Full HD 1080p"] },
   { id: 4, type: 'Dome', category: 'Interna', img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
 ];
 
 const PRODUCTS = {
   smart: [
-    { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/413sIfY9yAL._AC_SX679_.jpg", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
-    { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/41D1Xro8-XL._AC_SX679_.jpg", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
-    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/51r5I8PihqL._AC_SL1000_.jpg", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
-    { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/41D9K3K32-L._AC_SY879_.jpg", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
+    { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
+    { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://images.unsplash.com/photo-1557597775-5eb7bd517ae7?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
+    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://images.unsplash.com/photo-1588666308996-a40026e9de80?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
+    { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
   ],
   videoporteiro: [
     { title: "Vídeoporteiro Wi-Fi 7\"", model: "Intelbras WT7", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Monitor Touch Screen de 7\"", "Atendimento e Abertura via App Allo", "Conexão Wi-Fi Integrada no Monitor", "Integração Bivolt, abre 2 Fechaduras"] },
