@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, Menu, X, ChevronDown, MessageCircle, 
   Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench, HelpCircle,
@@ -25,7 +25,7 @@ const TABS = [
 
 const CAMERAS = [
   { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://m.media-amazon.com/images/I/51wXwEwXYYL._AC_SL1000_.jpg", title: "Speed Dome PTZ", model: "Intelbras VIP 8232 PTZ", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio"] },
-  { id: 2, type: 'Bullet', category: 'Externa', img: "/buulet-ip.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
+  { id: 2, type: 'Bullet', category: 'Externa', img: "/bullet-ip-intelbras.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
   { id: 3, type: 'Bullet', category: 'Externa', img: "https://m.media-amazon.com/images/I/41D1Xro8-XL._AC_SX679_.jpg", title: "Câmera Full Color Inteligente", model: "Intelbras Mibo iM5 SC", specs: ["Imagens 100% coloridas à noite", "Sirene de Alerta Embutida", "Antena Dupla Wi-Fi", "Qualidade Full HD 1080p"] },
   { id: 4, type: 'Dome', category: 'Interna', img: "https://m.media-amazon.com/images/I/41Q8L4sC0tL._AC_SL1000_.jpg", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
 ];
@@ -82,7 +82,7 @@ const FAQS = [
 ============================ */
 
 // Componente de Faq Accordion Animado
-function FaqItem({ question, answer }: { question: string, answer: string }) {
+function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <motion.div 
@@ -115,7 +115,7 @@ function FaqItem({ question, answer }: { question: string, answer: string }) {
 }
 
 // O NOVO CÓDIGO DO PRODUCT CARD -> Estático e Blindado para carregar sempre
-function ProductCard({ id, img, title, model, specs }: { id: string | number, img: string, title: string, model: string, specs: string[] }) {
+function ProductCard({ id, img, title, model, specs }: { id: string | number; img: string; title: string; model: string; specs: string[] }) {
   return (
     <motion.div 
       layout
@@ -172,20 +172,27 @@ function ProductCard({ id, img, title, model, specs }: { id: string | number, im
    COMPONENTES DE LOGO & HEADER
 ============================ */
 function InteractiveLogo({ isMobile }: { isMobile?: boolean }) {
-  // Removida lógica de localStorage para evitar erros em navegadores com restrição de cookies
   return (
     <div className={`relative flex items-center p-1 rounded-lg ${isMobile ? 'gap-2' : 'gap-3'}`}>
       <div className="flex items-center gap-2 md:gap-3 relative z-10">
-        {isMobile ? (
-          <Shield className="text-cyan-500 w-6 h-6" />
-        ) : (
-          <div className="p-2 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-            <Shield className="text-white w-6 h-6" />
-          </div>
-        )}
+        <div className="p-2 bg-white rounded-lg shadow-lg overflow-hidden w-10 h-10 flex items-center justify-center border border-cyan-500/30">
+           <img 
+             src="/nds-logo.png" 
+             alt="NDS Logo" 
+             className="w-full h-full object-contain"
+             onError={(e) => {
+               (e.target as HTMLImageElement).style.display = 'none';
+             }}
+           />
+           <Shield className="absolute text-cyan-600 w-6 h-6 opacity-0 hover:opacity-100" />
+        </div>
         <div>
-          <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-black text-white tracking-widest uppercase`}>NDS<span className="text-cyan-400">CFTV</span></h1>
-          {!isMobile && <p className="text-[10px] uppercase text-cyan-500 tracking-widest font-mono font-bold">Segurança Digital</p>}
+          <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-black text-white tracking-widest uppercase leading-none`}>
+            NDS<span className="text-cyan-400">CFTV</span>
+          </h1>
+          <p className="text-[10px] uppercase text-cyan-500 tracking-widest font-mono font-bold leading-none mt-1">
+            Segurança Digital
+          </p>
         </div>
       </div>
     </div>
@@ -295,6 +302,24 @@ export default function App() {
 
       {/* CONTEÚDO PRINCIPAL TELA */}
       <main className="flex-1 w-full bg-transparent min-h-screen relative z-10 flex flex-col">
+        {/* Banner Principal */}
+        <div className="w-full h-48 md:h-64 overflow-hidden relative border-b border-cyan-900/50 bg-[#0f172a]">
+          <img 
+            src="/hero-banner.png" 
+            alt="NDS CFTV Banner" 
+            className="w-full h-full object-cover opacity-60"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1200";
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#020617] to-transparent" />
+          <div className="absolute bottom-8 left-8 md:left-12">
+            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter shadow-black drop-shadow-lg">
+              Sua Segurança <br/><span className="text-cyan-400">Levada a Sério</span>
+            </h2>
+          </div>
+        </div>
+
         {/* Banner Simples / Breadcrumb */}
         <div className="p-6 lg:p-10 w-full max-w-7xl mx-auto flex-1">
           
