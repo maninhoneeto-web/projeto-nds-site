@@ -116,6 +116,27 @@ function FaqItem({ question, answer }: { key?: string | number, question: string
 
 // O NOVO CÓDIGO DO PRODUCT CARD -> Animações extremas, Fallback e Upload Local
 function ProductCard({ id, img, title, model, specs }: { key?: string | number, id: string | number, img: string, title: string, model: string, specs: string[] }) {
+  // Inicializa a imagem pegando do PC do usuário ou usando a padrão
+  const [imgSrc, setImgSrc] = useState(() => {
+    const saved = localStorage.getItem(`img-custom-${id}`);
+    return saved || img;
+  });
+
+  const svgFallback = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' width='400' height='300'%3E%3Crect width='400' height='300' fill='%230f172a'/%3E%3Cpath d='M150 100 L250 100 L250 200 L150 200 Z' fill='none' stroke='%2306b6d4' stroke-width='4' stroke-dasharray='10 5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='bold' fill='%2306b6d4'%3EADICIONE UMA FOTO%3C/text%3E%3Ctext x='50%25' y='60%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='12' fill='%2364748b'%3E(Clique aqui)%3C/text%3E%3C/svg%3E";
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImgSrc(base64);
+        localStorage.setItem(`img-custom-${id}`, base64);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <motion.div 
       layout
@@ -128,13 +149,22 @@ function ProductCard({ id, img, title, model, specs }: { key?: string | number, 
 
       <div className="w-full h-48 mb-4 overflow-hidden rounded-lg bg-slate-900 border border-slate-800 relative group/img cursor-pointer">
         <motion.img 
-          src={img}
+          src={imgSrc}
+          onError={() => setImgSrc(svgFallback)}
           variants={{
             hover: { scale: 1.15, rotate: 1, filter: "brightness(1.2) contrast(1.1)" },
           }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="w-full h-full object-cover"
         />
+
+        {/* Camada de Upload Local */}
+        <label className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity z-20 cursor-pointer">
+           <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+           <div className="bg-cyan-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-[0_0_15px_#22d3ee]">
+             + Enviar Foto do PC
+           </div>
+        </label>
 
         <motion.div 
           className="absolute top-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee] z-10 pointer-events-none"
