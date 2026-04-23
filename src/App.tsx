@@ -24,45 +24,45 @@ const TABS = [
 ];
 
 const CAMERAS = [
-  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://images.unsplash.com/photo-1557597775-5eb7bd517ae7?auto=format&fit=crop&q=80&w=400&h=300", title: "Speed Dome Preta", model: "Intelbras VIP 8232 PTZ (Black Edition)", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio Preto"] },
-  { id: 2, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1557597775-5eb7bd517ae7?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
-  { id: 3, type: 'Bullet', category: 'Externa', img: "https://images.unsplash.com/photo-1588666308996-a40026e9de80?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Full Color 24h", model: "Intelbras VHD 3230 B", specs: ["Imagens 100% coloridas à noite", "LED branco visível até 20m", "Menu OSD e protocolo HDCVI", "Resolução Full HD 1080p"] },
-  { id: 4, type: 'Dome', category: 'Interna', img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
+  { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://m.media-amazon.com/images/I/51wXwEwXYYL._AC_SL1000_.jpg", title: "Speed Dome IP PTZ", model: "Intelbras VIP 8232 PTZ", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio"] },
+  { id: 2, type: 'Bullet', category: 'Externa', img: "https://m.media-amazon.com/images/I/41sW95L8HnL._AC_SL1000_.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
+  { id: 3, type: 'Bullet', category: 'Externa', img: "https://m.media-amazon.com/images/I/41D1Xro8-XL._AC_SX679_.jpg", title: "Câmera Full Color Inteligente", model: "Intelbras Mibo iM5 SC", specs: ["Imagens 100% coloridas à noite", "Sirene de Alerta Embutida", "Antena Dupla Wi-Fi", "Qualidade Full HD 1080p"] },
+  { id: 4, type: 'Dome', category: 'Interna', img: "https://m.media-amazon.com/images/I/41Q8L4sC0tL._AC_SL1000_.jpg", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
 ];
 
 const PRODUCTS = {
   smart: [
-    { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
-    { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://images.unsplash.com/photo-1557597775-5eb7bd517ae7?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
-    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://images.unsplash.com/photo-1588666308996-a40026e9de80?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
-    { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
+    { title: "Mibo Wi-Fi Full HD", model: "Intelbras iM5 SC", img: "https://m.media-amazon.com/images/I/41D1Xro8-XL._AC_SX679_.jpg", specs: ["Versatilidade Externa Mibo", "Visão Noturna Otimizada", "Antena Wi-Fi Dupla", "Alarme e Sirene Integrados"] },
+    { title: "Mibo Robô Integrada", model: "Intelbras iM4 C", img: "https://m.media-amazon.com/images/I/41D9K3K32-L._AC_SY879_.jpg", specs: ["Cobertura Total de 360°", "Interação por Voz Bidirecional", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] },
+    { title: "Mibo 360° Externa", model: "Intelbras iM7 Full Color", img: "https://m.media-amazon.com/images/I/51r5I8PihqL._AC_SL1000_.jpg", specs: ["Imagens Coloridas no Escuro Real", "Visão Robotizada Completa", "Detecção Humana (IA)", "Resistência IP66"] },
+    { title: "Kit Mesh Wi-Fi Exclusivo", model: "Twibi Force (Kit)", img: "https://m.media-amazon.com/images/I/413dKz8Mv5L._AC_SX679_.jpg", specs: ["Rede Integrada Unificada", "Alta velocidade e cobertura", "Suporta múltiplas câmeras", "Instalação super fáil via App"] }
   ],
   videoporteiro: [
-    { title: "Vídeoporteiro Wi-Fi 7\"", model: "Intelbras WT7", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Monitor Touch Screen de 7\"", "Atendimento e Abertura via App Allo", "Conexão Wi-Fi Integrada no Monitor", "Integração Bivolt, abre 2 Fechaduras"] },
-    { title: "Vídeoporteiro Smart", model: "Intelbras Allo w3", img: "https://images.unsplash.com/photo-1541889816001-f25b29094017?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Visualização Noturna Integrada", "Atendimento direto celular App", "Gravação Automática de Foto e Vídeo", "Alerta de Movimento Constante"] }
+    { title: "Vídeoporteiro Wi-Fi", model: "Intelbras Allo w3 Lite", img: "https://m.media-amazon.com/images/I/51zXtz27mZL._AC_SL1000_.jpg", specs: ["Atendimento direto no Smartphone", "Conexão totalmente Wi-Fi", "Gravação Automática de Foto", "Módulo de Campainha Interna"] },
+    { title: "Vídeoporteiro Monitor 7\"", model: "Intelbras WT7", img: "https://m.media-amazon.com/images/I/61Uv5I5dFGL._AC_SL1000_.jpg", specs: ["Monitor Touch Screen Completo", "Telas touch extra HD", "Controle Total App Allo", "Acionamento Duplo (2 portões)"] }
   ],
   dvr: [
-    { title: "NVR Inteligente 32 Canais", model: "Intelbras NVD 3332 P", img: "https://images.unsplash.com/photo-1611689342806-0863700ce1e4?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Suporta câmeras 4K Ultra HD", "16 portas PoE+ Integradas", "Reconhecimento Facial Embutido", "Capacidade para 4 HDs SATA"] },
-    { title: "DVR Multi-HD 16 Canais", model: "Intelbras iMHDX 3116", img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Compressão H.265+ de Vídeo", "Pentabrído (HDCVI, AHD, Analógico)", "Detecção inteligente de pessoas", "Armazenamento até 14TB"] }
+    { title: "Gravador de Vídeo Digital", model: "DVR Intelbras Básico a 32CH", img: "https://m.media-amazon.com/images/I/51j1WnLqVlL._AC_SL1000_.jpg", specs: ["Visualização em 4K e Full HD", "Reconhecimento Facial (Série i)", "Suporte Multi-Tecnologia (Pentabrid)", "HDs de Alta Capacidade (WD Purple)"] },
+    { title: "Gravador IP Central (NVR)", model: "Intelbras NVD", img: "https://m.media-amazon.com/images/I/51j1WnLqVlL._AC_SL1000_.jpg", specs: ["Para Projetos 100% IP", "Entradas PoE Incorporadas", "Gestão Inteligente H.265+", "Gravação sem perda de frames"] }
   ],
   acesso: [
-    { title: "Leitor Facial Rápido", model: "Intelbras SS 3430 MF FACE", img: "https://images.unsplash.com/photo-1614064641936-3899884a8684?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Tela Touch Screen 4,3\"", "Leitura Mapeada em 0,2s", "Armazena 3.000 Faces", "Detecção Liveness Anti-Fake"] },
-    { title: "Fechadura Digital Biométrica", model: "Intelbras FR 201", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Abra por Senha, Tag ou Digital", "Alarme Antiarrombamento", "Painel Touch Integrado", "1 Ano de Bateria (4 pilhas)"] }
+    { title: "Fechadura Digital Biométrica", model: "Intelbras FR 201", img: "https://m.media-amazon.com/images/I/51d6S9T27wL._AC_SL1000_.jpg", specs: ["Abertura por Senha, Tag ou Digital", "Proteção Antiarrombamento", "Teclado Touch Integrado", "Funcionamento a Pilhas (Inclusas)"] },
+    { title: "Relé de Automação", model: "Intelbras IGD 110", img: "https://m.media-amazon.com/images/I/41Jk96Zq67L._AC_SY879_.jpg", specs: ["Automatize luzes e portões", "Compatível com Alexa / Google", "App Inteligente Izy Smart", "Comunicação Bivolt Automática"] }
   ],
   cerca: [
-    { title: "Central de Cerca", model: "Intelbras ELC 5002", img: "https://images.unsplash.com/photo-1605814522438-fb8d9753c153?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Descarga de Choque de 18.000V", "Alarme e Cerca na mesma central", "App Móvel para Armar/Desarmar", "Monitoramento Corte de Tensão"] },
-    { title: "Hastes Industriais", model: "Big Haste Alumínio 25x25", img: "https://images.unsplash.com/photo-1581092921461-7031e4bf0e5b?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Alumínio Industrial Grosso", "Parafusos de Aço Inox", "Isoladores Anti-Trincamento UV", "Blindagem Frontal"] }
+    { title: "Eletrificador Central", model: "Intelbras ELC 5002", img: "https://m.media-amazon.com/images/I/51YJmP9z2wL._AC_SL1000_.jpg", specs: ["Descarga Violenta de 18 Mil Volts", "Setores de alarme embutidos", "Configuração Simplificada", "Monitoramento Contínuo do Fio"] },
+    { title: "Kit Hastes Industriais", model: "Hastes Estrela / Big Haste", img: "https://m.media-amazon.com/images/I/61D79E7y59L._AC_SL1000_.jpg", specs: ["Produzidas em Alumínio Maciço", "Isoladores grossos contra quebra", "Máxima durabilidade UV", "Estética profissional no muro"] }
   ],
   portao: [
-    { title: "Motor Deslizante Industrial", model: "Intelbras DR 600", img: "https://images.unsplash.com/photo-1622329388339-dae86ebaa7c2?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Abertura Total em 7 segundos", "Para Portões até 600kg", "Corpo 100% de Alumínio", "Rádio Frequência Longa Distância"] },
-    { title: "Relé Smart Portão", model: "Intelbras IZY Smart", img: "https://images.unsplash.com/photo-1541889816001-f25b29094017?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Conecte ao seu Wi-Fi 2.4Ghz", "Abra Portão de Qualquer Lugar", "Compatível com Comando Alexa", "Notificação de Quem Abriu"] }
+    { title: "Motor Deslizante Rápido", model: "Intelbras DR 600", img: "https://m.media-amazon.com/images/I/516m124zQLL._AC_SL1000_.jpg", specs: ["Movimenta Portões até 600 Kilos", "Abertura Expressa e Inteligente", "Chassis Robusto em Alumínio", "Inclui cremalheiras"] },
+    { title: "Módulo Portão Smart", model: "Intelbras IGD 110 (Izy)", img: "https://m.media-amazon.com/images/I/41Jk96Zq67L._AC_SY879_.jpg", specs: ["Transforma seu motor antigo em Smart", "Abra ou Feche pelo seu Celular 4G", "Verifique se o portão está aberto", "Receba notificações em tempo real"] }
   ],
   alarme: [
-    { title: "Alarme Modular Wireless", model: "Intelbras AMT 8000", img: "https://images.unsplash.com/photo-1496368077930-c1e31b4e5b44?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Transmissão de 1000 Metros", "64 Zonas Sem Fio Configuráveis", "Sensores Criptografados", "Baterias de Longa Vida Padrão"] }
+    { title: "Central de Alarme Intelbras", model: "Série AMT 8000 Pro", img: "https://m.media-amazon.com/images/I/41zK61c9DUL._AC_SL1000_.jpg", specs: ["Estrutura 100% Wireless (Sem Fios)", "Longo Alcance entre Sensores", "Detecção Avançada (Presença/Abertura)", "Integração Celular via Nuvem"] }
   ],
   ti: [
-    { title: "Switch PoE Gerenciável", model: "Intelbras SG 2404 MR", img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=400&h=300", specs: ["24 Portas de Rede Gigabit", "4 Portas em Fibra SFP", "QoS e Proteções L2 Robustas", "Protocolo Segurança IPv6"] },
-    { title: "Sistema Mesh Empresarial", model: "Intelbras Twibi Force", img: "https://images.unsplash.com/photo-1558223363-233bbda22312?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Wi-Fi Fast Roaming Escala", "Alcance contínuo até 400m²", "128 Conexões Simultâneas", "Wi-Fi AX Estável"] }
+    { title: "Cabeamento & Rack Servidor", model: "Estrutura Rack Padrão 19\"", img: "https://images.unsplash.com/photo-1558227691-41ea78d1f631?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Organização Total de Fios de Rede", "Patch Panels de Alta Performance", "Proteção Contra Poeira e Impactos", "Garantia de Velocidade Gigabit"] },
+    { title: "Switch PoE Alta Potência", model: "Switches Gerenciáveis", img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=400&h=300", specs: ["PoE+ (Energia via cabo de rede)", "Conexão Estável em Larga Escala", "Isolamento Físico de Circuito", "Para complexos de grande porte"] }
   ],
   manutencao: [
     { title: "Reparo Profundo (Câmeras)", model: "Serviços em Geral", img: "https://images.unsplash.com/photo-1534944415848-0ca1a6ec0409?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Substituição de Lentes", "Refação de Rede Rompida", "Troca Baluns e Conversor", "Alinhamento Físico de Ângulo"] },
