@@ -31,7 +31,7 @@ const PORTFOLIO = [
 ];
 
 const FAQS = [
-  { q: 'A NDS CFTV atende quais regiões?', a: 'Atendemos todo o Distrito Federal, com foco em Águas Claras, Asa Sul, Asa Norte, Guará e Lago Sul.' },
+  { q: 'A NDS CFTV atende quais regiões?', a: 'Atendemos todo o Distrito Federal, com foco em Águas Claras, Asa Sul, Asa Norte, Guará , Lago Sul,lago norte,park way,vicente pires,cruzeiro,e taguatinga.' },
   { q: 'Qual a garantia das instalações?', a: 'Equipamentos possuem 1 ano de garantia de fábrica. Nossa instalação possui garantia técnica de 90 dias.' },
   { q: 'Posso ver as câmeras pelo celular?', a: 'Sim! Configuramos o acesso remoto em todos os seus dispositivos (celular, tablet e computador).' },
 ];
