@@ -32,10 +32,10 @@ const CAMERAS = [
 
 const PRODUCTS = {
   smart: [
-    { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
-    { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
-    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://images.unsplash.com/photo-1548610534-90aa4b61ec3f?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
-    { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://images.unsplash.com/photo-1611689342806-0863700ce1e4?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
+    { title: "Câmera Wi-Fi Full HD", model: "Intelbras iM5", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/413sIfY9yAL._AC_SX679_.jpg", specs: ["Versatilidade Interna/Externa", "Visão Noturna Otimizada", "Microfone Interno", "Acesso via App Mibo Smart"] },
+    { title: "Câmera Externa Full HD", model: "Intelbras iM5 SC", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/41D1Xro8-XL._AC_SX679_.jpg", specs: ["Aviso de Movimento Inteligente", "Sirene de Alerta Embutida", "Corpo Blindado IP67", "Qualidade Full HD 1080p"] },
+    { title: "Câmera 360° Externa Wi-Fi", model: "Intelbras iM7 Full Color", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/51r5I8PihqL._AC_SL1000_.jpg", specs: ["Imagens Coloridas no Escuro Real", "Visão 360 Graus Robotizada", "Interação por Voz Bidirecional", "Proteção IP66 e Notificações"] },
+    { title: "Câmera Robô Integrada", model: "Intelbras iM4 C", img: "https://wsrv.nl/?url=https://m.media-amazon.com/images/I/41D9K3K32-L._AC_SY879_.jpg", specs: ["Visão panorâmica de 360°", "Interação por Voz (Áudio Bidirecional)", "Auto-Tracking de Pessoas", "Visão Noturna Avançada"] }
   ],
   videoporteiro: [
     { title: "Vídeoporteiro Wi-Fi 7\"", model: "Intelbras WT7", img: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=400&h=300", specs: ["Monitor Touch Screen de 7\"", "Atendimento e Abertura via App Allo", "Conexão Wi-Fi Integrada no Monitor", "Integração Bivolt, abre 2 Fechaduras"] },
