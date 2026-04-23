@@ -25,7 +25,7 @@ const TABS = [
 
 const CAMERAS = [
   { id: 1, type: 'Speed Dome', category: 'Externa', img: "https://m.media-amazon.com/images/I/51wXwEwXYYL._AC_SL1000_.jpg", title: "Speed Dome PTZ", model: "Intelbras VIP 8232 PTZ", specs: ["Zoom Óptico de 32x", "Infravermelho inteligente (150m)", "Auto-tracking e mapa de calor", "IP66 e IK10 Antivandalismo", "Corpo em Alumínio"] },
-  { id: 2, type: 'Bullet', category: 'Externa', img: "https://m.media-amazon.com/images/I/41sW95L8HnL._AC_SL1000_.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
+  { id: 2, type: 'Bullet', category: 'Externa', img: "/buulet-ip.jpg", title: "Câmera Bullet IP HD", model: "Intelbras VIP 1130 B G4", specs: ["Resolução 1 Megapixel (720p)", "Lente fixa de 2.8 mm", "Visão Noturna IR até 30m", "Case de metal IP67"] },
   { id: 3, type: 'Bullet', category: 'Externa', img: "https://m.media-amazon.com/images/I/41D1Xro8-XL._AC_SX679_.jpg", title: "Câmera Full Color Inteligente", model: "Intelbras Mibo iM5 SC", specs: ["Imagens 100% coloridas à noite", "Sirene de Alerta Embutida", "Antena Dupla Wi-Fi", "Qualidade Full HD 1080p"] },
   { id: 4, type: 'Dome', category: 'Interna', img: "https://m.media-amazon.com/images/I/41Q8L4sC0tL._AC_SL1000_.jpg", title: "Câmera Dome Interna IP", model: "Intelbras VIP 1120 D G2", specs: ["Design compacto para teto", "Ângulo de visão amplo de 109°", "Instalação super discreta", "Visão Noturna Inteligente"] }
 ];
