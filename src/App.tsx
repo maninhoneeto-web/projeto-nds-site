@@ -27,7 +27,7 @@ const PORTFOLIO = [
   { id: 1, title: 'Speed Dome PTZ', model: 'VIP 8232', img: IMAGES.PORTFOLIO_PTZ },
   { id: 2, title: 'Monitoramento IP', model: 'VIP 1130 B', img: IMAGES.PORTFOLIO_BULLET },
   { id: 3, title: 'Central NVR', model: 'MHDX 1108', img: IMAGES.PORTFOLIO_NVR },
-  { id: 4, title: 'Digital Lock Pro', model: 'FR 201', img: IMAGES.PORTFOLIO_LOCK },
+  { id: 4, title: 'Fechadura Eletrônica', model: 'FR 201', img: IMAGES.PORTFOLIO_LOCK },
   { id: 5, title: 'Vídeo Porteiro WT7', model: 'Allo Intelbras PoE', img: IMAGES.PORTFOLIO_PORTEIRO },
   { id: 6, title: 'Rack TI', model: 'Infraestrutura', img: IMAGES.PORTFOLIO_RACK },
 ];
@@ -294,22 +294,12 @@ export default function App() {
             >
               <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800" 
+                  src={IMAGES.INSTALACAO} 
                   referrerPolicy="no-referrer"
                   alt="Instalação Profissional" 
                   className="w-full h-[500px] object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              {/* Floating Stat */}
-              <motion.div 
-                initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="absolute -bottom-10 -right-10 bg-white p-8 rounded-3xl shadow-xl z-20 border border-slate-100 hidden md:block"
-              >
-                <p className="text-5xl font-black text-cyan-600 tracking-tighter">13+</p>
-                <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">Anos de Experiência</p>
-              </motion.div>
               <div className="absolute -top-10 -left-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl" />
             </motion.div>
 
