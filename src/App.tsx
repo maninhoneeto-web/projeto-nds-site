@@ -128,7 +128,7 @@ export default function App() {
     {
       image: IMAGES.PORTFOLIO_PTZ,
       title: 'Speed Dome PTZ',
-      desc: '"Profissionais de alto nível. O sistema de monitoramento IP da Intelbras é fantástico." - Clínica Sorriso'
+      desc: '"Profissionais de alto nível. O sistema de monitoramento IP da Intelbras é fantástico." - João Paulo'
     }
   ];
 
