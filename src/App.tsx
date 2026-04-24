@@ -114,6 +114,33 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
 
+  const HERO_SLIDES = [
+    {
+      image: IMAGES.SERVICE_MIBO,
+      title: 'Mibo iM5',
+      desc: '"Amei a minha fechadura eletrônica! Instalação limpa e me explicaram tudo sobre como usar o app Mibo." - Maria Eduarda'
+    },
+    {
+      image: IMAGES.SERVICE_CAMERAS,
+      title: 'Monitoramento 4K',
+      desc: '"Excelente atendimento. Instalaram as câmeras em casa com muita rapidez e o sistema ficou perfeito." - Ricardo Santos'
+    },
+    {
+      image: IMAGES.PORTFOLIO_PTZ,
+      title: 'Speed Dome PTZ',
+      desc: '"Profissionais de alto nível. O sistema de monitoramento IP da Intelbras é fantástico." - Clínica Sorriso'
+    }
+  ];
+
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentHeroSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [HERO_SLIDES.length]);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -147,8 +174,8 @@ export default function App() {
 
           {/* Links Desktop */}
           <div className="hidden lg:flex items-center gap-10">
-            {['Serviços', 'Projetos', 'Sobre', 'Dúvidas'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
+            {['Serviços', 'Projetos', 'Sobre Nós', 'Dúvidas'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
                 {item}
               </a>
             ))}
@@ -178,8 +205,8 @@ export default function App() {
               <button onClick={() => setMobileMenuOpen(false)} className="p-2"><X /></button>
             </div>
             <div className="flex flex-col gap-8">
-              {['Serviços', 'Projetos', 'Sobre', 'Dúvidas'].map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+              {['Serviços', 'Projetos', 'Sobre Nós', 'Dúvidas'].map((item) => (
+                <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
                   {item}
                 </a>
               ))}
@@ -268,18 +295,60 @@ export default function App() {
             </div>
           </motion.div>
 
-          {/* Floating Element */}
+          {/* Hero Slider */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4, duration: 1 }}
-            className="hidden lg:block relative"
+            className="hidden lg:flex flex-col items-center relative"
           >
             <div className="w-[500px] h-[500px] bg-cyan-500/20 absolute -inset-20 blur-[100px] rounded-full" />
-            <img 
-              src={IMAGES.SERVICE_MIBO} 
-              referrerPolicy="no-referrer"
-              className="relative z-10 w-full object-contain drop-shadow-[0_0_50px_rgba(6,182,212,0.3)]" 
-              alt="Mibo Camera"
-            />
+            
+            <div className="relative z-10 w-full aspect-square max-w-[450px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentHeroSlide}
+                  initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -20, scale: 0.95 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  className="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <img 
+                    src={HERO_SLIDES[currentHeroSlide].image} 
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-contain drop-shadow-[0_0_50px_rgba(6,182,212,0.3)] mb-8" 
+                    alt={HERO_SLIDES[currentHeroSlide].title}
+                  />
+                  
+                  {/* Floating Review Card */}
+                  <motion.div 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-2xl max-w-sm"
+                  >
+                    <div className="flex gap-1 mb-2">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-cyan-400 text-cyan-400" />
+                      ))}
+                    </div>
+                    <p className="text-white text-sm font-medium italic leading-relaxed text-center">
+                      {HERO_SLIDES[currentHeroSlide].desc}
+                    </p>
+                  </motion.div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Slider Dots */}
+            <div className="flex gap-2 mt-20 z-20">
+              {HERO_SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentHeroSlide(i)}
+                  className={`h-1.5 transition-all duration-500 rounded-full ${i === currentHeroSlide ? 'w-10 bg-cyan-500' : 'w-2 bg-white/20'}`}
+                />
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
@@ -327,7 +396,7 @@ export default function App() {
       </section>
 
       {/* ABOUT US SECTION */}
-      <section id="sobre" className="py-24 bg-slate-50 overflow-hidden">
+      <section id="sobrenós" className="py-24 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div 
@@ -350,18 +419,22 @@ export default function App() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
             >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-0.5 w-12 bg-cyan-500"></div>
+                <span className="text-cyan-600 font-black uppercase text-[10px] tracking-[0.3em]">Conheça a NDS</span>
+              </div>
               <SectionTitle 
-                title="Liderando a Segurança no DF" 
-                subtitle="Desde 2011, a NDS CFTV Digital entrega o que há de mais moderno em proteção e monitoramento." 
+                title="Sobre Nós" 
+                subtitle="Liderando a segurança eletrônica no DF com inovação e confiança desde 2011." 
               />
               <div className="space-y-6 text-slate-600 leading-relaxed">
                 <p>
-                  A <span className="font-bold text-slate-900">NDS CFTV Digital</span> consolidou-se como referência absoluta em segurança eletrônica no Distrito Federal. Com uma trajetória iniciada há mais de uma década, transformamos a forma como brasilienses protegem o que é mais valioso.
+                  A <span className="font-bold text-slate-900">NDS CFTV Digital</span> consolidou-se como referência absoluta em segurança eletrônica no Distrito Federal. Com uma trajetória iniciada <span className="text-cyan-600 font-bold px-1.5 py-0.5 bg-cyan-50 rounded-lg">+ de 13 anos</span> atrás, transformamos a forma como brasilienses protegem o que é mais valioso.
                 </p>
                 <p>
                   Nossa expertise vai além da simples instalação; entregamos projetos estratégicos de <span className="text-cyan-600 font-bold">Monitoramento IP, Alarmes e Automação</span>. Somos parceiros autorizados das maiores marcas do mundo, com foco total na excelência dos equipamentos <span className="font-bold">Intelbras</span>.
                 </p>
-                <div className="grid grid-cols-2 gap-6 pt-6">
+                <div className="grid grid-cols-2 gap-6 pt-6 mb-8">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
                     <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Suporte Técnico 24h</span>
@@ -377,6 +450,17 @@ export default function App() {
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
                     <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Garantia Total</span>
+                  </div>
+                </div>
+
+                {/* Trust Seal */}
+                <div className="flex items-center gap-4 p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 max-w-xs transition-transform hover:scale-105">
+                  <div className="w-14 h-14 bg-gradient-to-tr from-cyan-600 to-blue-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                    <Award className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-black text-slate-900 leading-none">13+ Anos</h4>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Selo de Confiança</p>
                   </div>
                 </div>
               </div>
