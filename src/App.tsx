@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 
 import { IMAGES } from './constants/images';
+import { PartnerProgram } from './components/PartnerProgram';
 
 /* ============================
    DATA & CONFIG
@@ -40,8 +41,8 @@ const FAQS = [
 
 const TESTIMONIALS = [
   { id: 1, name: 'Ricardo Santos', rating: 5, comment: 'Excelente atendimento. Instalaram as câmeras em casa com muita rapidez e o sistema ficou perfeito. Recomendo!', date: 'há 2 meses' },
-  { id: 2, name: 'Clínica Sorriso', rating: 5, comment: 'Profissionais de alto nível. O sistema de monitoramento IP da Intelbras que colocaram aqui é fantástico. Visualização clara.', date: 'há 1 mês' },
-  { id: 3, name: 'Condomínio Solar', rating: 5, comment: 'Sempre que precisamos de manutenção na cerca elétrica ou no interfone, a NDS nos atende prontamente. Serviço de confiança.', date: 'há 3 semanas' },
+  { id: 2, name: 'Agropet', rating: 5, comment: 'Profissionais de alto nível. O sistema de monitoramento IP da Intelbras que colocaram aqui é fantástico. Visualização clara.', date: 'há 1 mês' },
+  { id: 3, name: 'Rodrigo Mendonça', rating: 5, comment: 'Sempre que precisamos de manutenção na cerca elétrica ou no interfone, a NDS nos atende prontamente. Serviço de confiança.', date: 'há 3 semanas' },
   { id: 4, name: 'Maria Eduarda', rating: 5, comment: 'Amei a minha fechadura eletrônica! Instalação limpa e me explicaram tudo sobre como usar o app Mibo.', date: 'há 2 semanas' },
 ];
 
@@ -113,6 +114,13 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
+  const [currentHash, setCurrentHash] = useState(window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => setCurrentHash(window.location.hash);
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const HERO_SLIDES = [
     {
@@ -128,7 +136,7 @@ export default function App() {
     {
       image: IMAGES.PORTFOLIO_PTZ,
       title: 'Speed Dome PTZ',
-      desc: '"Profissionais de alto nível. O sistema de monitoramento IP da Intelbras é fantástico." - João Paulo'
+      desc: '"Profissionais de alto nível. O sistema de monitoramento IP da Intelbras é fantástico." - Agropet'
     }
   ];
 
@@ -152,6 +160,10 @@ export default function App() {
     const msg = encodeURIComponent("Olá NDS! Vim pelo site e gostaria de um orçamento.");
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
+
+  if (currentHash === '#parceria') {
+    return <PartnerProgram />;
+  }
 
   return (
     <div className="min-h-screen bg-[#fafafa] flex flex-col selection:bg-cyan-500 selection:text-white">
