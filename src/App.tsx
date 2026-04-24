@@ -28,8 +28,8 @@ const PORTFOLIO = [
   { id: 2, title: 'Monitoramento IP', model: 'VIP 1130 B', img: IMAGES.PORTFOLIO_BULLET },
   { id: 3, title: 'Central NVR', model: 'MHDX 1108', img: IMAGES.PORTFOLIO_NVR },
   { id: 4, title: 'Digital Lock Pro', model: 'FR 201', img: IMAGES.PORTFOLIO_LOCK },
-  { id: 5, title: 'Vídeo Porteiro w3', model: 'Allo Intelbras', img: IMAGES.PORTFOLIO_PORTEIRO },
-  { id: 6, title: 'Rack TI Master', model: 'Infraestrutura', img: IMAGES.PORTFOLIO_RACK },
+  { id: 5, title: 'Vídeo Porteiro WT7', model: 'Allo Intelbras PoE', img: IMAGES.PORTFOLIO_PORTEIRO },
+  { id: 6, title: 'Rack TI', model: 'Infraestrutura', img: IMAGES.PORTFOLIO_RACK },
 ];
 
 const FAQS = [

@@ -31,13 +31,13 @@ export const IMAGES = {
   SERVICE_ACESSO: getImageUrl('bio-intel.jpg.webp', 'https://images.unsplash.com/photo-1633261748231-314de01d1dc4?auto=format&fit=crop&q=80&w=1200'),
   SERVICE_CERCA: getImageUrl('cerca-elrt.jpg.jpg', 'https://images.unsplash.com/photo-1614030424754-02d1f9a0d8be?auto=format&fit=crop&q=80&w=1200'),
   SERVICE_ALARME: getImageUrl('alrme-c.jpg.jpg', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_TI: getImageUrl('haste-alum.jpg.webp', 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=1200'),
+  SERVICE_TI: getImageUrl('rack-rede.jpg.jfif', 'https://images.unsplash.com/photo-1558494949-ef010cbdcc4b?auto=format&fit=crop&q=80&w=1200'),
   
   // Portfólio
-  PORTFOLIO_PTZ: getImageUrl('im-5.jpg.jfif', 'https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1200'),
+  PORTFOLIO_PTZ: getImageUrl('speeded-branca.jpg.jfif', 'https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1200'),
   PORTFOLIO_BULLET: getImageUrl('bullte-cm.jpg.jpg', 'https://images.unsplash.com/photo-1610473068541-cb689031c238?auto=format&fit=crop&q=80&w=1200'),
   PORTFOLIO_NVR: getImageUrl('dvr-intel.jpg.jfif', 'https://images.unsplash.com/photo-1558494949-ef010cbdcc4b?auto=format&fit=crop&q=80&w=1200'),
   PORTFOLIO_LOCK: getImageUrl('fechadura3- intelbras.jpg.webp', 'https://images.unsplash.com/photo-1633261748231-314de01d1dc4?auto=format&fit=crop&q=80&w=1200'),
-  PORTFOLIO_PORTEIRO: getImageUrl('allo-box.jpg.jpg', 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?auto=format&fit=crop&q=80&w=1200'),
-  PORTFOLIO_RACK: getImageUrl('haste-alum.jpg.webp', 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=1200'),
+  PORTFOLIO_PORTEIRO: getImageUrl('wt-7.jpg.jpg', 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?auto=format&fit=crop&q=80&w=1200'),
+  PORTFOLIO_RACK: getImageUrl('rack-rede.jpg.jfif', 'https://images.unsplash.com/photo-1558494949-ef010cbdcc4b?auto=format&fit=crop&q=80&w=1200'),
 };
