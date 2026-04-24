@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, Menu, X, ChevronDown, MessageCircle, 
   Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench, HelpCircle,
-  Smartphone, BellRing, ChevronRight, Phone, Instagram, MapPin, Award
+  Smartphone, BellRing, ChevronRight, Phone, Instagram, MapPin, Award, Star
 } from 'lucide-react';
 
 import { IMAGES } from './constants/images';
@@ -33,9 +33,16 @@ const PORTFOLIO = [
 ];
 
 const FAQS = [
-  { q: 'A NDS CFTV atende quais regiões?', a: 'Atendemos todo o Distrito Federal, com foco em Águas Claras, Asa Sul, Asa Norte, Guará e Lago Sul.' },
+  { q: 'A NDS CFTV atende quais regiões?', a: 'Atendemos todas as regiões do Distrito Federal, incluindo Águas Claras, Asa Sul, Asa Norte, Guará, Lago Sul, Lago Norte, Park Way e demais localidades.' },
   { q: 'Qual a garantia das instalações?', a: 'Equipamentos possuem 1 ano de garantia de fábrica. Nossa instalação possui garantia técnica de 90 dias.' },
   { q: 'Posso ver as câmeras pelo celular?', a: 'Sim! Configuramos o acesso remoto em todos os seus dispositivos (celular, tablet e computador).' },
+];
+
+const TESTIMONIALS = [
+  { id: 1, name: 'Ricardo Santos', rating: 5, comment: 'Excelente atendimento. Instalaram as câmeras em casa com muita rapidez e o sistema ficou perfeito. Recomendo!', date: 'há 2 meses' },
+  { id: 2, name: 'Clínica Sorriso', rating: 5, comment: 'Profissionais de alto nível. O sistema de monitoramento IP da Intelbras que colocaram aqui é fantástico. Visualização clara.', date: 'há 1 mês' },
+  { id: 3, name: 'Condomínio Solar', rating: 5, comment: 'Sempre que precisamos de manutenção na cerca elétrica ou no interfone, a NDS nos atende prontamente. Serviço de confiança.', date: 'há 3 semanas' },
+  { id: 4, name: 'Maria Eduarda', rating: 5, comment: 'Amei a minha fechadura eletrônica! Instalação limpa e me explicaram tudo sobre como usar o app Mibo.', date: 'há 2 semanas' },
 ];
 
 /* ============================
@@ -186,7 +193,41 @@ export default function App() {
 
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center pt-40 overflow-hidden bg-slate-950">
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {/* Floating Video 1 - Security */}
+          <motion.div
+            animate={{ 
+              y: [0, -30, 0],
+              rotate: [5, 2, 5],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/4 -left-20 w-96 aspect-video rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl skew-y-3 opacity-30 blur-[1px] hidden xl:block z-10"
+          >
+            <video 
+              src="https://assets.mixkit.co/videos/preview/mixkit-security-cameras-on-a-city-street-11440-large.mp4" 
+              autoPlay muted loop playsInline 
+              className="w-full h-full object-cover" 
+            />
+          </motion.div>
+
+          {/* Floating Video 2 - Data/Network */}
+          <motion.div
+            animate={{ 
+              y: [0, 30, 0],
+              rotate: [-5, -2, -5],
+              scale: [1, 0.95, 1]
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-1/4 -right-20 w-96 aspect-video rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl -skew-y-3 opacity-30 blur-[1px] hidden xl:block z-10"
+          >
+            <video 
+              src="https://assets.mixkit.co/videos/preview/mixkit-technology-server-room-rack-closet-4456-large.mp4" 
+              autoPlay muted loop playsInline 
+              className="w-full h-full object-cover" 
+            />
+          </motion.div>
+
           <img 
             src={IMAGES.HERO} 
             referrerPolicy="no-referrer"
@@ -205,10 +246,12 @@ export default function App() {
               <Award className="w-4 h-4 text-cyan-400" />
               <span className="text-cyan-400 text-[10px] uppercase font-black tracking-widest">Tecnologia NDS CFTV</span>
             </div>
-            <h1 className="text-6xl md:text-8xl font-black text-white leading-[0.9] tracking-tighter uppercase mb-8">
-              Segurança <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Inteligente</span>
+            <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter uppercase mb-2">
+              NDS CFTV DIGITAL
             </h1>
+            <h2 className="text-xl md:text-3xl font-black text-cyan-400 uppercase tracking-[0.2em] mb-8">
+              Segurança Eletrônica e Redes Cabeada
+            </h2>
             <p className="text-slate-300 text-lg md:text-xl max-w-lg mb-10 leading-relaxed font-light">
               Projetos personalizados de monitoramento, automação e proteção patrimonial no Distrito Federal. Tecnologia de ponta ao seu alcance.
             </p>
@@ -329,7 +372,7 @@ export default function App() {
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Projetos no DF</span>
+                    <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Atendimento em todo o DF</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
@@ -403,6 +446,60 @@ export default function App() {
         </div>
       </section>
 
+      {/* TESTIMONIALS SECTION */}
+      <section className="py-24 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <SectionTitle 
+            title="O que dizem nossos clientes" 
+            subtitle="Confira as avaliações de quem já protege o seu patrimônio com a NDS CFTV Digital no DF." 
+          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+            {TESTIMONIALS.map((t, idx) => (
+              <motion.div 
+                key={t.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(t.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-slate-600 italic leading-relaxed mb-6">"{t.comment}"</p>
+                </div>
+                <div className="pt-6 border-t border-slate-100">
+                  <p className="font-black text-slate-900 uppercase tracking-tighter">{t.name}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{t.date}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              onClick={() => window.open('https://www.google.com/search?q=NDS+CFTV+Digital+Google+Reviews', '_blank')}
+              className="inline-flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-cyan-500 text-slate-900 px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all group shadow-sm w-full sm:w-auto justify-center"
+            >
+              <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
+              <span>Ver todas as avaliações</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <button 
+              onClick={() => window.open('https://g.page/r/CcJR2aqm4LV_EBE/review', '_blank')}
+              className="inline-flex items-center gap-3 bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all group shadow-lg shadow-cyan-500/20 w-full sm:w-auto justify-center"
+            >
+              <Star className="w-4 h-4 fill-white" />
+              <span>Deixe sua avaliação</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* PARTNERS SECTION */}
       <section className="py-16 bg-slate-100 border-y border-slate-200">
         <div className="max-w-7xl mx-auto px-6 px-12 flex flex-wrap items-center justify-center gap-12 grayscale opacity-50 contrast-125">
@@ -464,7 +561,10 @@ export default function App() {
             <a href="#" className="text-slate-400 hover:text-white transition-colors"><MapPin /></a>
           </div>
 
-          <p className="text-[10px] uppercase font-bold tracking-widest text-slate-600">Brasília - Distrito Federal</p>
+          <div className="text-center md:text-right">
+            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-600 mb-1">Brasília - Distrito Federal</p>
+            <p className="text-[8px] uppercase font-bold tracking-[0.2em] text-slate-700">Atendemos Águas Claras, Asas Sul/Norte, Lago Sul/Norte, Park Way, Guará e todas as regiões do DF</p>
+          </div>
         </div>
       </footer>
 
