@@ -8,6 +8,7 @@ import {
 
 import { IMAGES } from './constants/images';
 import { PartnerProgram } from './components/PartnerProgram';
+import { ServiceManager } from './components/ServiceManager';
 
 /* ============================
    DATA & CONFIG
@@ -163,6 +164,10 @@ export default function App() {
 
   if (currentHash === '#parceria') {
     return <PartnerProgram />;
+  }
+
+  if (currentHash === '#manager') {
+    return <ServiceManager />;
   }
 
   return (
@@ -648,6 +653,7 @@ export default function App() {
              <div className="leading-none text-left">
                <span className="text-lg font-black tracking-tighter text-white">NDS<span className="text-cyan-500">CFTV</span></span>
                <p className="text-[8px] uppercase tracking-widest font-bold text-slate-500">Digital © 2026</p>
+               <a href="#manager" className="text-[8px] uppercase tracking-[0.2em] font-black text-slate-700 hover:text-cyan-500 transition-colors mt-1 block">Acesso Restrito</a>
              </div>
           </div>
           

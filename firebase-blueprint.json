@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "Customer": {
+      "title": "Customer",
+      "description": "Information about a client who received services.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the customer" },
+        "phone": { "type": "string", "description": "WhatsApp/Phone number" },
+        "email": { "type": "string", "description": "Email address" },
+        "address": { "type": "string", "description": "Installation address" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "createdAt"]
+    },
+    "Installation": {
+      "title": "Installation",
+      "description": "Details of a specific service or installation provided.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "type": { "type": "string", "enum": ["Câmera", "Alarme", "Cerca Elétrica", "Interfone", "Outro"] },
+        "description": { "type": "string" },
+        "photosBefore": { "type": "array", "items": { "type": "string" } },
+        "photosAfter": { "type": "array", "items": { "type": "string" } },
+        "qrCodeData": { "type": "string", "description": "Data encoded in the QR code for support/manuals" },
+        "status": { "type": "string", "enum": ["Em andamento", "Concluído", "Manutenção"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "type", "status", "createdAt"]
+    },
+    "MaintenanceReminders": {
+      "title": "Maintenance Reminder",
+      "description": "A scheduled maintenance task for a customer's equipment.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "installationId": { "type": "string" },
+        "taskType": { "type": "string", "description": "e.g., 'Troca de Bateria'" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "completed": { "type": "boolean" },
+        "notes": { "type": "string" }
+      },
+      "required": ["customerId", "dueDate", "taskType", "completed"]
+    }
+  },
+  "firestore": {
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Collection of all customers."
+    },
+    "/installations/{installationId}": {
+      "schema": "Installation",
+      "description": "Collection of all installations performed."
+    },
+    "/maintenance/{reminderId}": {
+      "schema": "MaintenanceReminders",
+      "description": "Collection of maintenance schedules."
+    }
+  }
+}

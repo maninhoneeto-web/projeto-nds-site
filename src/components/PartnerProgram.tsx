@@ -5,7 +5,7 @@ import { Globe, ShieldCheck, Zap, Rocket, CheckCircle2, ArrowRight, MessageSquar
 export const PartnerProgram: React.FC = () => {
   const openWhatsApp = () => {
     const message = encodeURIComponent('Olá, vi o seu site e gostaria de saber mais sobre a criação de sites profissionais.');
-    window.open(`https://wa.me/5561984242602?text=${message}`, '_blank');
+    window.open(`https://wa.me/5561998308655?text=${message}`, '_blank');
   };
 
   return (
