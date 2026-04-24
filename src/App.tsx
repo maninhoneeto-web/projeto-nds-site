@@ -6,32 +6,34 @@ import {
   Smartphone, BellRing, ChevronRight, Phone, Instagram, MapPin, Award
 } from 'lucide-react';
 
+import { IMAGES } from './constants/images';
+
 /* ============================
    DATA & CONFIG
    ============================ */
 
 const SERVICES = [
-  { id: 'cameras', label: 'Câmeras IP', icon: Camera, img: 'https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1200', desc: 'Monitoramento Intelbras em alta definição 4K. Câmeras Dome e Bullet de elite com visão noturna colorida.' },
-  { id: 'smart', label: 'Linha Mibo', icon: Smartphone, img: 'https://images.unsplash.com/photo-1521206698660-573b532bd2b0?auto=format&fit=crop&q=80&w=1200', desc: 'Câmeras inteligentes Wi-Fi Intelbras. Praticidade e segurança com acompanhamento inteligente via celular.' },
-  { id: 'videoporteiro', label: 'Vídeo Porteiros', icon: BellRing, img: 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?auto=format&fit=crop&q=80&w=1200', desc: 'Sistemas Allo de vídeo interfonia com abertura de fechadura remota e imagem em alta definição.' },
-  { id: 'dvr', label: 'Gravadores', icon: Server, img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc4b?auto=format&fit=crop&q=80&w=1200', desc: 'DVRs e NVRs Multi-HD Intelbras. Estabilidade total para o armazenamento das suas gravações 24h.' },
-  { id: 'acesso', label: 'Biometria', icon: Key, img: 'https://images.unsplash.com/photo-1633261748231-314de01d1dc4?auto=format&fit=crop&q=80&w=1200', desc: 'Controle de acesso seguro com tecnologia biométrica e facial Intelbras para condomínios e empresas.' },
-  { id: 'cerca', label: 'Cerca Elétrica', icon: Zap, img: 'https://images.unsplash.com/photo-1614030424754-02d1f9a0d8be?auto=format&fit=crop&q=80&w=1200', desc: 'Instalação técnica de cerca elétrica com centrais de alta voltagem e hastes reforçadas padrão NDS.' },
-  { id: 'alarme', label: 'Alarmes', icon: Shield, img: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=1200', desc: 'Alarmes sem fio AMT 8000. Inteligência e rapidez com disparo direto no seu smartphone.' },
-  { id: 'ti', label: 'Redes e TI', icon: Wifi, img: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=1200', desc: 'Infraestrutura robusta de TI, Wi-Fi de alta performance e cabeamento estruturado padrão cat6.' },
+  { id: 'cameras', label: 'Câmeras IP', icon: Camera, img: IMAGES.SERVICE_CAMERAS, desc: 'Monitoramento Intelbras em alta definição 4K. Câmeras Dome e Bullet de elite com visão noturna colorida.' },
+  { id: 'smart', label: 'Linha Mibo', icon: Smartphone, img: IMAGES.SERVICE_MIBO, desc: 'Câmeras inteligentes Wi-Fi Intelbras. Praticidade e segurança com acompanhamento inteligente via celular.' },
+  { id: 'videoporteiro', label: 'Vídeo Porteiros', icon: BellRing, img: IMAGES.SERVICE_PORTEIRO, desc: 'Sistemas Allo de vídeo interfonia com abertura de fechadura remota e imagem em alta definição.' },
+  { id: 'dvr', label: 'Gravadores', icon: Server, img: IMAGES.SERVICE_DVR, desc: 'DVRs e NVRs Multi-HD Intelbras. Estabilidade total para o armazenamento das suas gravações 24h.' },
+  { id: 'acesso', label: 'Biometria', icon: Key, img: IMAGES.SERVICE_ACESSO, desc: 'Controle de acesso seguro com tecnologia biométrica e facial Intelbras para condomínios e empresas.' },
+  { id: 'cerca', label: 'Cerca Elétrica', icon: Zap, img: IMAGES.SERVICE_CERCA, desc: 'Instalação técnica de cerca elétrica com centrais de alta voltagem e hastes reforçadas padrão NDS.' },
+  { id: 'alarme', label: 'Alarmes', icon: Shield, img: IMAGES.SERVICE_ALARME, desc: 'Alarmes sem fio AMT 8000. Inteligência e rapidez com disparo direto no seu smartphone.' },
+  { id: 'ti', label: 'Redes e TI', icon: Wifi, img: IMAGES.SERVICE_TI, desc: 'Infraestrutura robusta de TI, Wi-Fi de alta performance e cabeamento estruturado padrão cat6.' },
 ];
 
 const PORTFOLIO = [
-  { id: 1, title: 'Speed Dome PTZ', model: 'VIP 8232', img: 'https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1200' },
-  { id: 2, title: 'Monitoramento IP', model: 'VIP 1130 B', img: 'https://images.unsplash.com/photo-1610473068541-cb689031c238?auto=format&fit=crop&q=80&w=1200' },
-  { id: 3, title: 'Central NVR', model: 'MHDX 1108', img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc4b?auto=format&fit=crop&q=80&w=1200' },
-  { id: 4, title: 'Digital Lock Pro', model: 'FR 201', img: 'https://images.unsplash.com/photo-1633261748231-314de01d1dc4?auto=format&fit=crop&q=80&w=1200' },
-  { id: 5, title: 'Vídeo Porteiro w3', model: 'Allo Intelbras', img: 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?auto=format&fit=crop&q=80&w=1200' },
-  { id: 6, title: 'Rack TI Master', model: 'Infraestrutura', img: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=1200' },
+  { id: 1, title: 'Speed Dome PTZ', model: 'VIP 8232', img: IMAGES.PORTFOLIO_PTZ },
+  { id: 2, title: 'Monitoramento IP', model: 'VIP 1130 B', img: IMAGES.PORTFOLIO_BULLET },
+  { id: 3, title: 'Central NVR', model: 'MHDX 1108', img: IMAGES.PORTFOLIO_NVR },
+  { id: 4, title: 'Digital Lock Pro', model: 'FR 201', img: IMAGES.PORTFOLIO_LOCK },
+  { id: 5, title: 'Vídeo Porteiro w3', model: 'Allo Intelbras', img: IMAGES.PORTFOLIO_PORTEIRO },
+  { id: 6, title: 'Rack TI Master', model: 'Infraestrutura', img: IMAGES.PORTFOLIO_RACK },
 ];
 
 const FAQS = [
-  { q: 'A NDS CFTV atende quais regiões?', a: 'Atendemos todo o Distrito Federal, com foco em Águas Claras, Asa Sul, Asa Norte, Guará , Lago Sul,lago norte,park way,vicente pires,cruzeiro,e taguatinga.' },
+  { q: 'A NDS CFTV atende quais regiões?', a: 'Atendemos todo o Distrito Federal, com foco em Águas Claras, Asa Sul, Asa Norte, Guará e Lago Sul.' },
   { q: 'Qual a garantia das instalações?', a: 'Equipamentos possuem 1 ano de garantia de fábrica. Nossa instalação possui garantia técnica de 90 dias.' },
   { q: 'Posso ver as câmeras pelo celular?', a: 'Sim! Configuramos o acesso remoto em todos os seus dispositivos (celular, tablet e computador).' },
 ];
@@ -125,7 +127,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           <div className="flex items-center gap-4">
              <img 
-               src="https://i.ibb.co/mC43pD9m/logo-nds-png.jpg" 
+               src={IMAGES.LOGO} 
                alt="NDS" 
                referrerPolicy="no-referrer"
                className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl border-2 border-white/10" 
@@ -186,7 +188,7 @@ export default function App() {
       <section className="relative min-h-screen flex items-center justify-center pt-40 overflow-hidden bg-slate-950">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1920" 
+            src={IMAGES.HERO} 
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover opacity-30" 
             alt="NDS CFTV Segurança Digital" 
@@ -230,7 +232,7 @@ export default function App() {
           >
             <div className="w-[500px] h-[500px] bg-cyan-500/20 absolute -inset-20 blur-[100px] rounded-full" />
             <img 
-              src="https://images.unsplash.com/photo-1521206698660-573b532bd2b0?auto=format&fit=crop&q=80&w=1000" 
+              src={IMAGES.SERVICE_MIBO} 
               referrerPolicy="no-referrer"
               className="relative z-10 w-full object-contain drop-shadow-[0_0_50px_rgba(6,182,212,0.3)]" 
               alt="Mibo Camera"
@@ -390,12 +392,12 @@ export default function App() {
           <SectionTitle title="Tecnologia em Ação" subtitle="Confira alguns dos equipamentos de última geração que utilizamos em nossos projetos." />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
-              "https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=600",
-              "https://images.unsplash.com/photo-1521206698660-573b532bd2b0?auto=format&fit=crop&q=80&w=600",
-              "https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?auto=format&fit=crop&q=80&w=600",
-              "https://images.unsplash.com/photo-1610473068541-cb689031c238?auto=format&fit=crop&q=80&w=600",
-              "https://images.unsplash.com/photo-1558494949-ef010cbdcc4b?auto=format&fit=crop&q=80&w=600",
-              "https://images.unsplash.com/photo-1633261748231-314de01d1dc4?auto=format&fit=crop&q=80&w=600"
+              IMAGES.PORTFOLIO_PTZ,
+              IMAGES.SERVICE_MIBO,
+              IMAGES.SERVICE_PORTEIRO,
+              IMAGES.PORTFOLIO_BULLET,
+              IMAGES.SERVICE_DVR,
+              IMAGES.SERVICE_ACESSO
             ].map((img, i) => (
               <motion.div 
                 key={i}
@@ -455,7 +457,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
              <img 
-               src="https://i.ibb.co/mC43pD9m/logo-nds-png.jpg" 
+               src={IMAGES.LOGO} 
                alt="NDS" 
                referrerPolicy="no-referrer"
                className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl" 
