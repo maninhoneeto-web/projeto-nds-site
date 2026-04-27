@@ -4,14 +4,14 @@ import {
   Users, Plus, Search, ChevronRight, Phone, MapPin, 
   Settings, LogOut, Shield, Calendar, Camera, Bell,
   PlusCircle, Trash2, CheckCircle2, Clock, QrCode,
-  Image as ImageIcon, Loader2, ArrowLeft, BarChart3, TrendingUp, Eye
+  Image as ImageIcon, Loader2, ArrowLeft, BarChart2, TrendingUp, Eye
 } from 'lucide-react';
 import { 
   collection, query, getDocs, addDoc, serverTimestamp, 
   where, orderBy, deleteDoc, doc, updateDoc, onSnapshot
 } from 'firebase/firestore';
-import { auth, db, googleProvider, handleFirestoreError } from '../lib/firebase';
-import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { auth, db, googleProvider, githubProvider, handleFirestoreError } from '../lib/firebase';
+import { signInWithPopup, signOut, onAuthStateChanged, User, GithubAuthProvider } from 'firebase/auth';
 import { QRCodeSVG } from 'qrcode.react';
 
 // TYPES
@@ -63,6 +63,9 @@ export const ServiceManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [globalLoading, setGlobalLoading] = useState(false);
 
+  const AUTHORIZED_EMAIL = 'maninhoneeto@gmail.com';
+  const isAuthorized = user && user.email?.toLowerCase().trim() === AUTHORIZED_EMAIL.toLowerCase().trim();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -87,56 +90,51 @@ export const ServiceManager: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (user && currentTab === 'analytics') {
+    if (user && isAuthorized) {
       const q = query(collection(db, 'visits'), orderBy('timestamp', 'desc'));
       const unsubscribe = onSnapshot(q, (snapshot) => {
         setVisits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       }, (error) => {
         console.error('Firestore Error (Visits):', error);
-        if (error.code !== 'permission-denied') {
-          // handleFirestoreError(error, 'list', 'visits');
-        }
       });
       return () => unsubscribe();
     }
-  }, [user, currentTab]);
+  }, [user, isAuthorized]);
 
   useEffect(() => {
     if (selectedCustomer) {
-      // Load installations
+      // Carregar instalações
       const instQ = query(collection(db, 'installations'), where('customerId', '==', selectedCustomer.id));
       const unsubInst = onSnapshot(instQ, (s) => {
          setInstallations(s.docs.map(d => ({ id: d.id, ...d.data() } as Installation)));
       }, (error) => {
-        console.error('Firestore Error (Installations):', error);
+        console.error('Erro no Firestore (Instalações):', error);
       });
 
-      // Load maintenance
+      // Carregar manutenção
       const maintQ = query(collection(db, 'maintenance'), where('customerId', '==', selectedCustomer.id));
       const unsubMaint = onSnapshot(maintQ, (s) => {
          setMaintenance(s.docs.map(d => ({ id: d.id, ...d.data() } as Maintenance)));
       }, (error) => {
-        console.error('Firestore Error (Maintenance):', error);
+        console.error('Erro no Firestore (Manutenção):', error);
       });
 
       return () => { unsubInst(); unsubMaint(); };
     }
   }, [selectedCustomer]);
 
-  const AUTHORIZED_EMAIL = 'maninhoneeto@gmail.com';
-  const isAuthorized = user && user.email?.toLowerCase().trim() === AUTHORIZED_EMAIL.toLowerCase().trim();
-
   useEffect(() => {
     if (user) {
-      console.log('User logged in:', user.email);
-      console.log('Authorized status:', isAuthorized);
+      console.log('Usuário conectado:', user.email);
+      console.log('Status de autorização:', isAuthorized);
     }
   }, [user, isAuthorized]);
 
-  const login = async () => {
+  const login = async (provider: 'google' | 'github' = 'google') => {
     try {
       setGlobalLoading(true);
-      await signInWithPopup(auth, googleProvider);
+      const authProvider = provider === 'google' ? googleProvider : githubProvider;
+      await signInWithPopup(auth, authProvider);
     } catch (e: any) {
       if (e.code === 'auth/popup-closed-by-user') {
         console.log('Login cancelado pelo usuário');
@@ -232,23 +230,39 @@ export const ServiceManager: React.FC = () => {
             <p className="text-slate-400 mb-8 font-medium tracking-wide">
               Esta conta ({user.email}) não tem permissão para acessar o NDS Manager.
             </p>
-            <button 
-              onClick={logout}
-              className="w-full py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-white/10"
-            >
-              Trocar de Conta
-            </button>
+            <div className="space-y-4">
+              <button 
+                onClick={logout}
+                className="w-full py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-white/10"
+              >
+                Sair / Trocar de Conta
+              </button>
+              <button 
+                onClick={() => login('github')}
+                className="w-full py-4 bg-slate-800 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-slate-700 flex items-center justify-center gap-3"
+              >
+                Tentar com GitHub
+              </button>
+            </div>
           </>
         ) : (
           <>
             <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-4">NDS Service Manager</h1>
             <p className="text-slate-400 mb-10 font-medium tracking-wide">Área exclusiva para gestão de clientes e manutenções.</p>
-            <button 
-              onClick={login}
-              className="w-full py-5 bg-white text-slate-950 rounded-2xl font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3"
-            >
-              Acessar com Google
-            </button>
+            <div className="space-y-4">
+              <button 
+                onClick={() => login('google')}
+                className="w-full py-5 bg-white text-slate-950 rounded-2xl font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3"
+              >
+                Acessar com Google
+              </button>
+              <button 
+                onClick={() => login('github')}
+                className="w-full py-5 bg-slate-800 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-slate-700 hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3"
+              >
+                <span className="opacity-70">Acessar com GitHub</span>
+              </button>
+            </div>
           </>
         )}
 
@@ -290,16 +304,16 @@ export const ServiceManager: React.FC = () => {
               <Users className="w-5 h-5" />
               <span className="font-bold text-sm uppercase tracking-wider">Clientes</span>
             </button>
-            <button 
-              onClick={() => {
-                setSelectedCustomer(null);
-                setCurrentTab('analytics');
-              }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'analytics' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
-            >
-              <BarChart3 className="w-5 h-5" />
-              <span className="font-bold text-sm uppercase tracking-wider">Acessos</span>
-            </button>
+              <button 
+                onClick={() => {
+                  setSelectedCustomer(null);
+                  setCurrentTab('analytics');
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'analytics' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+              >
+                <BarChart2 className="w-5 h-5" />
+                <span className="font-bold text-sm uppercase tracking-wider">Acessos</span>
+              </button>
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
               <Bell className="w-5 h-5" />
               <span className="font-bold text-sm uppercase tracking-wider">Lembretes</span>
@@ -409,7 +423,7 @@ export const ServiceManager: React.FC = () => {
                     exit={{ opacity: 0, y: -20 }}
                   >
                     <div className="mb-12">
-                      <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Analytics</h1>
+                      <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Relatório de Acessos</h1>
                       <p className="text-slate-400 font-medium tracking-wide">Monitoramento de acessos e tráfego do site.</p>
                     </div>
 
@@ -466,7 +480,7 @@ export const ServiceManager: React.FC = () => {
                             {visits.slice(0, 10).map((visit) => (
                               <tr key={visit.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-8 py-6 text-sm font-medium text-slate-300">
-                                  {visit.timestamp?.toDate().toLocaleString('pt-BR')}
+                                  {visit.timestamp?.toDate ? visit.timestamp.toDate().toLocaleString('pt-BR') : 'Processando...'}
                                 </td>
                                 <td className="px-8 py-6">
                                   <span className="px-3 py-1 bg-cyan-500/10 text-cyan-500 text-[10px] font-black uppercase tracking-widest rounded-lg">
@@ -596,7 +610,7 @@ export const ServiceManager: React.FC = () => {
                                 <p className={`font-black uppercase tracking-tight mb-1 ${m.completed ? 'text-emerald-400 line-through' : 'text-white'}`}>{m.taskType}</p>
                                 <div className="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-widest">
                                   <Calendar className="w-3.5 h-3.5" />
-                                  {m.dueDate.toDate().toLocaleDateString('pt-BR')}
+                                  {m.dueDate?.toDate ? m.dueDate.toDate().toLocaleDateString('pt-BR') : 'Sem data'}
                                 </div>
                               </div>
                               <button 
