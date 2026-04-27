@@ -4,7 +4,8 @@ import {
   Users, Plus, Search, ChevronRight, Phone, MapPin, 
   Settings, LogOut, Shield, Calendar, Camera, Bell,
   PlusCircle, Trash2, CheckCircle2, Clock, QrCode,
-  Image as ImageIcon, Loader2, ArrowLeft, BarChart2, TrendingUp, Eye
+  Image as ImageIcon, Loader2, ArrowLeft, BarChart2, TrendingUp, Eye,
+  Github
 } from 'lucide-react';
 import { 
   collection, query, getDocs, addDoc, serverTimestamp, 
@@ -63,8 +64,15 @@ export const ServiceManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [globalLoading, setGlobalLoading] = useState(false);
 
-  const AUTHORIZED_EMAIL = 'maninhoneeto@gmail.com';
-  const isAuthorized = user && user.email?.toLowerCase().trim() === AUTHORIZED_EMAIL.toLowerCase().trim();
+  const AUTHORIZED_EMAILS = [
+    'maninhoneeto@gmail.com',
+    'maninhoneeto-web@users.noreply.github.com' // Possível e-mail do GitHub
+  ];
+
+  const isAuthorized = user && (
+    AUTHORIZED_EMAILS.some(email => user.email?.toLowerCase().trim() === email.toLowerCase().trim()) ||
+    user.providerData.some(p => p.email?.toLowerCase().trim() === 'maninhoneeto@gmail.com')
+  );
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -76,14 +84,21 @@ export const ServiceManager: React.FC = () => {
 
   useEffect(() => {
     if (user) {
+      console.log('--- STATUS DE ACESSO ---');
+      console.log('E-mail atual:', user.email);
+      console.log('Provedor:', user.providerData.map(p => p.providerId).join(', '));
+      console.log('Autorizado:', !!isAuthorized);
+      console.log('------------------------');
+    }
+  }, [user, isAuthorized]);
+
+  useEffect(() => {
+    if (user) {
       const q = query(collection(db, 'customers'), orderBy('createdAt', 'desc'));
       const unsubscribe = onSnapshot(q, (snapshot) => {
         setCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Customer)));
       }, (error) => {
         console.error('Firestore Error (Customers):', error);
-        if (error.code !== 'permission-denied') {
-          // handleFirestoreError(error, 'list', 'customers');
-        }
       });
       return () => unsubscribe();
     }
@@ -103,7 +118,6 @@ export const ServiceManager: React.FC = () => {
 
   useEffect(() => {
     if (selectedCustomer) {
-      // Carregar instalações
       const instQ = query(collection(db, 'installations'), where('customerId', '==', selectedCustomer.id));
       const unsubInst = onSnapshot(instQ, (s) => {
          setInstallations(s.docs.map(d => ({ id: d.id, ...d.data() } as Installation)));
@@ -111,7 +125,6 @@ export const ServiceManager: React.FC = () => {
         console.error('Erro no Firestore (Instalações):', error);
       });
 
-      // Carregar manutenção
       const maintQ = query(collection(db, 'maintenance'), where('customerId', '==', selectedCustomer.id));
       const unsubMaint = onSnapshot(maintQ, (s) => {
          setMaintenance(s.docs.map(d => ({ id: d.id, ...d.data() } as Maintenance)));
@@ -122,13 +135,6 @@ export const ServiceManager: React.FC = () => {
       return () => { unsubInst(); unsubMaint(); };
     }
   }, [selectedCustomer]);
-
-  useEffect(() => {
-    if (user) {
-      console.log('Usuário conectado:', user.email);
-      console.log('Status de autorização:', isAuthorized);
-    }
-  }, [user, isAuthorized]);
 
   const login = async (provider: 'google' | 'github' = 'google') => {
     try {
@@ -239,8 +245,9 @@ export const ServiceManager: React.FC = () => {
               </button>
               <button 
                 onClick={() => login('github')}
-                className="w-full py-4 bg-slate-800 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-slate-700 flex items-center justify-center gap-3"
+                className="w-full py-4 bg-slate-800 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-slate-700 flex items-center justify-center gap-3 group"
               >
+                <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Tentar com GitHub
               </button>
             </div>
@@ -258,9 +265,10 @@ export const ServiceManager: React.FC = () => {
               </button>
               <button 
                 onClick={() => login('github')}
-                className="w-full py-5 bg-slate-800 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-slate-700 hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3"
+                className="w-full py-5 bg-slate-800 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-slate-700 hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3 group"
               >
-                <span className="opacity-70">Acessar com GitHub</span>
+                <Github className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                <span className="opacity-90">Acessar com GitHub</span>
               </button>
             </div>
           </>
