@@ -67,14 +67,17 @@ export const ServiceManager: React.FC = () => {
   const AUTHORIZED_EMAILS = [
     'maninhoneeto@gmail.com',
     'maninhoneeto-web@users.noreply.github.com',
-    'maninhoneeto-web' // Adicionado como fallback
+    'maninhoneeto-web'
   ];
 
   const isAuthorized = user && (
     AUTHORIZED_EMAILS.some(e => user.email?.toLowerCase().trim() === e.toLowerCase().trim()) ||
-    user.providerData.some(p => p.email?.toLowerCase().trim() === 'maninhoneeto@gmail.com') ||
     user.displayName?.toLowerCase().includes('maninhoneeto') ||
-    user.email?.toLowerCase().includes('maninhoneeto')
+    user.email?.toLowerCase().includes('maninhoneeto') ||
+    user.providerData.some(p => 
+      p.displayName?.toLowerCase().includes('maninhoneeto') || 
+      p.email?.toLowerCase().includes('maninhoneeto')
+    )
   );
 
   useEffect(() => {
