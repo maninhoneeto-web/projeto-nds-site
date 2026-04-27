@@ -120,9 +120,22 @@ export default function App() {
   const [currentHash, setCurrentHash] = useState(window.location.hash);
 
   useEffect(() => {
-    const handleHashChange = () => setCurrentHash(window.location.hash);
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    const handleLocationChange = () => {
+      setCurrentHash(window.location.hash);
+      // Check if pathname is /manager
+      if (window.location.pathname === '/manager' && window.location.hash !== '#manager') {
+        window.location.hash = '#manager';
+      }
+    };
+
+    handleLocationChange(); // Initial check
+
+    window.addEventListener('hashchange', handleLocationChange);
+    window.addEventListener('popstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('hashchange', handleLocationChange);
+      window.removeEventListener('popstate', handleLocationChange);
+    };
   }, []);
 
   const HERO_SLIDES = [
@@ -263,6 +276,9 @@ export default function App() {
                   {item}
                 </a>
               ))}
+              <a href="#manager" onClick={() => setMobileMenuOpen(false)} className="text-xl font-black text-slate-400 uppercase tracking-tighter border-t border-slate-100 pt-8">
+                Painel Administrativo
+              </a>
             </div>
             <button onClick={openWhatsApp} className="mt-auto w-full bg-cyan-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-tighter">
               Solicitar Orçamento
@@ -689,7 +705,10 @@ export default function App() {
              <div className="leading-none text-left">
                <span className="text-lg font-black tracking-tighter text-white">NDS<span className="text-cyan-500">CFTV</span></span>
                <p className="text-[8px] uppercase tracking-widest font-bold text-slate-500">Digital © 2026</p>
-               <a href="#manager" className="text-[8px] uppercase tracking-[0.2em] font-black text-slate-700 hover:text-cyan-500 transition-colors mt-1 block">Acesso Restrito</a>
+               <a href="#manager" className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-500 hover:text-cyan-500 transition-all mt-2 flex items-center gap-1 group">
+                 <Shield className="w-3 h-3 transition-transform group-hover:scale-110" />
+                 Controle de Acesso
+               </a>
              </div>
           </div>
           
