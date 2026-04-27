@@ -42,6 +42,17 @@
         "notes": { "type": "string" }
       },
       "required": ["customerId", "dueDate", "taskType", "completed"]
+    },
+    "Visit": {
+      "title": "Visit",
+      "description": "Information about a site visit/access.",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "userAgent": { "type": "string" },
+        "page": { "type": "string" }
+      },
+      "required": ["timestamp"]
     }
   },
   "firestore": {
@@ -56,6 +67,10 @@
     "/maintenance/{reminderId}": {
       "schema": "MaintenanceReminders",
       "description": "Collection of maintenance schedules."
+    },
+    "/visits/{visitId}": {
+      "schema": "Visit",
+      "description": "Log of site visits."
     }
   }
 }

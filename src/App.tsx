@@ -5,6 +5,8 @@ import {
   Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench, HelpCircle,
   Smartphone, BellRing, ChevronRight, Phone, Instagram, MapPin, Award, Star
 } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from './lib/firebase';
 
 import { IMAGES } from './constants/images';
 import { PartnerProgram } from './components/PartnerProgram';
@@ -154,6 +156,28 @@ export default function App() {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const logVisit = async () => {
+      try {
+        const sessionKey = 'nds_visited_today';
+        const lastVisit = localStorage.getItem(sessionKey);
+        const today = new Date().toDateString();
+
+        if (lastVisit !== today) {
+          await addDoc(collection(db, 'visits'), {
+            timestamp: serverTimestamp(),
+            userAgent: navigator.userAgent,
+            page: window.location.hash || 'home'
+          });
+          localStorage.setItem(sessionKey, today);
+        }
+      } catch (e) {
+        console.error('Error logging visit:', e);
+      }
+    };
+    logVisit();
   }, []);
 
   const openWhatsApp = () => {

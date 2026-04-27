@@ -4,7 +4,7 @@ import {
   Users, Plus, Search, ChevronRight, Phone, MapPin, 
   Settings, LogOut, Shield, Calendar, Camera, Bell,
   PlusCircle, Trash2, CheckCircle2, Clock, QrCode,
-  Image as ImageIcon, Loader2, ArrowLeft
+  Image as ImageIcon, Loader2, ArrowLeft, BarChart3, TrendingUp, Eye
 } from 'lucide-react';
 import { 
   collection, query, getDocs, addDoc, serverTimestamp, 
@@ -53,8 +53,10 @@ export const ServiceManager: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [installations, setInstallations] = useState<Installation[]>([]);
   const [maintenance, setMaintenance] = useState<Maintenance[]>([]);
+  const [visits, setVisits] = useState<any[]>([]);
   
   // UI States
+  const [currentTab, setCurrentTab] = useState<'customers' | 'analytics'>('customers');
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [showAddInstallation, setShowAddInstallation] = useState(false);
   const [showAddMaintenance, setShowAddMaintenance] = useState(false);
@@ -78,6 +80,16 @@ export const ServiceManager: React.FC = () => {
       return () => unsubscribe();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user && currentTab === 'analytics') {
+      const q = query(collection(db, 'visits'), orderBy('timestamp', 'desc'));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        setVisits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      });
+      return () => unsubscribe();
+    }
+  }, [user, currentTab]);
 
   useEffect(() => {
     if (selectedCustomer) {
@@ -249,11 +261,24 @@ export const ServiceManager: React.FC = () => {
 
           <div className="space-y-2 flex-grow overflow-y-auto">
             <button 
-              onClick={() => setSelectedCustomer(null)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${!selectedCustomer ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+              onClick={() => {
+                setSelectedCustomer(null);
+                setCurrentTab('customers');
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'customers' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
             >
               <Users className="w-5 h-5" />
               <span className="font-bold text-sm uppercase tracking-wider">Clientes</span>
+            </button>
+            <button 
+              onClick={() => {
+                setSelectedCustomer(null);
+                setCurrentTab('analytics');
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'analytics' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+            >
+              <BarChart3 className="w-5 h-5" />
+              <span className="font-bold text-sm uppercase tracking-wider">Acessos</span>
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
               <Bell className="w-5 h-5" />
@@ -285,76 +310,160 @@ export const ServiceManager: React.FC = () => {
             
             <AnimatePresence mode="wait">
               {!selectedCustomer ? (
-                <motion.div
-                  key="customer-list"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-                    <div>
-                      <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Base de Clientes</h1>
-                      <p className="text-slate-400 font-medium tracking-wide">Gerencie todos os seus parceiros e instalações.</p>
-                    </div>
-                    <button 
-                      onClick={() => setShowAddCustomer(true)}
-                      className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-3"
-                    >
-                      <Plus className="w-5 h-5" />
-                      Novo Cliente
-                    </button>
-                  </div>
-
-                  {/* SEARCH */}
-                  <div className="relative mb-8 group">
-                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-500 transition-colors" />
-                    <input 
-                      type="text"
-                      placeholder="Buscar por nome ou telefone..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full bg-slate-900 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-white focus:outline-none focus:border-cyan-500/50 transition-all font-medium text-lg placeholder:text-slate-600"
-                    />
-                  </div>
-
-                  {/* CUSTOMER GRID */}
-                  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredCustomers.map((customer) => (
-                      <motion.div
-                        key={customer.id}
-                        layoutId={customer.id}
-                        onClick={() => setSelectedCustomer(customer)}
-                        className="group bg-slate-900 border border-white/5 p-6 rounded-[2rem] hover:border-cyan-500/30 transition-all cursor-pointer relative overflow-hidden"
+                currentTab === 'customers' ? (
+                  <motion.div
+                    key="customer-list"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                      <div>
+                        <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Base de Clientes</h1>
+                        <p className="text-slate-400 font-medium tracking-wide">Gerencie todos os seus parceiros e instalações.</p>
+                      </div>
+                      <button 
+                        onClick={() => setShowAddCustomer(true)}
+                        className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-3"
                       >
-                        <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <ChevronRight className="w-5 h-5 text-cyan-500" />
-                        </div>
-                        <div className="flex items-center gap-4 mb-6">
-                           <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-cyan-500/10 transition-colors">
-                              <Users className="w-6 h-6 text-slate-500 group-hover:text-cyan-500" />
-                           </div>
-                           <div>
-                              <h3 className="font-black text-lg uppercase tracking-tight text-white leading-none mb-1">{customer.name}</h3>
-                              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{customer.phone}</p>
-                           </div>
-                        </div>
-                        <div className="space-y-3">
-                           <div className="flex items-center gap-2 text-slate-400 text-xs">
-                              <MapPin className="w-4 h-4 text-slate-600" />
-                              <span className="truncate">{customer.address || 'Endereço não informado'}</span>
-                           </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  {filteredCustomers.length === 0 && !globalLoading && (
-                    <div className="py-20 text-center">
-                      <Users className="w-16 h-16 text-slate-800 mx-auto mb-4" />
-                      <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Nenhum cliente encontrado</p>
+                        <Plus className="w-5 h-5" />
+                        Novo Cliente
+                      </button>
                     </div>
-                  )}
-                </motion.div>
+
+                    {/* SEARCH */}
+                    <div className="relative mb-8 group">
+                      <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-500 transition-colors" />
+                      <input 
+                        type="text"
+                        placeholder="Buscar por nome ou telefone..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-white focus:outline-none focus:border-cyan-500/50 transition-all font-medium text-lg placeholder:text-slate-600"
+                      />
+                    </div>
+
+                    {/* CUSTOMER GRID */}
+                    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {filteredCustomers.map((customer) => (
+                        <motion.div
+                          key={customer.id}
+                          layoutId={customer.id}
+                          onClick={() => setSelectedCustomer(customer)}
+                          className="group bg-slate-900 border border-white/5 p-6 rounded-[2rem] hover:border-cyan-500/30 transition-all cursor-pointer relative overflow-hidden"
+                        >
+                          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <ChevronRight className="w-5 h-5 text-cyan-500" />
+                          </div>
+                          <div className="flex items-center gap-4 mb-6">
+                             <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-cyan-500/10 transition-colors">
+                                <Users className="w-6 h-6 text-slate-500 group-hover:text-cyan-500" />
+                             </div>
+                             <div>
+                                <h3 className="font-black text-lg uppercase tracking-tight text-white leading-none mb-1">{customer.name}</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{customer.phone}</p>
+                             </div>
+                          </div>
+                          <div className="space-y-3">
+                             <div className="flex items-center gap-2 text-slate-400 text-xs">
+                                <MapPin className="w-4 h-4 text-slate-600" />
+                                <span className="truncate">{customer.address || 'Endereço não informado'}</span>
+                             </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {filteredCustomers.length === 0 && !globalLoading && (
+                      <div className="py-20 text-center">
+                        <Users className="w-16 h-16 text-slate-800 mx-auto mb-4" />
+                        <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Nenhum cliente encontrado</p>
+                      </div>
+                    )}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="analytics-dashboard"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                  >
+                    <div className="mb-12">
+                      <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Analytics</h1>
+                      <p className="text-slate-400 font-medium tracking-wide">Monitoramento de acessos e tráfego do site.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
+                        <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center">
+                          <Eye className="w-8 h-8 text-cyan-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Total de Acessos</p>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">{visits.length}</h4>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
+                        <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                          <TrendingUp className="w-8 h-8 text-emerald-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Últimas 24h</p>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">
+                            {visits.filter(v => v.timestamp?.toDate() > new Date(Date.now() - 24 * 60 * 60 * 1000)).length}
+                          </h4>
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
+                        <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center">
+                          <Plus className="w-8 h-8 text-purple-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Sessões Únicas</p>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">
+                            {visits.length > 0 ? 'Calculando...' : '0'}
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-900 border border-white/5 rounded-[2.5rem] overflow-hidden">
+                      <div className="p-8 border-b border-white/5">
+                        <h3 className="text-xl font-black uppercase tracking-tighter">Log de Acessos Recentes</h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="border-b border-white/5">
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Data e Hora</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Página</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Dispositivo/Navegador</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/5">
+                            {visits.slice(0, 10).map((visit) => (
+                              <tr key={visit.id} className="hover:bg-white/5 transition-colors">
+                                <td className="px-8 py-6 text-sm font-medium text-slate-300">
+                                  {visit.timestamp?.toDate().toLocaleString('pt-BR')}
+                                </td>
+                                <td className="px-8 py-6">
+                                  <span className="px-3 py-1 bg-cyan-500/10 text-cyan-500 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                                    {visit.page}
+                                  </span>
+                                </td>
+                                <td className="px-8 py-6 text-xs text-slate-500 font-mono max-w-xs truncate">
+                                  {visit.userAgent}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </motion.div>
+                )
               ) : (
                 <motion.div
                   key="customer-detail"
