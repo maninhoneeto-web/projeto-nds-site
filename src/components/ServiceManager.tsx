@@ -5,7 +5,7 @@ import {
   Settings, LogOut, Shield, Calendar, Camera, Bell,
   PlusCircle, Trash2, CheckCircle2, Clock, QrCode,
   Image as ImageIcon, Loader2, ArrowLeft, BarChart2, TrendingUp, Eye,
-  Github
+  Github, X, Smartphone
 } from 'lucide-react';
 import { 
   collection, query, getDocs, addDoc, serverTimestamp, 
@@ -55,6 +55,8 @@ export const ServiceManager: React.FC = () => {
   const [installations, setInstallations] = useState<Installation[]>([]);
   const [maintenance, setMaintenance] = useState<Maintenance[]>([]);
   const [visits, setVisits] = useState<any[]>([]);
+  
+  const [selectedVisit, setSelectedVisit] = useState<any | null>(null);
   
   // UI States
   const [currentTab, setCurrentTab] = useState<'customers' | 'analytics'>('customers');
@@ -493,27 +495,42 @@ export const ServiceManager: React.FC = () => {
                         <h3 className="text-xl font-black uppercase tracking-tighter">Log de Acessos Recentes</h3>
                       </div>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left">
+                        <table className="w-full text-left border-collapse">
                           <thead>
                             <tr className="border-b border-white/5">
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Data e Hora</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Página</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Dispositivo/Navegador</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Dispositivo</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Ação</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-white/5">
-                            {visits.slice(0, 10).map((visit) => (
-                              <tr key={visit.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-8 py-6 text-sm font-medium text-slate-300">
+                            {visits.slice(0, 20).map((visit) => (
+                              <tr 
+                                key={visit.id} 
+                                onClick={() => setSelectedVisit(visit)}
+                                className="hover:bg-cyan-500/5 transition-colors cursor-pointer group"
+                              >
+                                <td className="px-8 py-6 text-sm font-bold text-slate-300">
                                   {visit.timestamp?.toDate ? visit.timestamp.toDate().toLocaleString('pt-BR') : 'Processando...'}
                                 </td>
                                 <td className="px-8 py-6">
-                                  <span className="px-3 py-1 bg-cyan-500/10 text-cyan-500 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                                  <span className="px-3 py-1 bg-white/5 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/5 group-hover:border-cyan-500/30 group-hover:text-cyan-400">
                                     {visit.page}
                                   </span>
                                 </td>
-                                <td className="px-8 py-6 text-xs text-slate-500 font-mono max-w-xs truncate">
-                                  {visit.userAgent}
+                                <td className="px-8 py-6">
+                                   <div className="flex items-center gap-2">
+                                      <span className={`w-2 h-2 rounded-full ${visit.device === 'iOS' || visit.device === 'Android' ? 'bg-emerald-500' : 'bg-cyan-500'}`} />
+                                      <span className="text-xs font-bold text-slate-400 group-hover:text-white uppercase tracking-widest">
+                                        {visit.device || 'Desconhecido'}
+                                      </span>
+                                   </div>
+                                </td>
+                                <td className="px-8 py-6 text-right">
+                                  <button className="p-2 bg-white/5 rounded-lg text-slate-500 group-hover:text-cyan-500 group-hover:bg-cyan-500/10 transition-all">
+                                    <Eye className="w-4 h-4" />
+                                  </button>
                                 </td>
                               </tr>
                             ))}
@@ -730,6 +747,87 @@ export const ServiceManager: React.FC = () => {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+
+        {selectedVisit && (
+          <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md"
+            onClick={() => setSelectedVisit(null)}
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-slate-900 w-full max-w-2xl rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl"
+            >
+              <div className="p-8 border-b border-white/5 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-black uppercase tracking-tighter text-white">Análise de Acesso</h2>
+                  <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">
+                    ID: {selectedVisit.id}
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setSelectedVisit(null)}
+                  className="p-3 hover:bg-white/5 rounded-2xl transition-colors"
+                >
+                  <X className="w-6 h-6 text-slate-500" />
+                </button>
+              </div>
+
+              <div className="p-8 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dispositivo</p>
+                    <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
+                       <Smartphone className="w-4 h-4 text-cyan-500" />
+                       {selectedVisit.device || 'Desktop'}
+                    </p>
+                  </div>
+                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Resolução</p>
+                    <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
+                       <ImageIcon className="w-4 h-4 text-emerald-500" />
+                       {selectedVisit.screen || 'N/A'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Página Acessada</p>
+                    <p className="text-cyan-400 font-mono text-sm underline decoration-cyan-500/30">
+                      {window.location.origin}/{selectedVisit.page}
+                    </p>
+                  </div>
+
+                  <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Referência (Traffic Source)</p>
+                    <p className="text-white text-sm font-medium">
+                      {selectedVisit.referrer || 'Acesso Direto'}
+                    </p>
+                  </div>
+
+                  <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Navegador Completo (User Agent)</p>
+                    <p className="text-slate-400 text-[10px] font-mono leading-relaxed break-all">
+                      {selectedVisit.userAgent}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 bg-slate-950/50 flex justify-end">
+                <button 
+                  onClick={() => setSelectedVisit(null)}
+                  className="px-8 py-3 bg-white text-slate-950 rounded-xl font-black uppercase tracking-widest text-xs transition-all hover:scale-105"
+                >
+                  Fechar Análise
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

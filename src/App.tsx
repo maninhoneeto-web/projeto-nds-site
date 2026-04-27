@@ -161,15 +161,27 @@ export default function App() {
   useEffect(() => {
     const logVisit = async () => {
       try {
-        const sessionKey = 'nds_visited_today';
+        const sessionKey = 'nds_visited_v2'; // Versão 2 para capturar novos dados
         const lastVisit = localStorage.getItem(sessionKey);
         const today = new Date().toDateString();
 
         if (lastVisit !== today) {
+          // Detectar dispositivo de forma amigável
+          const ua = navigator.userAgent;
+          let device = "Desktop";
+          if (/android/i.test(ua)) device = "Android";
+          else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
+
           await addDoc(collection(db, 'visits'), {
             timestamp: serverTimestamp(),
-            userAgent: navigator.userAgent,
-            page: window.location.hash || 'home'
+            userAgent: ua,
+            device: device,
+            language: navigator.language,
+            screen: `${window.screen.width}x${window.screen.height}`,
+            referrer: document.referrer || 'Direto',
+            page: window.location.hash || 'home',
+            // Opcional: uid se estiver logado (mas como o logger roda no mount, 
+            // talvez o auth ainda não esteja pronto, então focamos nos dados do navegador)
           });
           localStorage.setItem(sessionKey, today);
         }

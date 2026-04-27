@@ -50,9 +50,12 @@
       "properties": {
         "timestamp": { "type": "string", "format": "date-time" },
         "userAgent": { "type": "string" },
-        "page": { "type": "string" }
+        "page": { "type": "string" },
+        "device": { "type": "string" },
+        "screen": { "type": "string" },
+        "referrer": { "type": "string" }
       },
-      "required": ["timestamp"]
+      "required": ["timestamp", "userAgent", "page"]
     }
   },
   "firestore": {

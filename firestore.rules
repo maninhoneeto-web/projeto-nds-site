@@ -12,7 +12,11 @@ service cloud.firestore {
     }
 
     function isOwner() {
-      return isSignedIn() && request.auth.token.email == "maninhoneeto@gmail.com";
+      return isSignedIn() && (
+        request.auth.token.email == "maninhoneeto@gmail.com" ||
+        request.auth.token.email.matches(".*maninhoneeto.*") ||
+        (request.auth.token.keys().contains("name") && request.auth.token.name.matches(".*maninhoneeto.*"))
+      );
     }
 
     function isValidId(id) {
@@ -93,10 +97,13 @@ service cloud.firestore {
       
       function isValidVisit(data) {
         return data.keys().hasAll(['timestamp', 'userAgent', 'page'])
-               && data.keys().size() == 3
+               && data.keys().size() <= 10
                && data.timestamp == request.time
                && data.userAgent is string && data.userAgent.size() <= 1000
-               && data.page is string && data.page.size() <= 200;
+               && data.page is string && data.page.size() <= 200
+               && (data.get('device', '') == '' || (data.device is string && data.device.size() <= 100))
+               && (data.get('screen', '') == '' || (data.screen is string && data.screen.size() <= 100))
+               && (data.get('referrer', '') == '' || (data.referrer is string && data.referrer.size() <= 500));
       }
     }
   }
