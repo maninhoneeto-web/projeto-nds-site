@@ -76,6 +76,11 @@ export const ServiceManager: React.FC = () => {
       const q = query(collection(db, 'customers'), orderBy('createdAt', 'desc'));
       const unsubscribe = onSnapshot(q, (snapshot) => {
         setCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Customer)));
+      }, (error) => {
+        console.error('Firestore Error (Customers):', error);
+        if (error.code !== 'permission-denied') {
+          // handleFirestoreError(error, 'list', 'customers');
+        }
       });
       return () => unsubscribe();
     }
@@ -86,6 +91,11 @@ export const ServiceManager: React.FC = () => {
       const q = query(collection(db, 'visits'), orderBy('timestamp', 'desc'));
       const unsubscribe = onSnapshot(q, (snapshot) => {
         setVisits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }, (error) => {
+        console.error('Firestore Error (Visits):', error);
+        if (error.code !== 'permission-denied') {
+          // handleFirestoreError(error, 'list', 'visits');
+        }
       });
       return () => unsubscribe();
     }
@@ -97,12 +107,16 @@ export const ServiceManager: React.FC = () => {
       const instQ = query(collection(db, 'installations'), where('customerId', '==', selectedCustomer.id));
       const unsubInst = onSnapshot(instQ, (s) => {
          setInstallations(s.docs.map(d => ({ id: d.id, ...d.data() } as Installation)));
+      }, (error) => {
+        console.error('Firestore Error (Installations):', error);
       });
 
       // Load maintenance
       const maintQ = query(collection(db, 'maintenance'), where('customerId', '==', selectedCustomer.id));
       const unsubMaint = onSnapshot(maintQ, (s) => {
          setMaintenance(s.docs.map(d => ({ id: d.id, ...d.data() } as Maintenance)));
+      }, (error) => {
+        console.error('Firestore Error (Maintenance):', error);
       });
 
       return () => { unsubInst(); unsubMaint(); };
@@ -110,6 +124,14 @@ export const ServiceManager: React.FC = () => {
   }, [selectedCustomer]);
 
   const AUTHORIZED_EMAIL = 'maninhoneeto@gmail.com';
+  const isAuthorized = user && user.email?.toLowerCase().trim() === AUTHORIZED_EMAIL.toLowerCase().trim();
+
+  useEffect(() => {
+    if (user) {
+      console.log('User logged in:', user.email);
+      console.log('Authorized status:', isAuthorized);
+    }
+  }, [user, isAuthorized]);
 
   const login = async () => {
     try {
@@ -192,8 +214,6 @@ export const ServiceManager: React.FC = () => {
       <Loader2 className="w-12 h-12 text-cyan-500 animate-spin" />
     </div>
   );
-
-  const isAuthorized = user && user.email === AUTHORIZED_EMAIL;
 
   if (!user || !isAuthorized) return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-cyan-900/20 via-slate-950 to-slate-950">
@@ -411,7 +431,7 @@ export const ServiceManager: React.FC = () => {
                         <div>
                           <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Últimas 24h</p>
                           <h4 className="text-3xl font-black text-white leading-none mt-1">
-                            {visits.filter(v => v.timestamp?.toDate() > new Date(Date.now() - 24 * 60 * 60 * 1000)).length}
+                            {visits.filter(v => v.timestamp?.toDate ? v.timestamp.toDate() > new Date(Date.now() - 24 * 60 * 60 * 1000) : false).length}
                           </h4>
                         </div>
                       </div>
@@ -423,7 +443,7 @@ export const ServiceManager: React.FC = () => {
                         <div>
                           <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Sessões Únicas</p>
                           <h4 className="text-3xl font-black text-white leading-none mt-1">
-                            {visits.length > 0 ? 'Calculando...' : '0'}
+                            {new Set(visits.map(v => v.userAgent)).size}
                           </h4>
                         </div>
                       </div>
