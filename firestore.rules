@@ -85,5 +85,19 @@ service cloud.firestore {
                && data.completed is bool;
       }
     }
+
+    // 4. Visits
+    match /visits/{visitId} {
+      allow create: if isValidVisit(incoming());
+      allow read: if isOwner();
+      
+      function isValidVisit(data) {
+        return data.keys().hasAll(['timestamp', 'userAgent', 'page'])
+               && data.keys().size() == 3
+               && data.timestamp == request.time
+               && data.userAgent is string && data.userAgent.size() <= 1000
+               && data.page is string && data.page.size() <= 200;
+      }
+    }
   }
 }
