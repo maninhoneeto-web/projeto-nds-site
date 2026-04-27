@@ -6,7 +6,8 @@ import {
   Smartphone, BellRing, ChevronRight, Phone, Instagram, MapPin, Award, Star
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from './lib/firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { db, auth } from './lib/firebase';
 
 import { IMAGES } from './constants/images';
 import { PartnerProgram } from './components/PartnerProgram';
@@ -118,12 +119,21 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
   const [currentHash, setCurrentHash] = useState(window.location.hash);
+  const [authUser, setAuthUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (user) => {
+      setAuthUser(user);
+    });
+  }, []);
 
   useEffect(() => {
     const handleLocationChange = () => {
       setCurrentHash(window.location.hash);
-      // Check if pathname is /manager
-      if (window.location.pathname === '/manager' && window.location.hash !== '#manager') {
+      
+      // Check if pathname is /manager or ends with /manager
+      const isManagerPath = window.location.pathname.endsWith('/manager') || window.location.pathname.includes('/manager/');
+      if (isManagerPath && window.location.hash !== '#manager') {
         window.location.hash = '#manager';
       }
     };
@@ -174,12 +184,13 @@ export default function App() {
   useEffect(() => {
     const logVisit = async () => {
       try {
-        const sessionKey = 'nds_visited_v2'; // Versão 2 para capturar novos dados
+        const sessionKey = 'nds_visited_v3'; // Versão 3
         const lastVisit = localStorage.getItem(sessionKey);
         const today = new Date().toDateString();
 
+        // Sempre logamos se o user mudar ou se não logou hoje
+        // Mas para não floodar, usamos uma lógica de cache por sessão/dia
         if (lastVisit !== today) {
-          // Detectar dispositivo de forma amigável
           const ua = navigator.userAgent;
           let device = "Desktop";
           if (/android/i.test(ua)) device = "Android";
@@ -193,8 +204,9 @@ export default function App() {
             screen: `${window.screen.width}x${window.screen.height}`,
             referrer: document.referrer || 'Direto',
             page: window.location.hash || 'home',
-            // Opcional: uid se estiver logado (mas como o logger roda no mount, 
-            // talvez o auth ainda não esteja pronto, então focamos nos dados do navegador)
+            userEmail: authUser?.email || null,
+            userName: authUser?.displayName || null,
+            userProvider: authUser?.providerData[0]?.providerId || null
           });
           localStorage.setItem(sessionKey, today);
         }
@@ -203,7 +215,7 @@ export default function App() {
       }
     };
     logVisit();
-  }, []);
+  }, [authUser]);
 
   const openWhatsApp = () => {
     const phone = "5561998308655";

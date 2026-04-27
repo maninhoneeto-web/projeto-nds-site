@@ -5,7 +5,7 @@ import {
   Settings, LogOut, Shield, Calendar, Camera, Bell,
   PlusCircle, Trash2, CheckCircle2, Clock, QrCode,
   Image as ImageIcon, Loader2, ArrowLeft, BarChart2, TrendingUp, Eye,
-  Github, X, Smartphone
+  Github, X, Smartphone, User as UserIcon
 } from 'lucide-react';
 import { 
   collection, query, getDocs, addDoc, serverTimestamp, 
@@ -500,6 +500,7 @@ export const ServiceManager: React.FC = () => {
                             <tr className="border-b border-white/5">
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Data e Hora</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Página</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Visitante</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Dispositivo</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Ação</th>
                             </tr>
@@ -518,6 +519,23 @@ export const ServiceManager: React.FC = () => {
                                   <span className="px-3 py-1 bg-white/5 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/5 group-hover:border-cyan-500/30 group-hover:text-cyan-400">
                                     {visit.page}
                                   </span>
+                                </td>
+                                <td className="px-8 py-6">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`p-2 rounded-xl border border-white/5 ${visit.userEmail ? 'bg-cyan-500/10 text-cyan-500' : 'bg-white/5 text-slate-600'}`}>
+                                      <UserIcon className="w-3 h-3" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                      <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tight truncate max-w-[120px]">
+                                        {visit.userName || visit.userEmail || 'Anônimo'}
+                                      </span>
+                                      {visit.userEmail && (
+                                        <span className="text-[9px] text-slate-500 font-medium lowercase">
+                                          {visit.userEmail.length > 20 ? visit.userEmail.substring(0, 17) + '...' : visit.userEmail}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
                                 </td>
                                 <td className="px-8 py-6">
                                    <div className="flex items-center gap-2">
@@ -779,6 +797,23 @@ export const ServiceManager: React.FC = () => {
               </div>
 
               <div className="p-8 space-y-6">
+                <div className="bg-cyan-500/5 border border-cyan-500/10 rounded-2xl p-6 flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border border-white/5 shadow-xl ${selectedVisit.userEmail ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-slate-500'}`}>
+                    <UserIcon className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white leading-none">
+                      {selectedVisit.userName || 'Visitante Anônimo'}
+                    </h3>
+                    <p className="text-slate-400 text-sm mt-1">{selectedVisit.userEmail || 'Nenhum login detectado'}</p>
+                    {selectedVisit.userProvider && (
+                       <span className="inline-flex mt-2 px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-black uppercase tracking-widest text-slate-500">
+                         Via {selectedVisit.userProvider}
+                       </span>
+                    )}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dispositivo</p>
