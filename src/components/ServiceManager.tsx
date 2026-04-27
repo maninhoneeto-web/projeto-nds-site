@@ -66,12 +66,15 @@ export const ServiceManager: React.FC = () => {
 
   const AUTHORIZED_EMAILS = [
     'maninhoneeto@gmail.com',
-    'maninhoneeto-web@users.noreply.github.com' // Possível e-mail do GitHub
+    'maninhoneeto-web@users.noreply.github.com',
+    'maninhoneeto-web' // Adicionado como fallback
   ];
 
   const isAuthorized = user && (
-    AUTHORIZED_EMAILS.some(email => user.email?.toLowerCase().trim() === email.toLowerCase().trim()) ||
-    user.providerData.some(p => p.email?.toLowerCase().trim() === 'maninhoneeto@gmail.com')
+    AUTHORIZED_EMAILS.some(e => user.email?.toLowerCase().trim() === e.toLowerCase().trim()) ||
+    user.providerData.some(p => p.email?.toLowerCase().trim() === 'maninhoneeto@gmail.com') ||
+    user.displayName?.toLowerCase().includes('maninhoneeto') ||
+    user.email?.toLowerCase().includes('maninhoneeto')
   );
 
   useEffect(() => {
@@ -84,11 +87,13 @@ export const ServiceManager: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      console.log('--- STATUS DE ACESSO ---');
-      console.log('E-mail atual:', user.email);
-      console.log('Provedor:', user.providerData.map(p => p.providerId).join(', '));
-      console.log('Autorizado:', !!isAuthorized);
-      console.log('------------------------');
+      console.log('AUTHORIZATION DEBUG:', {
+        email: user.email,
+        displayName: user.displayName,
+        isAuthorized: !!isAuthorized,
+        uid: user.uid,
+        providers: user.providerData.map(p => ({ id: p.providerId, email: p.email }))
+      });
     }
   }, [user, isAuthorized]);
 
@@ -233,15 +238,24 @@ export const ServiceManager: React.FC = () => {
         {user && !isAuthorized ? (
           <>
             <h1 className="text-3xl font-black text-rose-500 uppercase tracking-tighter mb-4">Acesso Negado</h1>
-            <p className="text-slate-400 mb-8 font-medium tracking-wide">
-              Esta conta ({user.email}) não tem permissão para acessar o NDS Manager.
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8 text-left">
+              <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-4">Informações do Login:</p>
+              <div className="space-y-2">
+                <p className="text-sm text-white font-medium flex justify-between"><span className="text-slate-500">E-mail:</span> {user.email || 'Não informado'}</p>
+                <p className="text-sm text-white font-medium flex justify-between"><span className="text-slate-500">Nome:</span> {user.displayName || 'Não informado'}</p>
+                <p className="text-sm text-white font-medium flex justify-between"><span className="text-slate-500">Provedor:</span> {user.providerData[0]?.providerId}</p>
+              </div>
+            </div>
+            <p className="text-slate-400 mb-8 font-medium tracking-wide text-sm">
+              Esta conta não está na lista de administradores.
             </p>
             <div className="space-y-4">
               <button 
                 onClick={logout}
-                className="w-full py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-white/10"
+                className="w-full py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-white/10 flex items-center justify-center gap-3"
               >
-                Sair / Trocar de Conta
+                <LogOut className="w-5 h-5" />
+                Trocar de Conta
               </button>
               <button 
                 onClick={() => login('github')}
