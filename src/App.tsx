@@ -14,9 +14,6 @@ import { db, auth } from './lib/firebase';
 import { IMAGES } from './constants/images';
 import { PartnerProgram } from './components/PartnerProgram';
 import { ServiceManager } from './components/ServiceManager';
-import { DigitalAgency } from './components/DigitalAgency';
-import MarketingFolder from './tecnologia/MarketingFolder';
-import PaginaVendas from './tecnologia/PaginaVendas';
 
 /* ============================
    DATA & CONFIG
@@ -198,17 +195,8 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
             <a href="#serviços" className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
               Serviços
             </a>
-            <a 
-              onClick={() => navigate('/tecnologia')}
-              className={`text-xs font-black uppercase tracking-widest transition-colors cursor-pointer ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}
-            >
-              Tecnologia
-            </a>
-            <a 
-              onClick={() => navigate('/tecnologia/vendas')}
-              className={`text-xs font-black uppercase tracking-widest transition-colors cursor-pointer ${isScrolled ? 'text-orange-600 hover:text-orange-500' : 'text-orange-400 hover:text-white'}`}
-            >
-              Página de Vendas
+            <a href="#projetos" className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
+              Produtos
             </a>
             <a href="#tecnologia-ia" className="relative group">
               <span className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-cyan-600' : 'text-cyan-400'}`}>
@@ -249,20 +237,11 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
                 Tecnologia IA
                 <span className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded-full">NOVO</span>
               </a>
-              <button 
-                onClick={() => { setMobileMenuOpen(false); navigate('/tecnologia'); }}
-                className="text-left text-3xl font-black text-slate-900 uppercase tracking-tighter"
-              >
-                Marketing & Tech
-              </button>
-              <button 
-                onClick={() => { setMobileMenuOpen(false); navigate('/tecnologia/vendas'); }}
-                className="text-left text-3xl font-black text-orange-600 uppercase tracking-tighter"
-              >
-                Página de Vendas
-              </button>
               <a href="#serviços" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
                 Serviços
+              </a>
+              <a href="#projetos" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+                Produtos
               </a>
             </div>
             <button onClick={openWhatsApp} className="mt-auto w-full bg-cyan-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-tighter">
@@ -727,63 +706,6 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
       </section>
 
       {/* FAQ SECTION */}
-      <section id="duvídas" className="py-24 bg-slate-950">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <SectionTitle title="Dúvidas Comuns" light />
-          <div className="max-w-3xl mt-12">
-            {FAQS.map((f, i) => (
-              <FaqItem key={i} question={f.q} answer={f.a} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PROMINENT TECH & SALES SECTION */}
-      <section className="bg-slate-900 py-24 px-6 border-y border-white/5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-600/10 blur-[120px] rounded-full" />
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
-          <div>
-             <span className="text-cyan-500 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Evolução Digital</span>
-             <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none mb-8">
-               Não apenas Câmeras.<br />
-               <span className="text-cyan-500 italic text-3xl md:text-5xl">Estratégia Tecnológica.</span>
-             </h2>
-             <p className="text-slate-400 text-lg mb-10 max-w-xl leading-relaxed">
-               Além do CFTV, entregamos a infraestrutura digital que seu negócio precisa para crescer e converter mais.
-             </p>
-             <div className="flex flex-col sm:flex-row gap-4">
-                <button 
-                  onClick={() => navigate('/tecnologia/vendas')}
-                  className="bg-orange-600 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition-all shadow-2xl shadow-orange-600/30 flex items-center justify-center gap-3"
-                >
-                  Página de Vendas ✨
-                  <TrendingUp className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => navigate('/tecnologia')}
-                  className="bg-white/5 border border-white/10 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all flex items-center justify-center gap-3"
-                >
-                  Apresentação NDS Tech
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-             <div className="bg-slate-800/50 p-8 rounded-[2rem] border border-white/5 hover:border-cyan-500/30 transition-all group">
-                <Zap className="w-8 h-8 text-cyan-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="text-white font-black uppercase text-sm tracking-widest mb-2">LP High-End</h3>
-                <p className="text-[10px] text-slate-500 font-bold leading-relaxed">Páginas de vendas ultra-rápidas para máxima conversão.</p>
-             </div>
-             <div className="bg-slate-800/50 p-8 rounded-[2rem] border border-white/5 hover:border-cyan-500/30 transition-all group mt-8">
-                <Target className="w-8 h-8 text-cyan-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="text-white font-black uppercase text-sm tracking-widest mb-2">Ads Analytics</h3>
-                <p className="text-[10px] text-slate-500 font-bold leading-relaxed">Rastreamento preciso de leads vindos do Google Ads.</p>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
       <footer className="bg-slate-950 border-t border-white/5 py-12">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
@@ -900,11 +822,8 @@ export default function App() {
       <VisitLogger authUser={authUser} />
       <Routes>
         <Route path="/" element={<CFTVSite authUser={authUser} />} />
-        <Route path="/tecnologia" element={<MarketingFolder />} />
-        <Route path="/tecnologia/vendas" element={<PaginaVendas />} />
         <Route path="/parceria" element={<PartnerProgram />} />
-        <Route path="/ndsdashboard" element={<ServiceManager />} />
-        <Route path="/agencia" element={<DigitalAgency />} />
+        <Route path="/manager" element={<ServiceManager />} />
         {/* Fallbacks */}
         <Route path="*" element={<CFTVSite authUser={authUser} />} />
       </Routes>

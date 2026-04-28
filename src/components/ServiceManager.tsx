@@ -54,24 +54,14 @@ export const ServiceManager: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [installations, setInstallations] = useState<Installation[]>([]);
   const [maintenance, setMaintenance] = useState<Maintenance[]>([]);
-  const [visits, setVisits] = useState<any[]>([]);
-  const [conversions, setConversions] = useState<any[]>([]);
-  
-  const [selectedVisit, setSelectedVisit] = useState<any | null>(null);
   
   // UI States
-  const [currentTab, setCurrentTab] = useState<'customers' | 'analytics'>('analytics');
+  const [currentTab, setCurrentTab] = useState<'customers'>('customers');
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [showAddInstallation, setShowAddInstallation] = useState(false);
   const [showAddMaintenance, setShowAddMaintenance] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [globalLoading, setGlobalLoading] = useState(false);
-
-  const adsBudget = 120; // Reais
-  const googleAdsVisits = visits.filter(v => v.source === 'Google Ads').length;
-  const googleAdsLeads = conversions.filter(c => visits.some(v => v.id === c.visitId && v.source === 'Google Ads') || (c.page === 'CFTV Home' && googleAdsVisits > 0)).length; 
-  // Note: lead tracking is simplified for now to show the logic
-  const costPerLead = googleAdsLeads > 0 ? (adsBudget / googleAdsLeads).toFixed(2) : '0';
 
   const AUTHORIZED_EMAILS = [
     'maninhoneeto@gmail.com',
@@ -115,26 +105,6 @@ export const ServiceManager: React.FC = () => {
       return () => unsubscribe();
     }
   }, [user]);
-
-  useEffect(() => {
-    if (user && isAuthorized) {
-      const q = query(collection(db, 'visits'), orderBy('timestamp', 'desc'));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        setVisits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      }, (error) => {
-        console.error('Firestore Error (Visits):', error);
-      });
-      
-      const convQ = query(collection(db, 'conversions'), orderBy('timestamp', 'desc'));
-      const unsubConv = onSnapshot(convQ, (snapshot) => {
-        setConversions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      }, (error) => {
-        console.error('Firestore Error (Conversions):', error);
-      });
-
-      return () => { unsubscribe(); unsubConv(); };
-    }
-  }, [user, isAuthorized]);
 
   useEffect(() => {
     if (selectedCustomer) {
@@ -341,20 +311,6 @@ export const ServiceManager: React.FC = () => {
               <Users className="w-5 h-5" />
               <span className="font-bold text-sm uppercase tracking-wider">Clientes</span>
             </button>
-            <button 
-              onClick={() => setCurrentTab('analytics')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'analytics' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
-            >
-              <BarChart2 className="w-5 h-5" />
-              <span className="font-bold text-sm uppercase tracking-wider">Monitoramento</span>
-            </button>
-            <button 
-              onClick={() => window.open('/tecnologia/vendas', '_blank')}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-orange-400 bg-orange-400/5 border border-orange-400/20 hover:bg-orange-100/10 transition-all"
-            >
-              <TrendingUp className="w-5 h-5" />
-              <span className="font-bold text-[10px] uppercase tracking-widest font-black">Página de Vendas ✨</span>
-            </button>
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
               <Bell className="w-5 h-5" />
               <span className="font-bold text-sm uppercase tracking-wider">Lembretes</span>
@@ -385,310 +341,76 @@ export const ServiceManager: React.FC = () => {
             
             <AnimatePresence mode="wait">
               {!selectedCustomer ? (
-                currentTab === 'customers' ? (
-                  <motion.div
-                    key="customer-list"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                  >
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-                      <div>
-                        <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Base de Clientes</h1>
-                        <p className="text-slate-400 font-medium tracking-wide">Gerencie todos os seus parceiros e instalações.</p>
-                      </div>
-                      <button 
-                        onClick={() => setShowAddCustomer(true)}
-                        className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-3"
+                <motion.div
+                  key="customer-list"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                    <div>
+                      <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Base de Clientes</h1>
+                      <p className="text-slate-400 font-medium tracking-wide">Gerencie todos os seus parceiros e instalações.</p>
+                    </div>
+                    <button 
+                      onClick={() => setShowAddCustomer(true)}
+                      className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-3"
+                    >
+                      <Plus className="w-5 h-5" />
+                      Novo Cliente
+                    </button>
+                  </div>
+
+                  {/* SEARCH */}
+                  <div className="relative mb-8 group">
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-500 transition-colors" />
+                    <input 
+                      type="text"
+                      placeholder="Buscar por nome ou telefone..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-white focus:outline-none focus:border-cyan-500/50 transition-all font-medium text-lg placeholder:text-slate-600"
+                    />
+                  </div>
+
+                  {/* CUSTOMER GRID */}
+                  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {filteredCustomers.map((customer) => (
+                      <motion.div
+                        key={customer.id}
+                        layoutId={customer.id}
+                        onClick={() => setSelectedCustomer(customer)}
+                        className="group bg-slate-900 border border-white/5 p-6 rounded-[2rem] hover:border-cyan-500/30 transition-all cursor-pointer relative overflow-hidden"
                       >
-                        <Plus className="w-5 h-5" />
-                        Novo Cliente
-                      </button>
+                        <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <ChevronRight className="w-5 h-5 text-cyan-500" />
+                        </div>
+                        <div className="flex items-center gap-4 mb-6">
+                           <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-cyan-500/10 transition-colors">
+                              <Users className="w-6 h-6 text-slate-500 group-hover:text-cyan-500" />
+                           </div>
+                           <div>
+                              <h3 className="font-black text-lg uppercase tracking-tight text-white leading-none mb-1">{customer.name}</h3>
+                              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{customer.phone}</p>
+                           </div>
+                        </div>
+                        <div className="space-y-3">
+                           <div className="flex items-center gap-2 text-slate-400 text-xs">
+                              <MapPin className="w-4 h-4 text-slate-600" />
+                              <span className="truncate">{customer.address || 'Endereço não informado'}</span>
+                           </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {filteredCustomers.length === 0 && !globalLoading && (
+                    <div className="py-20 text-center">
+                      <Users className="w-16 h-16 text-slate-800 mx-auto mb-4" />
+                      <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Nenhum cliente encontrado</p>
                     </div>
-
-                    {/* SEARCH */}
-                    <div className="relative mb-8 group">
-                      <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-500 transition-colors" />
-                      <input 
-                        type="text"
-                        placeholder="Buscar por nome ou telefone..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-white focus:outline-none focus:border-cyan-500/50 transition-all font-medium text-lg placeholder:text-slate-600"
-                      />
-                    </div>
-
-                    {/* CUSTOMER GRID */}
-                    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                      {filteredCustomers.map((customer) => (
-                        <motion.div
-                          key={customer.id}
-                          layoutId={customer.id}
-                          onClick={() => setSelectedCustomer(customer)}
-                          className="group bg-slate-900 border border-white/5 p-6 rounded-[2rem] hover:border-cyan-500/30 transition-all cursor-pointer relative overflow-hidden"
-                        >
-                          <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <ChevronRight className="w-5 h-5 text-cyan-500" />
-                          </div>
-                          <div className="flex items-center gap-4 mb-6">
-                             <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-cyan-500/10 transition-colors">
-                                <Users className="w-6 h-6 text-slate-500 group-hover:text-cyan-500" />
-                             </div>
-                             <div>
-                                <h3 className="font-black text-lg uppercase tracking-tight text-white leading-none mb-1">{customer.name}</h3>
-                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{customer.phone}</p>
-                             </div>
-                          </div>
-                          <div className="space-y-3">
-                             <div className="flex items-center gap-2 text-slate-400 text-xs">
-                                <MapPin className="w-4 h-4 text-slate-600" />
-                                <span className="truncate">{customer.address || 'Endereço não informado'}</span>
-                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {filteredCustomers.length === 0 && !globalLoading && (
-                      <div className="py-20 text-center">
-                        <Users className="w-16 h-16 text-slate-800 mx-auto mb-4" />
-                        <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Nenhum cliente encontrado</p>
-                      </div>
-                    )}
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="analytics-dashboard"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                  >
-                    <div className="mb-12">
-                      <h1 className="text-4xl font-black uppercase tracking-tighter text-white mb-2">Relatório de Acessos</h1>
-                      <p className="text-slate-400 font-medium tracking-wide">Monitoramento de acessos e tráfego do site.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
-                        <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center">
-                          <Eye className="w-8 h-8 text-cyan-500" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Acessos</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">{visits.length}</h4>
-                        </div>
-                      </div>
-
-                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
-                        <div className="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-                          <Target className="w-8 h-8 text-orange-500" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Leads (Zap)</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">{conversions.length}</h4>
-                        </div>
-                      </div>
-
-                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
-                        <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center">
-                          <TrendingUp className="w-8 h-8 text-amber-500" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Ads (Gclid)</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">{googleAdsVisits}</h4>
-                        </div>
-                      </div>
-
-                      <div className="bg-slate-900 border border-emerald-500/30 p-8 rounded-[2rem] flex items-center gap-6 shadow-[0_0_50px_-12px_rgba(16,185,129,0.2)]">
-                        <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
-                          <PlusCircle className="w-8 h-8 text-emerald-500" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest leading-tight">Previsão Próximos 7 Dias</p>
-                          <h4 className="text-2xl font-black text-white leading-none mt-1">~{Math.max(2, Math.round(googleAdsVisits * 0.15))} Leads</h4>
-                          <p className="text-[8px] text-slate-500 mt-1 uppercase font-bold">Base: R$ {adsBudget} de Investimento</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                       <div className="bg-slate-900 border border-emerald-500/20 p-8 rounded-[2.5rem] relative overflow-hidden group">
-                          <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 blur-[80px] group-hover:bg-emerald-500/20 transition-colors" />
-                          <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-3">
-                             <Zap className="w-5 h-5 text-emerald-500" />
-                             Assistente de Performance Ads
-                          </h3>
-                          <div className="space-y-6">
-                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 text-emerald-500">Diagnóstico Técnico</p>
-                                <p className="text-sm font-bold text-slate-300">Sincronização entre site e anúncios Google Ads em perfeita harmonia. Rastreamento de conversão ativo.</p>
-                             </div>
-                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 text-amber-500">Estimativa para R$ 120,00</p>
-                                <p className="text-sm font-bold text-slate-300">Expectativa de 4 a 8 contatos qualificados no WhatsApp em um ciclo de 7 dias úteis.</p>
-                             </div>
-                             <button 
-                               onClick={() => window.open(`https://wa.me/5561998308655?text=Olá! Gostaria de ver o relatório detalhado de performance ads.`, '_blank')}
-                               className="w-full py-4 bg-white/5 hover:bg-emerald-500/20 hover:text-emerald-500 hover:border-emerald-500/50 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                             >
-                               Solicitar Relatório Detalhado
-                             </button>
-                          </div>
-                       </div>
-
-                       <div className="bg-slate-900 border border-white/5 p-8 rounded-[2.5rem]">
-                          <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-2">
-                             <TrendingUp className="w-5 h-5 text-cyan-500" />
-                             Fontes de Tráfego Ads
-                          </h3>
-                          <div className="space-y-4">
-                             {[
-                               { label: 'Google Ads', color: 'bg-amber-500' },
-                               { label: 'Busca Google', color: 'bg-emerald-500' },
-                               { label: 'Instagram', color: 'bg-rose-500' },
-                               { label: 'IA (ChatGPT/Bing)', color: 'bg-purple-500' },
-                               { label: 'Direto', color: 'bg-slate-500' }
-                             ].map(source => {
-                               const count = visits.filter(v => v.source === source.label).length;
-                               const total = visits.length || 1;
-                               const percentage = Math.round((count / total) * 100);
-                               return (
-                                 <div key={source.label}>
-                                   <div className="flex justify-between items-center mb-1">
-                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{source.label}</span>
-                                     <span className="text-xs font-black text-white">{count} ({percentage}%)</span>
-                                   </div>
-                                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                                     <motion.div 
-                                       initial={{ width: 0 }}
-                                       animate={{ width: `${percentage}%` }}
-                                       className={`h-full ${source.color}`}
-                                     />
-                                   </div>
-                                 </div>
-                               );
-                             })}
-                          </div>
-                       </div>
-
-                       <div className="bg-slate-900 border border-white/5 p-8 rounded-[2.5rem]">
-                          <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-2">
-                             <Target className="w-5 h-5 text-orange-500" />
-                             Performance por Página
-                          </h3>
-                          <div className="space-y-4">
-                             {[
-                               { label: 'CFTV Home', color: 'bg-cyan-500' },
-                               { label: 'Tecnologia Folder', color: 'bg-blue-500' },
-                               { label: 'Pagina de Vendas', color: 'bg-orange-500' },
-                               { label: 'Parceria', color: 'bg-purple-500' }
-                             ].map(page => {
-                               const vCount = visits.filter(v => v.page === page.label).length;
-                               const cCount = conversions.filter(c => c.page === page.label).length;
-                               return (
-                                 <div key={page.label} className="p-4 bg-white/2 rounded-2xl flex items-center justify-between border border-white/5 group hover:border-white/10 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                       <div className={`w-2 h-2 rounded-full ${page.color}`} />
-                                       <span className="text-xs font-bold uppercase tracking-tight text-slate-300">{page.label}</span>
-                                    </div>
-                                    <div className="flex gap-4">
-                                       <div className="text-right">
-                                          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Acessos</p>
-                                          <p className="text-xs font-black text-white">{vCount}</p>
-                                       </div>
-                                       <div className="text-right">
-                                          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Leads</p>
-                                          <p className="text-xs font-black text-orange-500">{cCount}</p>
-                                       </div>
-                                    </div>
-                                 </div>
-                               );
-                             })}
-                          </div>
-                       </div>
-                    </div>
-
-                    <div className="bg-slate-900 border border-white/5 rounded-[2.5rem] overflow-hidden">
-                      <div className="p-8 border-b border-white/5">
-                        <h3 className="text-xl font-black uppercase tracking-tighter">Log de Acessos Recentes</h3>
-                      </div>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                          <thead>
-                            <tr className="border-b border-white/5">
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Data e Hora</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Origem</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Página</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Visitante</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Dispositivo</th>
-                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Ação</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-white/5">
-                            {visits.slice(0, 100).map((visit) => (
-                              <tr 
-                                key={visit.id} 
-                                onClick={() => setSelectedVisit(visit)}
-                                className="group hover:bg-cyan-500/10 transition-all cursor-pointer border-b border-white/5 last:border-0"
-                              >
-                                <td className="px-8 py-6 text-sm font-bold text-slate-300">
-                                  {visit.timestamp?.toDate ? visit.timestamp.toDate().toLocaleString('pt-BR') : 'Processando...'}
-                                </td>
-                                <td className="px-8 py-6">
-                                  <span className={`px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest border ${
-                                    visit.source === 'Google Ads' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                                    visit.source === 'Busca Google' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                                    visit.source === 'Instagram' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
-                                    visit.source === 'IA (ChatGPT/Bing)' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
-                                    'bg-white/5 text-slate-500 border-white/10'
-                                  }`}>
-                                    {visit.source || 'Direto'}
-                                  </span>
-                                </td>
-                                <td className="px-8 py-6">
-                                  <span className="px-3 py-1 bg-white/5 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/5 group-hover:border-cyan-500/30 group-hover:text-cyan-400">
-                                    {visit.page || 'Home'}
-                                  </span>
-                                </td>
-                                <td className="px-8 py-6">
-                                  <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-xl border border-white/5 ${visit.userEmail ? 'bg-cyan-500/10 text-cyan-500' : 'bg-white/5 text-slate-600'}`}>
-                                      <UserIcon className="w-3 h-3" />
-                                    </div>
-                                    <div className="flex flex-col">
-                                      <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tight truncate max-w-[120px]">
-                                        {visit.userName || visit.userEmail || 'Anônimo'}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-8 py-6">
-                                   <div className="flex items-center gap-2">
-                                      <span className={`w-2 h-2 rounded-full ${visit.device === 'iOS' || visit.device === 'Android' ? 'bg-emerald-500' : 'bg-cyan-500'}`} />
-                                      <span className="text-xs font-bold text-slate-400 group-hover:text-white uppercase tracking-widest">
-                                        {visit.device || 'Desconhecido'}
-                                      </span>
-                                   </div>
-                                </td>
-                                <td className="px-8 py-6 text-right">
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedVisit(visit);
-                                    }}
-                                    className="px-4 py-2 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-cyan-600 hover:text-white transition-all inline-flex items-center gap-2 ml-auto shadow-lg shadow-cyan-500/10"
-                                  >
-                                    <Eye className="w-3.5 h-3.5" /> Ver Visitante
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </motion.div>
-                )
+                  )}
+                </motion.div>
               ) : (
                 <motion.div
                   key="customer-detail"
@@ -896,120 +618,6 @@ export const ServiceManager: React.FC = () => {
                   </button>
                 </div>
               </form>
-            </motion.div>
-          </div>
-        )}
-
-        {selectedVisit && (
-          <div 
-            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md"
-            onClick={() => setSelectedVisit(null)}
-          >
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              onClick={e => e.stopPropagation()}
-              className="bg-slate-900 w-full max-w-2xl rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl"
-            >
-              <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-black uppercase tracking-tighter text-white">Análise de Acesso</h2>
-                  <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">
-                    ID: {selectedVisit.id}
-                  </p>
-                </div>
-                <button 
-                  onClick={() => setSelectedVisit(null)}
-                  className="p-3 hover:bg-white/5 rounded-2xl transition-colors"
-                >
-                  <X className="w-6 h-6 text-slate-500" />
-                </button>
-              </div>
-
-              <div className="p-8 space-y-6">
-                <div className="bg-cyan-500/5 border border-cyan-500/10 rounded-2xl p-6 flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border border-white/5 shadow-xl ${selectedVisit.userEmail ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-slate-500'}`}>
-                    <UserIcon className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white leading-none">
-                      {selectedVisit.userName || 'Visitante Anônimo'}
-                    </h3>
-                    <p className="text-slate-400 text-sm mt-1">{selectedVisit.userEmail || 'Nenhum login detectado'}</p>
-                    {selectedVisit.userProvider && (
-                       <span className="inline-flex mt-2 px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-black uppercase tracking-widest text-slate-500">
-                         Via {selectedVisit.userProvider}
-                       </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Canal de Origem</p>
-                    <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
-                       <TrendingUp className={`w-4 h-4 ${selectedVisit.source === 'Google Ads' ? 'text-amber-500' : 'text-emerald-500'}`} />
-                       {selectedVisit.source || 'Acesso Direto'}
-                    </p>
-                  </div>
-                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dispositivo</p>
-                    <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
-                       <Smartphone className="w-4 h-4 text-cyan-500" />
-                       {selectedVisit.device || 'Desktop'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Origem Específica</p>
-                    <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
-                       <BarChart2 className="w-4 h-4 text-purple-500" />
-                       {selectedVisit.utm_source || 'N/A'}
-                    </p>
-                  </div>
-                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Campanha</p>
-                    <p className="text-white font-bold uppercase tracking-tight truncate">
-                       {selectedVisit.utm_campaign || 'Nenhuma'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Página Acessada</p>
-                    <p className="text-cyan-400 font-mono text-sm underline decoration-cyan-500/30">
-                      {window.location.origin}/{selectedVisit.page}
-                    </p>
-                  </div>
-
-                  <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Referência (Traffic Source)</p>
-                    <p className="text-white text-sm font-medium">
-                      {selectedVisit.referrer || 'Acesso Direto'}
-                    </p>
-                  </div>
-
-                  <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Navegador Completo (User Agent)</p>
-                    <p className="text-slate-400 text-[10px] font-mono leading-relaxed break-all">
-                      {selectedVisit.userAgent}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-8 bg-slate-950/50 flex justify-end">
-                <button 
-                  onClick={() => setSelectedVisit(null)}
-                  className="px-8 py-3 bg-white text-slate-950 rounded-xl font-black uppercase tracking-widest text-xs transition-all hover:scale-105"
-                >
-                  Fechar Análise
-                </button>
-              </div>
             </motion.div>
           </div>
         )}
