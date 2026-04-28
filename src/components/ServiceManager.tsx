@@ -845,10 +845,10 @@ export const ServiceManager: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Resolução</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Origem Específica</p>
                     <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
-                       <ImageIcon className="w-4 h-4 text-emerald-500" />
-                       {selectedVisit.screen || 'N/A'}
+                       <BarChart2 className="w-4 h-4 text-purple-500" />
+                       {selectedVisit.utm_source || 'N/A'}
                     </p>
                   </div>
                   <div className="bg-white/5 p-5 rounded-2xl border border-white/5">

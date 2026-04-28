@@ -118,7 +118,13 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
-  const [currentHash, setCurrentHash] = useState(window.location.hash);
+  const [currentHash, setCurrentHash] = useState(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (path === '/manager' || path.endsWith('/manager') || path.includes('/manager/')) {
+      return '#manager';
+    }
+    return window.location.hash;
+  });
   const [authUser, setAuthUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -129,14 +135,16 @@ export default function App() {
 
   useEffect(() => {
     const handleLocationChange = () => {
-      setCurrentHash(window.location.hash);
-      
-      // Detecção agressiva do caminho /manager
       const path = window.location.pathname.toLowerCase();
       const isManagerPath = path === '/manager' || path.endsWith('/manager') || path.includes('/manager/');
       
-      if (isManagerPath && window.location.hash !== '#manager') {
-        window.location.hash = '#manager';
+      if (isManagerPath) {
+        setCurrentHash('#manager');
+        if (window.location.hash !== '#manager') {
+          window.location.hash = '#manager';
+        }
+      } else {
+        setCurrentHash(window.location.hash);
       }
     };
 
@@ -186,7 +194,7 @@ export default function App() {
   useEffect(() => {
     const logVisit = async () => {
       try {
-        const sessionKey = 'nds_visited_v4'; // Nova versão para novos dados
+        const sessionKey = 'nds_visited_v5'; // Forçando novo log para novos campos
         const lastVisit = localStorage.getItem(sessionKey);
         const today = new Date().toDateString();
 
@@ -198,11 +206,12 @@ export default function App() {
 
           // --- Detecção de Origem Expandida ---
           const urlParams = new URLSearchParams(window.location.search);
-          const referrer = document.referrer.toLowerCase();
+          const rawReferrer = document.referrer;
+          const referrer = rawReferrer.toLowerCase();
           let source = "Direto";
 
-          // 1. Google Ads (GCLID é o parâmetro do Google Ads)
-          if (urlParams.has('gclid')) {
+          // 1. Google Ads (GCLID)
+          if (urlParams.has('gclid') || urlParams.has('utm_medium') && urlParams.get('utm_medium')?.includes('cpc')) {
             source = "Google Ads";
           } 
           // 2. Google Search (Orgânico)
@@ -210,31 +219,36 @@ export default function App() {
             source = "Busca Google";
           }
           // 3. IAs (ChatGPT, Gemini, etc)
-          else if (referrer.includes('openai.com') || referrer.includes('chatgpt') || referrer.includes('bing.com')) {
+          else if (referrer.includes('openai.com') || referrer.includes('chatgpt') || referrer.includes('bing.com') || referrer.includes('perplexity')) {
             source = "IA (ChatGPT/Bing)";
           }
           // 4. Redes Sociais
           else if (referrer.includes('instagram.com') || referrer.includes('l.instagram.com')) {
             source = "Instagram";
           }
-          else if (referrer.includes('facebook.com') || referrer.includes('t.co')) {
-            source = "Social (FB/Twitter)";
+          else if (referrer.includes('facebook') || referrer.includes('fb.com') || referrer.includes('t.co') || referrer.includes('linkedin')) {
+            source = "Rede Social";
           }
-          // 5. Parâmetros UTM específicos
+          
+          // 5. Parâmetros UTM específicos (sobrescrevem detecção automática se presentes)
           if (urlParams.get('utm_source')) {
-            source = urlParams.get('utm_source') || source;
+            const utm = urlParams.get('utm_source');
+            if (utm === 'google') source = "Busca Google";
+            else if (utm === 'ig' || utm === 'instagram') source = "Instagram";
+            else source = utm || source;
           }
 
           await addDoc(collection(db, 'visits'), {
             timestamp: serverTimestamp(),
             userAgent: ua,
             device: device,
-            source: source, // Novo campo
+            source: source,
+            utm_source: urlParams.get('utm_source') || null,
             utm_medium: urlParams.get('utm_medium') || null,
             utm_campaign: urlParams.get('utm_campaign') || null,
             language: navigator.language,
             screen: `${window.screen.width}x${window.screen.height}`,
-            referrer: document.referrer || 'Direto',
+            referrer: rawReferrer || 'Direto',
             page: window.location.pathname === '/' ? (window.location.hash || 'home') : window.location.pathname,
             userEmail: authUser?.email || null,
             userName: authUser?.displayName || null,
