@@ -194,11 +194,21 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
 
           {/* Links Desktop */}
           <div className="hidden lg:flex items-center gap-8">
-            {['Serviços', 'Projetos', 'Sobre Nós', 'Dúvidas'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
-                {item}
-              </a>
-            ))}
+            <a href="#serviços" className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
+              Serviços
+            </a>
+            <a 
+              onClick={() => navigate('/tecnologia')}
+              className={`text-xs font-black uppercase tracking-widest transition-colors cursor-pointer ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}
+            >
+              Tecnologia
+            </a>
+            <a 
+              onClick={() => navigate('/tecnologia/vendas')}
+              className={`text-xs font-black uppercase tracking-widest transition-colors cursor-pointer ${isScrolled ? 'text-orange-600 hover:text-orange-500' : 'text-orange-400 hover:text-white'}`}
+            >
+              Página de Vendas
+            </a>
             <a href="#tecnologia-ia" className="relative group">
               <span className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-cyan-600' : 'text-cyan-400'}`}>
                 Tecnologia IA
@@ -238,12 +248,21 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
                 Tecnologia IA
                 <span className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded-full">NOVO</span>
               </a>
-              {['Serviços', 'Projetos', 'Sobre Nós', 'Dúvidas'].map((item) => (
-                <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
-                  {item}
-                </a>
-              ))}
-
+              <button 
+                onClick={() => { setMobileMenuOpen(false); navigate('/tecnologia'); }}
+                className="text-left text-3xl font-black text-slate-900 uppercase tracking-tighter"
+              >
+                Marketing & Tech
+              </button>
+              <button 
+                onClick={() => { setMobileMenuOpen(false); navigate('/tecnologia/vendas'); }}
+                className="text-left text-3xl font-black text-orange-600 uppercase tracking-tighter"
+              >
+                Página de Vendas
+              </button>
+              <a href="#serviços" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+                Serviços
+              </a>
             </div>
             <button onClick={openWhatsApp} className="mt-auto w-full bg-cyan-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-tighter">
               Solicitar Orçamento
@@ -753,9 +772,15 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
             <a href="#" className="text-slate-400 hover:text-white transition-colors"><MapPin /></a>
           </div>
 
-          <div className="text-center md:text-right">
+          <div className="flex flex-col items-center md:items-end">
             <p className="text-[10px] uppercase font-bold tracking-widest text-slate-600 mb-1">Brasília - Distrito Federal</p>
-            <p className="text-[8px] uppercase font-bold tracking-[0.2em] text-slate-700">Atendemos Águas Claras, Asas Sul/Norte, Lago Sul/Norte, Park Way, Guará e todas as regiões do DF</p>
+            <p className="text-[8px] uppercase font-bold tracking-[0.2em] text-slate-700 mb-4 text-center md:text-right">Atendemos Águas Claras, Asas Sul/Norte, Lago Sul/Norte, Park Way, Guará e todas as regiões do DF</p>
+            <button 
+              onClick={() => navigate('/ndsdashboard')}
+              className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-800 hover:text-cyan-500 transition-colors flex items-center gap-2"
+            >
+              <Shield className="w-3 h-3" /> Gerenciamento NDS
+            </button>
           </div>
         </div>
       </footer>
@@ -833,6 +858,7 @@ export default function App() {
         <Route path="/tecnologia/vendas" element={<PaginaVendas />} />
         <Route path="/parceria" element={<PartnerProgram />} />
         <Route path="/ndsdashboard" element={<ServiceManager />} />
+        <Route path="/agencia" element={<DigitalAgency />} />
         {/* Fallbacks */}
         <Route path="*" element={<CFTVSite authUser={authUser} />} />
       </Routes>

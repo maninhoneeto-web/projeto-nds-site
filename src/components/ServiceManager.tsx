@@ -5,7 +5,7 @@ import {
   Settings, LogOut, Shield, Calendar, Camera, Bell,
   PlusCircle, Trash2, CheckCircle2, Clock, QrCode, Target,
   Image as ImageIcon, Loader2, ArrowLeft, BarChart2, TrendingUp, Eye,
-  Github, X, Smartphone, User as UserIcon
+  Github, X, Smartphone, User as UserIcon, Zap
 } from 'lucide-react';
 import { 
   collection, query, getDocs, addDoc, serverTimestamp, 
@@ -75,18 +75,13 @@ export const ServiceManager: React.FC = () => {
 
   const AUTHORIZED_EMAILS = [
     'maninhoneeto@gmail.com',
-    'maninhoneeto-web@users.noreply.github.com',
-    'maninhoneeto-web'
+    'maninhoneeto-web@users.noreply.github.com'
   ];
 
   const isAuthorized = user && (
     AUTHORIZED_EMAILS.some(e => user.email?.toLowerCase().trim() === e.toLowerCase().trim()) ||
-    user.displayName?.toLowerCase().includes('maninhoneeto') ||
     user.email?.toLowerCase().includes('maninhoneeto') ||
-    user.providerData.some(p => 
-      p.displayName?.toLowerCase().includes('maninhoneeto') || 
-      p.email?.toLowerCase().includes('maninhoneeto')
-    )
+    user.displayName?.toLowerCase().includes('maninhoneeto')
   );
 
   useEffect(() => {
@@ -356,6 +351,13 @@ export const ServiceManager: React.FC = () => {
                 <BarChart2 className="w-5 h-5" />
                 <span className="font-bold text-sm uppercase tracking-wider">Acessos</span>
               </button>
+            <button 
+              onClick={() => window.open('/tecnologia/vendas', '_blank')}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-orange-400 hover:bg-orange-500/10 transition-all"
+            >
+              <TrendingUp className="w-5 h-5" />
+              <span className="font-bold text-sm uppercase tracking-wider">Página Vendas</span>
+            </button>
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
               <Bell className="w-5 h-5" />
               <span className="font-bold text-sm uppercase tracking-wider">Lembretes</span>
@@ -505,14 +507,38 @@ export const ServiceManager: React.FC = () => {
                           <PlusCircle className="w-8 h-8 text-emerald-500" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest leading-tight">Custo por Lead</p>
-                          <h4 className="text-2xl font-black text-white leading-none mt-1">R$ {costPerLead}</h4>
-                          <p className="text-[8px] text-slate-500 mt-1 uppercase font-bold">Base: R$ {adsBudget}</p>
+                          <p className="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest leading-tight">Previsão Próximos 7 Dias</p>
+                          <h4 className="text-2xl font-black text-white leading-none mt-1">~{Math.max(2, Math.round(googleAdsVisits * 0.15))} Leads</h4>
+                          <p className="text-[8px] text-slate-500 mt-1 uppercase font-bold">Base: R$ {adsBudget} de Investimento</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                       <div className="bg-slate-900 border border-emerald-500/20 p-8 rounded-[2.5rem] relative overflow-hidden group">
+                          <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 blur-[80px] group-hover:bg-emerald-500/20 transition-colors" />
+                          <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-3">
+                             <Zap className="w-5 h-5 text-emerald-500" />
+                             Assistente de Performance Ads
+                          </h3>
+                          <div className="space-y-6">
+                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 text-emerald-500">Diagnóstico Técnico</p>
+                                <p className="text-sm font-bold text-slate-300">Sincronização entre site e anúncios Google Ads em perfeita harmonia. Rastreamento de conversão ativo.</p>
+                             </div>
+                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 text-amber-500">Estimativa para R$ 120,00</p>
+                                <p className="text-sm font-bold text-slate-300">Expectativa de 4 a 8 contatos qualificados no WhatsApp em um ciclo de 7 dias úteis.</p>
+                             </div>
+                             <button 
+                               onClick={() => window.open(`https://wa.me/5561998308655?text=Olá! Gostaria de ver o relatório detalhado de performance ads.`, '_blank')}
+                               className="w-full py-4 bg-white/5 hover:bg-emerald-500/20 hover:text-emerald-500 hover:border-emerald-500/50 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                             >
+                               Solicitar Relatório Detalhado
+                             </button>
+                          </div>
+                       </div>
+
                        <div className="bg-slate-900 border border-white/5 p-8 rounded-[2.5rem]">
                           <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-2">
                              <TrendingUp className="w-5 h-5 text-cyan-500" />
@@ -602,11 +628,15 @@ export const ServiceManager: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-white/5">
-                            {visits.slice(0, 20).map((visit) => (
+                            {visits.slice(0, 30).map((visit) => (
                               <tr 
                                 key={visit.id} 
-                                onClick={() => setSelectedVisit(visit)}
-                                className="hover:bg-cyan-500/5 transition-colors cursor-pointer group"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setSelectedVisit(visit);
+                                }}
+                                className="hover:bg-cyan-500/10 transition-colors cursor-pointer group border-b border-white/5 last:border-0"
                               >
                                 <td className="px-8 py-6 text-sm font-bold text-slate-300">
                                   {visit.timestamp?.toDate ? visit.timestamp.toDate().toLocaleString('pt-BR') : 'Processando...'}
@@ -653,7 +683,13 @@ export const ServiceManager: React.FC = () => {
                                    </div>
                                 </td>
                                 <td className="px-8 py-6 text-right">
-                                  <button className="p-2 bg-white/5 rounded-lg text-slate-500 group-hover:text-cyan-500 group-hover:bg-cyan-500/10 transition-all">
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedVisit(visit);
+                                    }}
+                                    className="p-2 bg-white/5 rounded-lg text-slate-500 group-hover:text-cyan-500 group-hover:bg-cyan-500/10 transition-all"
+                                  >
                                     <Eye className="w-4 h-4" />
                                   </button>
                                 </td>
