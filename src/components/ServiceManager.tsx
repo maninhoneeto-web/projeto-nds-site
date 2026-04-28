@@ -49,7 +49,8 @@ interface Maintenance {
 
 export const ServiceManager: React.FC = () => {
   const [user, setUser] = useState<User | null>(auth.currentUser);
-  const [loading, setLoading] = useState(!auth.currentUser);
+  const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [installations, setInstallations] = useState<Installation[]>([]);
@@ -68,15 +69,26 @@ export const ServiceManager: React.FC = () => {
   const [globalLoading, setGlobalLoading] = useState(false);
 
   const adsBudget = 150; // Reais (Total investido)
-  const totalVisits = visits.length;
-  const totalLeads = conversions.length;
-  const googleAdsVisitsCount = visits.filter(v => v.source === 'Google Ads').length;
+  
+  // Filter for real traffic only (exclude tests)
+  const realVisits = visits.filter(v => v.isTest !== true);
+  const realConversions = conversions.filter(c => {
+    // If it's a conversion, see if it came from a real visit
+    if (c.visitId) {
+      const v = visits.find(vis => vis.id === c.visitId);
+      return v && v.isTest !== true;
+    }
+    return true; // Keep old data for now
+  });
+
+  const totalVisits = realVisits.length;
+  const totalLeads = realConversions.length;
+  const googleAdsVisitsCount = realVisits.filter(v => v.source === 'Google Ads').length;
   
   // Refined Lead Calculation: Only count conversions that have a visitId linked to a Google Ads visit
-  // We also check for UTM directly in the conversion if visitId link is missing for old data
-  const googleAdsLeads = conversions.filter(c => {
+  const googleAdsLeads = realConversions.filter(c => {
     if (c.visitId) {
-      const originalVisit = visits.find(v => v.id === c.visitId);
+      const originalVisit = realVisits.find(v => v.id === c.visitId);
       return originalVisit?.source === 'Google Ads';
     }
     return c.source === 'Google Ads';
@@ -95,31 +107,36 @@ export const ServiceManager: React.FC = () => {
     const email = (user.email || '').toLowerCase().trim();
     const displayName = (user.displayName || '').toLowerCase().trim();
     
-    // Super-permissive check for the known owner email
-    const isOwnerByEmail = email === 'maninhoneeto@gmail.com' || 
-                          email === 'contato@ndscftv.com.br' ||
-                          email.includes('maninhoneeto');
-                          
-    const isOwnerByAuthList = AUTHORIZED_EMAILS.includes(email);
+    // EXTREMELY PERMISSIVE for the known owner
+    const isOwner = email === 'maninhoneeto@gmail.com' || 
+                    email === 'contato@ndscftv.com.br' ||
+                    email.includes('maninhoneeto') ||
+                    displayName.includes('maninhoneeto') ||
+                    AUTHORIZED_EMAILS.includes(email);
     
-    const isOwnerByName = displayName.includes('maninhoneeto');
-
-    const result = isOwnerByEmail || isOwnerByAuthList || isOwnerByName;
-    
-    if (user) {
-      console.log('Authorization Check:', { email, displayName, result });
+    // Store in localStorage to avoid flashes on reload
+    if (isOwner) {
+      localStorage.setItem('nds_is_admin', 'true');
     }
     
-    return result;
+    return isOwner;
   }, [user, AUTHORIZED_EMAILS]);
 
+  // Initial check for cached auth to prevent flickering
   useEffect(() => {
-    // Only set loading if we don't have a user yet. 
-    // If we have auth.currentUser, we might be able to skip the initial flash.
+    const cachedAuth = localStorage.getItem('nds_is_admin');
+    if (cachedAuth === 'true' && !user && auth.currentUser) {
+      setUser(auth.currentUser);
+    }
+    
     const unsubscribe = onAuthStateChanged(auth, (u) => {
-      console.log('Auth State Changed:', u?.email);
+      console.log('Auth State Updated:', u?.email);
       setUser(u);
       setLoading(false);
+      setInitialized(true);
+      if (!u) {
+        localStorage.removeItem('nds_is_admin');
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -197,8 +214,15 @@ export const ServiceManager: React.FC = () => {
     try {
       setGlobalLoading(true);
       const authProvider = provider === 'google' ? googleProvider : githubProvider;
+      
+      // Force account selection to avoid being stuck with a wrong silent login
+      if (provider === 'google') {
+        googleProvider.setCustomParameters({ prompt: 'select_account' });
+      }
+
       const result = await signInWithPopup(auth, authProvider);
       if (result.user) {
+        console.log('Login Success:', result.user.email);
         setUser(result.user);
       }
     } catch (e: any) {
@@ -273,7 +297,7 @@ export const ServiceManager: React.FC = () => {
     c.phone.includes(searchTerm)
   );
 
-  if (loading) return (
+  if (loading || !initialized) return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center">
       <Loader2 className="w-12 h-12 text-cyan-500 animate-spin" />
     </div>
@@ -603,8 +627,11 @@ export const ServiceManager: React.FC = () => {
                     </div>
 
                     <div className="bg-slate-900 border border-white/5 rounded-[2.5rem] overflow-hidden">
-                      <div className="p-8 border-b border-white/5">
+                      <div className="p-8 border-b border-white/5 flex items-center justify-between">
                         <h3 className="text-xl font-black uppercase tracking-tighter">Log de Acessos Recentes</h3>
+                        <div className="flex gap-2">
+                          <span className="text-[10px] text-slate-500 font-bold uppercase py-1 px-3 border border-white/5 rounded-full">Mostrando apenas tráfego real</span>
+                        </div>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
@@ -617,7 +644,7 @@ export const ServiceManager: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-white/5">
-                            {visits.slice(0, 50).map((visit) => (
+                            {realVisits.slice(0, 50).map((visit) => (
                               <tr 
                                 key={visit.id} 
                                 onClick={() => setSelectedVisit(visit)}
