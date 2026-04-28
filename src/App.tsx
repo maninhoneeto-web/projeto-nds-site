@@ -126,7 +126,7 @@ export default function App() {
       const hash = window.location.hash || '';
       const path = window.location.pathname || '/';
       
-      if (hash === '#manager' || path === '/manager' || path.endsWith('/manager')) {
+      if (hash === '#ndsdashboard' || path === '/ndsdashboard' || path.endsWith('/ndsdashboard')) {
         setView('manager');
       } else if (hash === '#parceria') {
         setView('parceria');
@@ -265,7 +265,7 @@ export default function App() {
     return <PartnerProgram />;
   }
 
-  if (view === '#manager' || view === 'manager') {
+  if (view === '#ndsdashboard' || view === 'ndsdashboard' || view === 'manager') {
     return <ServiceManager />;
   }
 
@@ -303,9 +303,7 @@ export default function App() {
                 NOVO
               </span>
             </a>
-            <a href="#manager" className={`px-4 py-2 rounded-lg border transition-all ${isScrolled ? 'text-slate-600 border-slate-200 bg-slate-50 hover:bg-slate-100' : 'text-white border-white/20 bg-white/5 hover:bg-white/10'} text-[10px] font-black uppercase tracking-widest`}>
-              Painel
-            </a>
+
             <button 
               onClick={openWhatsApp}
               className="bg-cyan-600 hover:bg-cyan-500 text-white px-7 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ml-2"
@@ -341,9 +339,7 @@ export default function App() {
                   {item}
                 </a>
               ))}
-              <a href="#manager" onClick={() => setMobileMenuOpen(false)} className="text-xl font-black text-slate-400 uppercase tracking-tighter border-t border-slate-100 pt-8">
-                Painel Administrativo
-              </a>
+
             </div>
             <button onClick={openWhatsApp} className="mt-auto w-full bg-cyan-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-tighter">
               Solicitar Orçamento
@@ -831,10 +827,7 @@ export default function App() {
              <div className="leading-none text-left">
                <span className="text-lg font-black tracking-tighter text-white">NDS<span className="text-cyan-500">CFTV</span></span>
                <p className="text-[8px] uppercase tracking-widest font-bold text-slate-500">Digital © 2026</p>
-               <a href="#manager" className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-500 hover:text-cyan-500 transition-all mt-2 flex items-center gap-1 group">
-                 <Shield className="w-3 h-3 transition-transform group-hover:scale-110" />
-                 Controle de Acesso
-               </a>
+
              </div>
           </div>
           
