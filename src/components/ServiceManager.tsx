@@ -70,8 +70,16 @@ export const ServiceManager: React.FC = () => {
 
   const adsBudget = 150; // Reais (Total investido)
   
-  // Filter for real traffic only (exclude tests)
-  const realVisits = visits.filter(v => v.isTest !== true);
+  // Filter for real traffic only (exclude tests from localhost/preview)
+  const realVisits = visits.filter(v => {
+    // If it was explicitly marked as test in App.tsx (now only localhost/ais-dev)
+    if (v.isTest === true) {
+      // If it's on a vercel domain, it's NOT a test for the user anymore
+      if (v.userAgent?.includes('VercelBot')) return false; // Exclude bots
+      return false;
+    }
+    return true; 
+  });
   const realConversions = conversions.filter(c => {
     // If it's a conversion, see if it came from a real visit
     if (c.visitId) {
@@ -114,13 +122,17 @@ export const ServiceManager: React.FC = () => {
                     displayName.includes('maninhoneeto') ||
                     AUTHORIZED_EMAILS.includes(email);
     
-    // Store in localStorage to avoid flashes on reload
-    if (isOwner) {
-      localStorage.setItem('nds_is_admin', 'true');
-    }
-    
     return isOwner;
   }, [user, AUTHORIZED_EMAILS]);
+
+  // Sync admin status to localStorage via Effect (Safe)
+  useEffect(() => {
+    if (isAuthorized) {
+      localStorage.setItem('nds_is_admin', 'true');
+    } else if (initialized && !loading) {
+      localStorage.removeItem('nds_is_admin');
+    }
+  }, [isAuthorized, initialized, loading]);
 
   // Initial check for cached auth to prevent flickering
   useEffect(() => {
@@ -603,8 +615,8 @@ export const ServiceManager: React.FC = () => {
                                { label: 'IA (ChatGPT/Bing)', color: 'bg-purple-500' },
                                { label: 'Direto', color: 'bg-slate-500' }
                              ].map(source => {
-                               const count = visits.filter(v => v.source === source.label).length;
-                               const total = visits.length || 1;
+                               const count = realVisits.filter(v => v.source === source.label).length;
+                               const total = realVisits.length || 1;
                                const percentage = Math.round((count / total) * 100);
                                return (
                                  <div key={source.label}>

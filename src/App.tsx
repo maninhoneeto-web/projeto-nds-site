@@ -143,60 +143,7 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
     }
   };
 
-  // TRACKING LOGIC
-  useEffect(() => {
-    const trackVisit = async () => {
-      // Exclude owner/admin from being tracked as a visit to keep numbers clean
-      const adminFlag = localStorage.getItem('nds_is_admin');
-      const isOwnerEmail = authUser?.email === 'maninhoneeto@gmail.com' || authUser?.email?.includes('maninhoneeto');
-      
-      if (adminFlag === 'true' || isOwnerEmail) {
-        console.log('Admin detected, skipping visit tracking to keep analytics clean.');
-        return;
-      }
-
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const gclid = urlParams.get('gclid');
-        const utmSource = urlParams.get('utm_source');
-        const utmMedium = urlParams.get('utm_medium');
-        
-        // Environment Detection
-        const isDev = window.location.hostname.includes('localhost') || 
-                      window.location.hostname.includes('ais-dev') ||
-                      window.location.hostname.includes('vercel.app');
-
-        let source = 'Direto';
-        if (gclid) source = 'Google Ads';
-        else if (utmSource === 'google' || document.referrer.includes('google.com')) source = 'Busca Google';
-        else if (utmSource === 'instagram' || document.referrer.includes('instagram.com')) source = 'Instagram';
-        else if (utmSource) source = utmSource;
-
-        const visitData = {
-          timestamp: serverTimestamp(),
-          page: 'Home',
-          source,
-          gclid: gclid || null,
-          utm_source: utmSource || null,
-          utm_medium: utmMedium || null,
-          userAgent: navigator.userAgent,
-          device: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
-          referrer: document.referrer || null,
-          environment: isDev ? 'Development/Preview' : 'Production',
-          isTest: isDev
-        };
-
-        const docRef = await addDoc(collection(db, 'visits'), visitData);
-        setCurrentVisitId(docRef.id);
-        localStorage.setItem('nds_visit_id', docRef.id);
-      } catch (e) {
-        console.error('Error tracking visit:', e);
-      }
-    };
-
-    trackVisit();
-  }, [authUser]);
-
+  // TRACKING LOGIC REMOVED - CONSOLIDATED IN VisitLogger
   const HERO_SLIDES = [
     {
       image: IMAGES.SERVICE_MIBO,
@@ -947,7 +894,15 @@ function VisitLogger({ authUser }: { authUser: User | null }) {
           if (location.pathname === '/tecnologia/vendas') pageName = "Pagina de Vendas";
           if (location.pathname === '/parceria') pageName = "Parceria";
 
-          await addDoc(collection(db, 'visits'), {
+          const isDev = window.location.hostname.includes('localhost') || 
+                        window.location.hostname.includes('ais-dev');
+          
+          const adminFlag = localStorage.getItem('nds_is_admin');
+          const isOwnerEmail = authUser?.email === 'maninhoneeto@gmail.com' || authUser?.email?.includes('maninhoneeto');
+          
+          if (adminFlag === 'true' || isOwnerEmail) return;
+
+          const docRef = await addDoc(collection(db, 'visits'), {
             timestamp: serverTimestamp(),
             userAgent: ua,
             device: device,
@@ -959,10 +914,13 @@ function VisitLogger({ authUser }: { authUser: User | null }) {
             screen: `${window.screen.width}x${window.screen.height}`,
             referrer: rawReferrer || 'Direto',
             page: pageName,
+            isTest: isDev,
+            environment: isDev ? 'Development/Preview' : 'Production',
             userEmail: authUser?.email || null,
             userName: authUser?.displayName || null,
             userProvider: authUser?.providerData[0]?.providerId || null
           });
+          localStorage.setItem('nds_visit_id', docRef.id);
           localStorage.setItem(sessionKey, today);
         }
       } catch (e) {
