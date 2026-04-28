@@ -18,14 +18,14 @@ import { ServiceManager } from './components/ServiceManager';
    ============================ */
 
 const SERVICES = [
-  { id: 'cameras', label: 'Câmeras IP', icon: Camera, img: IMAGES.SERVICE_CAMERAS, desc: 'Monitoramento Intelbras em alta definição 4K. Câmeras Dome e Bullet de elite com visão noturna colorida.' },
-  { id: 'smart', label: 'Linha Mibo', icon: Smartphone, img: IMAGES.SERVICE_MIBO, desc: 'Câmeras inteligentes Wi-Fi Intelbras. Praticidade e segurança com acompanhamento inteligente via celular.' },
-  { id: 'videoporteiro', label: 'Vídeo Porteiros', icon: BellRing, img: IMAGES.SERVICE_PORTEIRO, desc: 'Sistemas Allo de vídeo interfonia com abertura de fechadura remota e imagem em alta definição.' },
-  { id: 'dvr', label: 'Gravadores', icon: Server, img: IMAGES.SERVICE_DVR, desc: 'DVRs e NVRs Multi-HD Intelbras. Estabilidade total para o armazenamento das suas gravações 24h.' },
-  { id: 'acesso', label: 'Biometria', icon: Key, img: IMAGES.SERVICE_ACESSO, desc: 'Controle de acesso seguro com tecnologia biométrica e facial Intelbras para condomínios e empresas.' },
-  { id: 'cerca', label: 'Cerca Elétrica', icon: Zap, img: IMAGES.SERVICE_CERCA, desc: 'Instalação técnica de cerca elétrica com centrais de alta voltagem e hastes reforçadas padrão NDS.' },
-  { id: 'alarme', label: 'Alarmes', icon: Shield, img: IMAGES.SERVICE_ALARME, desc: 'Alarmes sem fio AMT 8000. Inteligência e rapidez com disparo direto no seu smartphone.' },
-  { id: 'ti', label: 'Redes e TI', icon: Wifi, img: IMAGES.SERVICE_TI, desc: 'Infraestrutura robusta de TI, Wi-Fi de alta performance e cabeamento estruturado padrão cat6.' },
+  { id: 'ia', label: 'Monitoramento IA', icon: Zap, img: IMAGES.PORTFOLIO_PTZ, desc: 'Analíticos de vídeo avançados com Inteligência Artificial para detecção facial, leitura de placas e proteção de perímetro.' },
+  { id: 'cameras', label: 'Câmeras IP', icon: Camera, img: IMAGES.SERVICE_CAMERAS, desc: 'Monitoramento Intelbras em alta definição 4K. Câmeras de elite com visão noturna colorida e processamento de imagem.' },
+  { id: 'smart', label: 'Linha Mibo', icon: Smartphone, img: IMAGES.SERVICE_MIBO, desc: 'Câmeras inteligentes Wi-Fi Intelbras. Praticidade e segurança com acompanhamento inteligente via smartphone.' },
+  { id: 'videoporteiro', label: 'Vídeo Porteiros', icon: BellRing, img: IMAGES.SERVICE_PORTEIRO, desc: 'Sistemas Allo de vídeo interfonia com abertura de fechadura remota e imagem cristalina.' },
+  { id: 'dvr', label: 'Gravadores', icon: Server, img: IMAGES.SERVICE_DVR, desc: 'DVRs e NVRs Multi-HD Intelbras. Estabilidade total para o armazenamento das suas gravações 24h por dia.' },
+  { id: 'acesso', label: 'Biometria', icon: Key, img: IMAGES.SERVICE_ACESSO, desc: 'Controle de acesso seguro com tecnologia biométrica e reconhecimento facial de última geração.' },
+  { id: 'alarme', label: 'Alarmes Smart', icon: Shield, img: IMAGES.SERVICE_ALARME, desc: 'Centrais AMT 8000 totalmente sem fio. Notificações em tempo real e inteligência contra invasões.' },
+  { id: 'ti', label: 'Redes e TI', icon: Wifi, img: IMAGES.SERVICE_TI, desc: 'Infraestrutura de rede robusta e Wi-Fi de alta performance para suportar sistemas de segurança modernos.' },
 ];
 
 const PORTFOLIO = [
@@ -735,6 +735,67 @@ export default function App() {
           >
             Chamar Suporte Imediato
           </button>
+        </div>
+      </section>
+
+      {/* AI TECHNOLOGY SECTION */}
+      <section className="py-24 bg-slate-900 border-y border-white/5 relative overflow-hidden" id="tecnologia-ia">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(6,182,212,0.1),transparent)]" />
+        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+            >
+              <SectionTitle 
+                light
+                title="Segurança Potencializada por IA"
+                subtitle="Nossos sistemas não apenas gravam imagens, eles entendem o que está acontecendo em tempo real."
+              />
+              <div className="space-y-6">
+                {[
+                  { t: 'Reconhecimento Facial', d: 'Identificação instantânea de pessoas autorizadas e alerta para desconhecidos.' },
+                  { t: 'Analíticos de Comportamento', d: 'Detecção de intrusão, abandono de objetos e cruzamento de linha virtual.' },
+                  { t: 'Leitura de Placas (LPR)', d: 'Controle total de entrada e saída de veículos com registro automatizado.' },
+                  { t: 'Busca Inteligente', d: 'Encontre eventos específicos em segundos, filtrando por cor de roupa ou tipo de objeto.' }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
+                    <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0 group-hover:scale-110 transition-transform">
+                      <Zap className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold uppercase tracking-tight text-sm mb-1">{item.t}</h4>
+                      <p className="text-slate-400 text-sm">{item.d}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+            >
+              <img 
+                src={IMAGES.PORTFOLIO_PTZ} 
+                alt="Tecnologia IA" 
+                className="w-full h-full object-cover" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+              <div className="absolute bottom-8 left-8 right-8 p-6 backdrop-blur-xl bg-white/10 rounded-2xl border border-white/10">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-cyan-500 flex items-center justify-center animate-pulse">
+                    <Shield className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-cyan-400 text-[10px] uppercase font-black tracking-widest">IA ATIVA</p>
+                    <p className="text-white font-bold text-lg">Proteção 24/7 com análise preditiva</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
