@@ -50,7 +50,6 @@ interface Maintenance {
 export const ServiceManager: React.FC = () => {
   const [user, setUser] = useState<User | null>(auth.currentUser);
   const [loading, setLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [installations, setInstallations] = useState<Installation[]>([]);
@@ -67,6 +66,7 @@ export const ServiceManager: React.FC = () => {
   const [showAddMaintenance, setShowAddMaintenance] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [globalLoading, setGlobalLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const adsBudget = 150; // Reais (Total investido)
   
@@ -113,39 +113,30 @@ export const ServiceManager: React.FC = () => {
   const isAuthorized = useMemo(() => {
     if (!user) return false;
     const email = (user.email || '').toLowerCase().trim();
-    const displayName = (user.displayName || '').toLowerCase().trim();
     
-    // EXTREMELY PERMISSIVE for the known owner
-    const isOwner = email === 'maninhoneeto@gmail.com' || 
-                    email === 'contato@ndscftv.com.br' ||
-                    email.includes('maninhoneeto') ||
-                    displayName.includes('maninhoneeto') ||
+    // THE OWNER ALWAYS HAS ACCESS
+    if (email === 'maninhoneeto@gmail.com' || email === 'contato@ndscftv.com.br') return true;
+    
+    // Broad check for owner name or list
+    const isOwner = email.includes('maninhoneeto') || 
+                    (user.displayName || '').toLowerCase().includes('maninhoneeto') ||
                     AUTHORIZED_EMAILS.includes(email);
     
     return isOwner;
   }, [user, AUTHORIZED_EMAILS]);
 
-  // Sync admin status to localStorage via Effect (Safe)
+  // Sync admin status to localStorage (Safe)
   useEffect(() => {
     if (isAuthorized) {
       localStorage.setItem('nds_is_admin', 'true');
-    } else if (initialized && !loading) {
-      localStorage.removeItem('nds_is_admin');
     }
-  }, [isAuthorized, initialized, loading]);
+  }, [isAuthorized]);
 
   // Initial check for cached auth to prevent flickering
   useEffect(() => {
-    const cachedAuth = localStorage.getItem('nds_is_admin');
-    if (cachedAuth === 'true' && !user && auth.currentUser) {
-      setUser(auth.currentUser);
-    }
-    
     const unsubscribe = onAuthStateChanged(auth, (u) => {
-      console.log('Auth State Updated:', u?.email);
       setUser(u);
       setLoading(false);
-      setInitialized(true);
       if (!u) {
         localStorage.removeItem('nds_is_admin');
       }
@@ -224,6 +215,7 @@ export const ServiceManager: React.FC = () => {
 
   const login = async (provider: 'google' | 'github' = 'google') => {
     try {
+      setAuthError(null);
       setGlobalLoading(true);
       const authProvider = provider === 'google' ? googleProvider : githubProvider;
       
@@ -239,9 +231,10 @@ export const ServiceManager: React.FC = () => {
       }
     } catch (e: any) {
       if (e.code === 'auth/popup-closed-by-user') {
-        console.log('Login cancelado pelo usuário');
+        setAuthError('O login foi cancelado.');
       } else {
         console.error(e);
+        setAuthError('Erro ao tentar login. Verifique sua conexão.');
       }
     } finally {
       setGlobalLoading(false);
@@ -309,7 +302,7 @@ export const ServiceManager: React.FC = () => {
     c.phone.includes(searchTerm)
   );
 
-  if (loading || !initialized) return (
+  if (loading) return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center">
       <Loader2 className="w-12 h-12 text-cyan-500 animate-spin" />
     </div>
@@ -361,6 +354,13 @@ export const ServiceManager: React.FC = () => {
           <>
             <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-4">NDS Service Manager</h1>
             <p className="text-slate-400 mb-10 font-medium tracking-wide">Área exclusiva para gestão de clientes e manutenções.</p>
+            
+            {authError && (
+              <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-500 font-bold text-sm">
+                {authError}
+              </div>
+            )}
+
             <div className="space-y-4">
               <button 
                 onClick={() => login('google')}
