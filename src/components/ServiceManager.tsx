@@ -106,20 +106,20 @@ export const ServiceManager: React.FC = () => {
 
   const AUTHORIZED_EMAILS = useMemo(() => [
     'maninhoneeto@gmail.com',
-    'maninhoneeto-web@users.noreply.github.com',
-    'contato@ndscftv.com.br'
+    'contato@ndscftv.com.br',
+    'maninhoneeto-web@users.noreply.github.com'
   ], []);
 
   const isAuthorized = useMemo(() => {
     if (!user) return false;
     const email = (user.email || '').toLowerCase().trim();
+    const displayName = (user.displayName || '').toLowerCase().trim();
     
-    // THE OWNER ALWAYS HAS ACCESS
-    if (email === 'maninhoneeto@gmail.com' || email === 'contato@ndscftv.com.br') return true;
-    
-    // Broad check for owner name or list
-    const isOwner = email.includes('maninhoneeto') || 
-                    (user.displayName || '').toLowerCase().includes('maninhoneeto') ||
+    // OWNER ALWAYS HAS ACCESS
+    const isOwner = email === 'maninhoneeto@gmail.com' || 
+                    email === 'contato@ndscftv.com.br' ||
+                    email.includes('maninhoneeto') ||
+                    displayName.includes('maninhoneeto') ||
                     AUTHORIZED_EMAILS.includes(email);
     
     return isOwner;
@@ -129,10 +129,11 @@ export const ServiceManager: React.FC = () => {
   useEffect(() => {
     if (isAuthorized) {
       localStorage.setItem('nds_is_admin', 'true');
+    } else if (user) {
+      localStorage.removeItem('nds_is_admin');
     }
-  }, [isAuthorized]);
+  }, [isAuthorized, user]);
 
-  // Initial check for cached auth to prevent flickering
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -145,53 +146,30 @@ export const ServiceManager: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      console.log('AUTHORIZATION DEBUG:', {
-        email: user.email,
-        displayName: user.displayName,
-        isAuthorized: !!isAuthorized,
-        uid: user.uid,
-        providers: user.providerData.map(p => ({ id: p.providerId, email: p.email }))
-      });
-    }
-  }, [user, isAuthorized]);
-
-  useEffect(() => {
     if (user && isAuthorized) {
-      console.log('Fetching Analytics Data for Authorized User:', user.email);
+      // Analytics Data
       const visitsQ = query(collection(db, 'visits'), orderBy('timestamp', 'desc'));
       const unsubscribeV = onSnapshot(visitsQ, (snapshot) => {
-        const visitsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        console.log('Visits loaded:', visitsData.length);
-        setVisits(visitsData);
-      }, (error) => {
-        console.error('Firestore Error (Visits):', error);
-      });
+        setVisits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }, (err) => console.error('Visits sync error:', err));
       
       const convQ = query(collection(db, 'conversions'), orderBy('timestamp', 'desc'));
       const unsubscribeC = onSnapshot(convQ, (snapshot) => {
-        const convData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        console.log('Conversions loaded:', convData.length);
-        setConversions(convData);
-      }, (error) => {
-        console.error('Firestore Error (Conversions):', error);
-      });
+        setConversions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }, (err) => console.error('Conversions sync error:', err));
 
-      return () => { unsubscribeV(); unsubscribeC(); };
+      const custQ = query(collection(db, 'customers'), orderBy('createdAt', 'desc'));
+      const unsubscribeCust = onSnapshot(custQ, (snapshot) => {
+        setCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Customer)));
+      }, (err) => console.error('Customers sync error:', err));
+
+      return () => { 
+        unsubscribeV(); 
+        unsubscribeC(); 
+        unsubscribeCust();
+      };
     }
   }, [user, isAuthorized]);
-
-  useEffect(() => {
-    if (user) {
-      const q = query(collection(db, 'customers'), orderBy('createdAt', 'desc'));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        setCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Customer)));
-      }, (error) => {
-        console.error('Firestore Error (Customers):', error);
-      });
-      return () => unsubscribe();
-    }
-  }, [user]);
 
   useEffect(() => {
     if (selectedCustomer) {
@@ -219,21 +197,15 @@ export const ServiceManager: React.FC = () => {
       setGlobalLoading(true);
       const authProvider = provider === 'google' ? googleProvider : githubProvider;
       
-      // Force account selection to avoid being stuck with a wrong silent login
-      if (provider === 'google') {
-        googleProvider.setCustomParameters({ prompt: 'select_account' });
-      }
-
       const result = await signInWithPopup(auth, authProvider);
       if (result.user) {
-        console.log('Login Success:', result.user.email);
         setUser(result.user);
       }
     } catch (e: any) {
+      console.error('Login error:', e);
       if (e.code === 'auth/popup-closed-by-user') {
         setAuthError('O login foi cancelado.');
       } else {
-        console.error(e);
         setAuthError('Erro ao tentar login. Verifique sua conexão.');
       }
     } finally {
@@ -333,6 +305,17 @@ export const ServiceManager: React.FC = () => {
             <p className="text-slate-400 mb-8 font-medium tracking-wide text-sm">
               Esta conta não está na lista de administradores.
             </p>
+            {(user.email?.includes('maninhoneeto') || user.displayName?.toLowerCase().includes('maninhoneeto')) && (
+              <button 
+                onClick={() => {
+                  localStorage.setItem('nds_is_admin', 'true');
+                  window.location.reload();
+                }}
+                className="w-full py-4 mb-4 bg-cyan-600/20 text-cyan-500 border border-cyan-500/30 rounded-2xl font-black uppercase tracking-widest transition-all hover:bg-cyan-600/30"
+              >
+                Forçar Acesso (Sou o Dono)
+              </button>
+            )}
             <div className="space-y-4">
               <button 
                 onClick={logout}
