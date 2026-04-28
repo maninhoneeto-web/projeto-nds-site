@@ -131,8 +131,10 @@ export default function App() {
     const handleLocationChange = () => {
       setCurrentHash(window.location.hash);
       
-      // Check if pathname is /manager or ends with /manager
-      const isManagerPath = window.location.pathname.endsWith('/manager') || window.location.pathname.includes('/manager/');
+      // Detecção agressiva do caminho /manager
+      const path = window.location.pathname.toLowerCase();
+      const isManagerPath = path === '/manager' || path.endsWith('/manager') || path.includes('/manager/');
+      
       if (isManagerPath && window.location.hash !== '#manager') {
         window.location.hash = '#manager';
       }
@@ -184,22 +186,52 @@ export default function App() {
   useEffect(() => {
     const logVisit = async () => {
       try {
-        const sessionKey = 'nds_visited_v3'; // Versão 3
+        const sessionKey = 'nds_visited_v4'; // Nova versão para novos dados
         const lastVisit = localStorage.getItem(sessionKey);
         const today = new Date().toDateString();
 
-        // Sempre logamos se o user mudar ou se não logou hoje
-        // Mas para não floodar, usamos uma lógica de cache por sessão/dia
         if (lastVisit !== today) {
           const ua = navigator.userAgent;
           let device = "Desktop";
           if (/android/i.test(ua)) device = "Android";
           else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
 
+          // --- Detecção de Origem Expandida ---
+          const urlParams = new URLSearchParams(window.location.search);
+          const referrer = document.referrer.toLowerCase();
+          let source = "Direto";
+
+          // 1. Google Ads (GCLID é o parâmetro do Google Ads)
+          if (urlParams.has('gclid')) {
+            source = "Google Ads";
+          } 
+          // 2. Google Search (Orgânico)
+          else if (referrer.includes('google.com')) {
+            source = "Busca Google";
+          }
+          // 3. IAs (ChatGPT, Gemini, etc)
+          else if (referrer.includes('openai.com') || referrer.includes('chatgpt') || referrer.includes('bing.com')) {
+            source = "IA (ChatGPT/Bing)";
+          }
+          // 4. Redes Sociais
+          else if (referrer.includes('instagram.com') || referrer.includes('l.instagram.com')) {
+            source = "Instagram";
+          }
+          else if (referrer.includes('facebook.com') || referrer.includes('t.co')) {
+            source = "Social (FB/Twitter)";
+          }
+          // 5. Parâmetros UTM específicos
+          if (urlParams.get('utm_source')) {
+            source = urlParams.get('utm_source') || source;
+          }
+
           await addDoc(collection(db, 'visits'), {
             timestamp: serverTimestamp(),
             userAgent: ua,
             device: device,
+            source: source, // Novo campo
+            utm_medium: urlParams.get('utm_medium') || null,
+            utm_campaign: urlParams.get('utm_campaign') || null,
             language: navigator.language,
             screen: `${window.screen.width}x${window.screen.height}`,
             referrer: document.referrer || 'Direto',

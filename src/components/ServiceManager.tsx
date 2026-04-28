@@ -499,6 +499,7 @@ export const ServiceManager: React.FC = () => {
                           <thead>
                             <tr className="border-b border-white/5">
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Data e Hora</th>
+                              <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Origem</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Página</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Visitante</th>
                               <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Dispositivo</th>
@@ -514,6 +515,17 @@ export const ServiceManager: React.FC = () => {
                               >
                                 <td className="px-8 py-6 text-sm font-bold text-slate-300">
                                   {visit.timestamp?.toDate ? visit.timestamp.toDate().toLocaleString('pt-BR') : 'Processando...'}
+                                </td>
+                                <td className="px-8 py-6">
+                                  <span className={`px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest border ${
+                                    visit.source === 'Google Ads' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                                    visit.source === 'Busca Google' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                                    visit.source === 'Instagram' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
+                                    visit.source === 'IA (ChatGPT/Bing)' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
+                                    'bg-white/5 text-slate-500 border-white/10'
+                                  }`}>
+                                    {visit.source || 'Direto'}
+                                  </span>
                                 </td>
                                 <td className="px-8 py-6">
                                   <span className="px-3 py-1 bg-white/5 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/5 group-hover:border-cyan-500/30 group-hover:text-cyan-400">
@@ -816,17 +828,33 @@ export const ServiceManager: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Canal de Origem</p>
+                    <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
+                       <TrendingUp className={`w-4 h-4 ${selectedVisit.source === 'Google Ads' ? 'text-amber-500' : 'text-emerald-500'}`} />
+                       {selectedVisit.source || 'Acesso Direto'}
+                    </p>
+                  </div>
+                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dispositivo</p>
                     <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
                        <Smartphone className="w-4 h-4 text-cyan-500" />
                        {selectedVisit.device || 'Desktop'}
                     </p>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Resolução</p>
                     <p className="text-white font-bold uppercase tracking-tight flex items-center gap-2">
                        <ImageIcon className="w-4 h-4 text-emerald-500" />
                        {selectedVisit.screen || 'N/A'}
+                    </p>
+                  </div>
+                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Campanha</p>
+                    <p className="text-white font-bold uppercase tracking-tight truncate">
+                       {selectedVisit.utm_campaign || 'Nenhuma'}
                     </p>
                   </div>
                 </div>

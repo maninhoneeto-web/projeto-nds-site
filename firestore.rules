@@ -97,13 +97,17 @@ service cloud.firestore {
       
       function isValidVisit(data) {
         return data.keys().hasAll(['timestamp', 'userAgent', 'page'])
-               && data.keys().size() <= 10
+               && data.keys().size() <= 20
                && data.timestamp == request.time
                && data.userAgent is string && data.userAgent.size() <= 1000
                && data.page is string && data.page.size() <= 200
                && (data.get('device', '') == '' || (data.device is string && data.device.size() <= 100))
                && (data.get('screen', '') == '' || (data.screen is string && data.screen.size() <= 100))
-               && (data.get('referrer', '') == '' || (data.referrer is string && data.referrer.size() <= 500));
+               && (data.get('referrer', '') == '' || (data.referrer is string && data.referrer.size() <= 500))
+               && (data.get('source', '') == '' || (data.source is string && data.source.size() <= 200))
+               && (data.get('userEmail', null) == null || (data.userEmail is string && data.userEmail.size() <= 200))
+               && (data.get('userName', null) == null || (data.userName is string && data.userName.size() <= 200))
+               && (data.get('userProvider', null) == null || (data.userProvider is string && data.userProvider.size() <= 100));
       }
     }
   }
