@@ -824,6 +824,7 @@ export default function App() {
         <Route path="/" element={<CFTVSite authUser={authUser} />} />
         <Route path="/parceria" element={<PartnerProgram />} />
         <Route path="/manager" element={<ServiceManager />} />
+        <Route path="/ndsdashboard" element={<ServiceManager />} />
         {/* Fallbacks */}
         <Route path="*" element={<CFTVSite authUser={authUser} />} />
       </Routes>
