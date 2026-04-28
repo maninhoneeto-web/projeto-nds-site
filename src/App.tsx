@@ -235,7 +235,7 @@ export default function App() {
             language: navigator.language,
             screen: `${window.screen.width}x${window.screen.height}`,
             referrer: document.referrer || 'Direto',
-            page: window.location.hash || 'home',
+            page: window.location.pathname === '/' ? (window.location.hash || 'home') : window.location.pathname,
             userEmail: authUser?.email || null,
             userName: authUser?.displayName || null,
             userProvider: authUser?.providerData[0]?.providerId || null
