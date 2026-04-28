@@ -341,22 +341,19 @@ export const ServiceManager: React.FC = () => {
               <Users className="w-5 h-5" />
               <span className="font-bold text-sm uppercase tracking-wider">Clientes</span>
             </button>
-              <button 
-                onClick={() => {
-                  setSelectedCustomer(null);
-                  setCurrentTab('analytics');
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'analytics' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
-              >
-                <BarChart2 className="w-5 h-5" />
-                <span className="font-bold text-sm uppercase tracking-wider">Acessos</span>
-              </button>
+            <button 
+              onClick={() => setCurrentTab('analytics')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'analytics' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+            >
+              <BarChart2 className="w-5 h-5" />
+              <span className="font-bold text-sm uppercase tracking-wider">Monitoramento</span>
+            </button>
             <button 
               onClick={() => window.open('/tecnologia/vendas', '_blank')}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-orange-400 hover:bg-orange-500/10 transition-all"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-orange-400 bg-orange-400/5 border border-orange-400/20 hover:bg-orange-100/10 transition-all"
             >
               <TrendingUp className="w-5 h-5" />
-              <span className="font-bold text-sm uppercase tracking-wider">Página Vendas</span>
+              <span className="font-bold text-[10px] uppercase tracking-widest font-black">Página de Vendas ✨</span>
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
               <Bell className="w-5 h-5" />
@@ -628,15 +625,11 @@ export const ServiceManager: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-white/5">
-                            {visits.slice(0, 30).map((visit) => (
+                            {visits.slice(0, 100).map((visit) => (
                               <tr 
                                 key={visit.id} 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setSelectedVisit(visit);
-                                }}
-                                className="hover:bg-cyan-500/10 transition-colors cursor-pointer group border-b border-white/5 last:border-0"
+                                onClick={() => setSelectedVisit(visit)}
+                                className="group hover:bg-cyan-500/10 transition-all cursor-pointer border-b border-white/5 last:border-0"
                               >
                                 <td className="px-8 py-6 text-sm font-bold text-slate-300">
                                   {visit.timestamp?.toDate ? visit.timestamp.toDate().toLocaleString('pt-BR') : 'Processando...'}
@@ -654,7 +647,7 @@ export const ServiceManager: React.FC = () => {
                                 </td>
                                 <td className="px-8 py-6">
                                   <span className="px-3 py-1 bg-white/5 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/5 group-hover:border-cyan-500/30 group-hover:text-cyan-400">
-                                    {visit.page}
+                                    {visit.page || 'Home'}
                                   </span>
                                 </td>
                                 <td className="px-8 py-6">
@@ -666,11 +659,6 @@ export const ServiceManager: React.FC = () => {
                                       <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tight truncate max-w-[120px]">
                                         {visit.userName || visit.userEmail || 'Anônimo'}
                                       </span>
-                                      {visit.userEmail && (
-                                        <span className="text-[9px] text-slate-500 font-medium lowercase">
-                                          {visit.userEmail.length > 20 ? visit.userEmail.substring(0, 17) + '...' : visit.userEmail}
-                                        </span>
-                                      )}
                                     </div>
                                   </div>
                                 </td>
@@ -688,9 +676,9 @@ export const ServiceManager: React.FC = () => {
                                       e.stopPropagation();
                                       setSelectedVisit(visit);
                                     }}
-                                    className="p-2 bg-white/5 rounded-lg text-slate-500 group-hover:text-cyan-500 group-hover:bg-cyan-500/10 transition-all"
+                                    className="px-4 py-2 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-cyan-600 hover:text-white transition-all inline-flex items-center gap-2 ml-auto shadow-lg shadow-cyan-500/10"
                                   >
-                                    <Eye className="w-4 h-4" />
+                                    <Eye className="w-3.5 h-3.5" /> Ver Visitante
                                   </button>
                                 </td>
                               </tr>
