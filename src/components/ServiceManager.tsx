@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, Plus, Search, ChevronRight, Phone, MapPin, 
@@ -48,8 +48,8 @@ interface Maintenance {
 }
 
 export const ServiceManager: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(auth.currentUser);
+  const [loading, setLoading] = useState(!auth.currentUser);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [installations, setInstallations] = useState<Installation[]>([]);
@@ -72,18 +72,25 @@ export const ServiceManager: React.FC = () => {
   const googleAdsLeads = conversions.filter(c => visits.some(v => v.id === c.visitId && v.source === 'Google Ads') || (c.page === 'CFTV Home' && googleAdsVisits > 0)).length; 
   const costPerLead = googleAdsLeads > 0 ? (adsBudget / googleAdsLeads).toFixed(2) : '0';
 
-  const AUTHORIZED_EMAILS = [
+  const AUTHORIZED_EMAILS = useMemo(() => [
     'maninhoneeto@gmail.com',
-    'maninhoneeto-web@users.noreply.github.com'
-  ];
+    'maninhoneeto-web@users.noreply.github.com',
+    'contato@ndscftv.com.br',
+    'maninhoneeto@gmail.com'.toLowerCase()
+  ], []);
 
-  const isAuthorized = user && (
-    AUTHORIZED_EMAILS.some(e => user.email?.toLowerCase().trim() === e.toLowerCase().trim()) ||
-    user.email?.toLowerCase().includes('maninhoneeto') ||
-    user.displayName?.toLowerCase().includes('maninhoneeto')
-  );
+  const isAuthorized = useMemo(() => {
+    if (!user) return false;
+    const email = user.email?.toLowerCase().trim() || '';
+    const displayName = user.displayName?.toLowerCase().trim() || '';
+    const isManinho = email.includes('maninhoneeto') || 
+                      displayName.includes('maninhoneeto') || 
+                      AUTHORIZED_EMAILS.includes(email);
+    return isManinho;
+  }, [user, AUTHORIZED_EMAILS]);
 
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -159,7 +166,10 @@ export const ServiceManager: React.FC = () => {
     try {
       setGlobalLoading(true);
       const authProvider = provider === 'google' ? googleProvider : githubProvider;
-      await signInWithPopup(auth, authProvider);
+      const result = await signInWithPopup(auth, authProvider);
+      if (result.user) {
+        setUser(result.user);
+      }
     } catch (e: any) {
       if (e.code === 'auth/popup-closed-by-user') {
         console.log('Login cancelado pelo usuário');
@@ -330,6 +340,16 @@ export const ServiceManager: React.FC = () => {
           </div>
 
           <div className="space-y-2 flex-grow overflow-y-auto">
+            <button 
+              onClick={() => {
+                setSelectedCustomer(null);
+                setCurrentTab('analytics');
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentTab === 'analytics' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+            >
+              <BarChart2 className="w-5 h-5" />
+              <span className="font-bold text-sm uppercase tracking-wider">Monitoramento</span>
+            </button>
             <button 
               onClick={() => {
                 setSelectedCustomer(null);
@@ -810,6 +830,78 @@ export const ServiceManager: React.FC = () => {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+
+        {selectedVisit && (
+          <div className="fixed inset-0 z-[101] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              className="bg-slate-900 w-full max-w-2xl rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setSelectedVisit(null)}
+                className="absolute top-8 right-8 p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors z-10"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="p-10">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center">
+                    <UserIcon className="w-8 h-8 text-cyan-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black uppercase tracking-tighter">Detalhes do Acesso</h2>
+                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{selectedVisit.id}</p>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8 mb-10">
+                  <div className="space-y-6">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Origem do Tráfego</p>
+                      <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border ${
+                        selectedVisit.source === 'Google Ads' ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' :
+                        selectedVisit.source === 'Busca Google' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' :
+                        'bg-white/5 text-slate-400 border-white/10'
+                      }`}>
+                        {selectedVisit.source || 'Tráfego Direto'}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Horário</p>
+                      <p className="text-white font-bold">{selectedVisit.timestamp?.toDate ? selectedVisit.timestamp.toDate().toLocaleString('pt-BR') : 'Sem data'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Localização (IP/Geral)</p>
+                      <p className="text-white font-bold flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-cyan-500" />
+                        {selectedVisit.city || 'Brasília'} - {selectedVisit.region || 'DF'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Dispositivo</p>
+                      <p className="text-white font-bold flex items-center gap-2 capitalize">
+                        <Smartphone className="w-4 h-4 text-cyan-500" />
+                        {selectedVisit.device || 'Mobile'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white/5 rounded-3xl p-6 border border-white/5">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Parâmetro Técnico (GCLID/UTM)</p>
+                   <div className="bg-slate-950 p-4 rounded-xl font-mono text-[10px] break-all text-cyan-400/80">
+                      {selectedVisit.gclid || selectedVisit.utm_source || 'Nenhum parâmetro de rastreio detectado.'}
+                   </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}
