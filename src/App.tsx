@@ -118,44 +118,36 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
-  const [currentHash, setCurrentHash] = useState(() => {
-    const path = window.location.pathname.toLowerCase();
-    if (path === '/manager' || path.endsWith('/manager') || path.includes('/manager/')) {
-      return '#manager';
-    }
-    return window.location.hash;
-  });
+  const [view, setView] = useState<'home' | 'manager' | 'parceria'>('home');
   const [authUser, setAuthUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const handleLocation = () => {
+      const hash = window.location.hash || '';
+      const path = window.location.pathname || '/';
+      
+      if (hash === '#manager' || path === '/manager' || path.endsWith('/manager')) {
+        setView('manager');
+      } else if (hash === '#parceria') {
+        setView('parceria');
+      } else {
+        setView('home');
+      }
+    };
+
+    handleLocation();
+    window.addEventListener('hashchange', handleLocation);
+    window.addEventListener('popstate', handleLocation);
+    return () => {
+      window.removeEventListener('hashchange', handleLocation);
+      window.removeEventListener('popstate', handleLocation);
+    };
+  }, []);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
       setAuthUser(user);
     });
-  }, []);
-
-  useEffect(() => {
-    const handleLocationChange = () => {
-      const path = window.location.pathname.toLowerCase();
-      const isManagerPath = path === '/manager' || path.endsWith('/manager') || path.includes('/manager/');
-      
-      if (isManagerPath) {
-        setCurrentHash('#manager');
-        if (window.location.hash !== '#manager') {
-          window.location.hash = '#manager';
-        }
-      } else {
-        setCurrentHash(window.location.hash);
-      }
-    };
-
-    handleLocationChange(); // Initial check
-
-    window.addEventListener('hashchange', handleLocationChange);
-    window.addEventListener('popstate', handleLocationChange);
-    return () => {
-      window.removeEventListener('hashchange', handleLocationChange);
-      window.removeEventListener('popstate', handleLocationChange);
-    };
   }, []);
 
   const HERO_SLIDES = [
@@ -269,11 +261,11 @@ export default function App() {
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
 
-  if (currentHash === '#parceria') {
+  if (view === '#parceria' || view === 'parceria') {
     return <PartnerProgram />;
   }
 
-  if (currentHash === '#manager') {
+  if (view === '#manager' || view === 'manager') {
     return <ServiceManager />;
   }
 
@@ -297,15 +289,26 @@ export default function App() {
           </div>
 
           {/* Links Desktop */}
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-8">
             {['Serviços', 'Projetos', 'Sobre Nós', 'Dúvidas'].map((item) => (
               <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
                 {item}
               </a>
             ))}
+            <a href="#tecnologia-ia" className="relative group">
+              <span className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-cyan-600' : 'text-cyan-400'}`}>
+                Tecnologia IA
+              </span>
+              <span className="absolute -top-4 -right-4 px-1.5 py-0.5 bg-cyan-600 text-[8px] font-black text-white rounded-full animate-bounce">
+                NOVO
+              </span>
+            </a>
+            <a href="#manager" className={`px-4 py-2 rounded-lg border transition-all ${isScrolled ? 'text-slate-600 border-slate-200 bg-slate-50 hover:bg-slate-100' : 'text-white border-white/20 bg-white/5 hover:bg-white/10'} text-[10px] font-black uppercase tracking-widest`}>
+              Painel
+            </a>
             <button 
               onClick={openWhatsApp}
-              className="bg-cyan-600 hover:bg-cyan-500 text-white px-7 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
+              className="bg-cyan-600 hover:bg-cyan-500 text-white px-7 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ml-2"
             >
               Orçamento
             </button>
@@ -329,6 +332,10 @@ export default function App() {
               <button onClick={() => setMobileMenuOpen(false)} className="p-2"><X /></button>
             </div>
             <div className="flex flex-col gap-8">
+              <a href="#tecnologia-ia" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-cyan-600 uppercase tracking-tighter flex items-center justify-between">
+                Tecnologia IA
+                <span className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded-full">NOVO</span>
+              </a>
               {['Serviços', 'Projetos', 'Sobre Nós', 'Dúvidas'].map((item) => (
                 <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
                   {item}
