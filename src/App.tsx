@@ -127,6 +127,7 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
   const [logoClickTimer, setLogoClickTimer] = useState<any>(null);
+  const [currentVisitId, setCurrentVisitId] = useState<string | null>(localStorage.getItem('nds_visit_id'));
 
   const handleLogoDown = () => {
     const timer = setTimeout(() => {
@@ -141,6 +142,47 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
       setLogoClickTimer(null);
     }
   };
+
+  // TRACKING LOGIC
+  useEffect(() => {
+    const trackVisit = async () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const gclid = urlParams.get('gclid');
+        const utmSource = urlParams.get('utm_source');
+        const utmMedium = urlParams.get('utm_medium');
+        
+        let source = 'Direto';
+        if (gclid) source = 'Google Ads';
+        else if (utmSource === 'google' || document.referrer.includes('google.com')) source = 'Busca Google';
+        else if (utmSource === 'instagram' || document.referrer.includes('instagram.com')) source = 'Instagram';
+        else if (utmSource) source = utmSource;
+
+        const visitData = {
+          timestamp: serverTimestamp(),
+          page: 'Home',
+          source,
+          gclid: gclid || null,
+          utm_source: utmSource || null,
+          utm_medium: utmMedium || null,
+          userAgent: navigator.userAgent,
+          device: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+          referrer: document.referrer || null,
+          userEmail: authUser?.email || null,
+          userName: authUser?.displayName || null,
+          userProvider: authUser?.providerData[0]?.providerId || null
+        };
+
+        const docRef = await addDoc(collection(db, 'visits'), visitData);
+        setCurrentVisitId(docRef.id);
+        localStorage.setItem('nds_visit_id', docRef.id);
+      } catch (e) {
+        console.error('Error tracking visit:', e);
+      }
+    };
+
+    trackVisit();
+  }, [authUser]);
 
   const HERO_SLIDES = [
     {
@@ -178,6 +220,7 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
       await addDoc(collection(db, 'conversions'), {
         page: 'CFTV Home',
         type: 'WhatsApp Click',
+        visitId: currentVisitId,
         timestamp: serverTimestamp(),
       });
     } catch (e) { console.error('Error logging conversion:', e); }

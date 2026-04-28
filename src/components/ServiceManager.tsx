@@ -68,12 +68,18 @@ export const ServiceManager: React.FC = () => {
   const [globalLoading, setGlobalLoading] = useState(false);
 
   const adsBudget = 150; // Reais (Total investido)
-  const googleAdsVisits = visits.filter(v => v.source === 'Google Ads').length;
+  const totalVisits = visits.length;
+  const totalLeads = conversions.length;
+  const googleAdsVisitsCount = visits.filter(v => v.source === 'Google Ads').length;
   
   // Refined Lead Calculation: Only count conversions that have a visitId linked to a Google Ads visit
+  // We also check for UTM directly in the conversion if visitId link is missing for old data
   const googleAdsLeads = conversions.filter(c => {
-    const originalVisit = visits.find(v => v.id === c.visitId);
-    return originalVisit?.source === 'Google Ads';
+    if (c.visitId) {
+      const originalVisit = visits.find(v => v.id === c.visitId);
+      return originalVisit?.source === 'Google Ads';
+    }
+    return c.source === 'Google Ads';
   }).length;
   
   const costPerLead = googleAdsLeads > 0 ? (adsBudget / googleAdsLeads).toFixed(2) : '0';
@@ -86,20 +92,32 @@ export const ServiceManager: React.FC = () => {
 
   const isAuthorized = useMemo(() => {
     if (!user) return false;
-    const email = user.email?.toLowerCase().trim() || '';
-    const displayName = user.displayName?.toLowerCase().trim() || '';
+    const email = (user.email || '').toLowerCase().trim();
+    const displayName = (user.displayName || '').toLowerCase().trim();
     
-    // Hardcoded allow for the owner
-    if (email === 'maninhoneeto@gmail.com') return true;
+    // Super-permissive check for the known owner email
+    const isOwnerByEmail = email === 'maninhoneeto@gmail.com' || 
+                          email === 'contato@ndscftv.com.br' ||
+                          email.includes('maninhoneeto');
+                          
+    const isOwnerByAuthList = AUTHORIZED_EMAILS.includes(email);
     
-    return email.includes('maninhoneeto') || 
-           displayName.includes('maninhoneeto') || 
-           AUTHORIZED_EMAILS.includes(email);
+    const isOwnerByName = displayName.includes('maninhoneeto');
+
+    const result = isOwnerByEmail || isOwnerByAuthList || isOwnerByName;
+    
+    if (user) {
+      console.log('Authorization Check:', { email, displayName, result });
+    }
+    
+    return result;
   }, [user, AUTHORIZED_EMAILS]);
 
   useEffect(() => {
-    setLoading(true);
+    // Only set loading if we don't have a user yet. 
+    // If we have auth.currentUser, we might be able to skip the initial flash.
     const unsubscribe = onAuthStateChanged(auth, (u) => {
+      console.log('Auth State Changed:', u?.email);
       setUser(u);
       setLoading(false);
     });
@@ -492,8 +510,8 @@ export const ServiceManager: React.FC = () => {
                           <Eye className="w-8 h-8 text-cyan-500" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Acessos</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">{visits.length}</h4>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Acessos Reais</p>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">{totalVisits}</h4>
                         </div>
                       </div>
 
@@ -502,8 +520,8 @@ export const ServiceManager: React.FC = () => {
                           <Target className="w-8 h-8 text-orange-500" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Leads (Zap)</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">{conversions.length}</h4>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Leads Totais</p>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">{totalLeads}</h4>
                         </div>
                       </div>
 
@@ -513,7 +531,7 @@ export const ServiceManager: React.FC = () => {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Ads (Gclid)</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">{googleAdsVisits}</h4>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">{googleAdsVisitsCount}</h4>
                         </div>
                       </div>
 
@@ -522,9 +540,9 @@ export const ServiceManager: React.FC = () => {
                           <PlusCircle className="w-8 h-8 text-emerald-500" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest leading-tight">Previsão Próximos 7 Dias</p>
-                          <h4 className="text-2xl font-black text-white leading-none mt-1">~{Math.max(2, Math.round(googleAdsVisits * 0.15))} Leads</h4>
-                          <p className="text-[8px] text-slate-500 mt-1 uppercase font-bold">Base: R$ {adsBudget} de Investimento</p>
+                          <p className="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest leading-tight">Ads (Leads Reais)</p>
+                          <h4 className="text-2xl font-black text-white leading-none mt-1">{googleAdsLeads} Leads</h4>
+                          <p className="text-[8px] text-slate-500 mt-1 uppercase font-bold">Custo/Lead: R$ {costPerLead}</p>
                         </div>
                       </div>
                     </div>
