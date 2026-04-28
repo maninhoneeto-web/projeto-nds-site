@@ -114,5 +114,19 @@ service cloud.firestore {
                && (data.get('userProvider', null) == null || (data.userProvider is string && data.userProvider.size() <= 100));
       }
     }
+
+    // 5. Conversions
+    match /conversions/{conversionId} {
+      allow create: if isValidConversion(incoming());
+      allow read: if isOwner();
+
+      function isValidConversion(data) {
+        return data.keys().hasAll(['timestamp', 'page', 'type'])
+               && data.keys().size() <= 10
+               && data.timestamp != null
+               && data.page is string && data.page.size() <= 200
+               && data.type is string && data.type.size() <= 200;
+      }
+    }
   }
 }

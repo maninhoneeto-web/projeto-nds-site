@@ -14,6 +14,8 @@ import { IMAGES } from './constants/images';
 import { PartnerProgram } from './components/PartnerProgram';
 import { ServiceManager } from './components/ServiceManager';
 import { DigitalAgency } from './components/DigitalAgency';
+import MarketingFolder from './tecnologia/MarketingFolder';
+import PaginaVendas from './tecnologia/PaginaVendas';
 
 /* ============================
    DATA & CONFIG
@@ -158,62 +160,15 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const logVisit = async () => {
-      try {
-        const sessionKey = 'nds_visited_v5';
-        const lastVisit = localStorage.getItem(sessionKey);
-        const today = new Date().toDateString();
+  const openWhatsApp = async () => {
+    try {
+      await addDoc(collection(db, 'conversions'), {
+        page: 'CFTV Home',
+        type: 'WhatsApp Click',
+        timestamp: serverTimestamp(),
+      });
+    } catch (e) { console.error('Error logging conversion:', e); }
 
-        if (lastVisit !== today) {
-          const ua = navigator.userAgent;
-          let device = "Desktop";
-          if (/android/i.test(ua)) device = "Android";
-          else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
-
-          const urlParams = new URLSearchParams(window.location.search);
-          const rawReferrer = document.referrer;
-          const referrer = rawReferrer.toLowerCase();
-          let source = "Direto";
-
-          if (urlParams.has('gclid') || (urlParams.has('utm_medium') && urlParams.get('utm_medium')?.includes('cpc'))) {
-            source = "Google Ads";
-          } else if (referrer.includes('google.com')) {
-            source = "Busca Google";
-          } else if (referrer.includes('openai.com') || referrer.includes('chatgpt') || referrer.includes('bing.com') || referrer.includes('perplexity')) {
-            source = "IA (ChatGPT/Bing)";
-          } else if (referrer.includes('instagram.com') || referrer.includes('l.instagram.com')) {
-            source = "Instagram";
-          } else if (referrer.includes('facebook') || referrer.includes('fb.com') || referrer.includes('t.co') || referrer.includes('linkedin')) {
-            source = "Rede Social";
-          }
-
-          await addDoc(collection(db, 'visits'), {
-            timestamp: serverTimestamp(),
-            userAgent: ua,
-            device: device,
-            source: source,
-            utm_source: urlParams.get('utm_source') || null,
-            utm_medium: urlParams.get('utm_medium') || null,
-            utm_campaign: urlParams.get('utm_campaign') || null,
-            language: navigator.language,
-            screen: `${window.screen.width}x${window.screen.height}`,
-            referrer: rawReferrer || 'Direto',
-            page: 'CFTV Home',
-            userEmail: authUser?.email || null,
-            userName: authUser?.displayName || null,
-            userProvider: authUser?.providerData[0]?.providerId || null
-          });
-          localStorage.setItem(sessionKey, today);
-        }
-      } catch (e) {
-        console.error('Error logging visit:', e);
-      }
-    };
-    logVisit();
-  }, [authUser]);
-
-  const openWhatsApp = () => {
     const phone = "5561998308655";
     const msg = encodeURIComponent("Olá NDS! Vim pelo site de CFTV e gostaria de um orçamento.");
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
@@ -871,9 +826,11 @@ export default function App() {
 
   return (
     <Router>
+      <VisitLogger authUser={authUser} />
       <Routes>
         <Route path="/" element={<CFTVSite authUser={authUser} />} />
-        <Route path="/tecnologia" element={<DigitalAgency />} />
+        <Route path="/tecnologia" element={<MarketingFolder />} />
+        <Route path="/tecnologia/vendas" element={<PaginaVendas />} />
         <Route path="/parceria" element={<PartnerProgram />} />
         <Route path="/ndsdashboard" element={<ServiceManager />} />
         {/* Fallbacks */}
@@ -881,4 +838,70 @@ export default function App() {
       </Routes>
     </Router>
   );
+}
+
+function VisitLogger({ authUser }: { authUser: User | null }) {
+  const location = useLocation();
+
+  useEffect(() => {
+    const logVisit = async () => {
+      try {
+        const sessionKey = `nds_visited_${location.pathname.replace(/\//g, '_')}`;
+        const lastVisit = localStorage.getItem(sessionKey);
+        const today = new Date().toDateString();
+
+        if (lastVisit !== today) {
+          const ua = navigator.userAgent;
+          let device = "Desktop";
+          if (/android/i.test(ua)) device = "Android";
+          else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const rawReferrer = document.referrer;
+          const referrer = rawReferrer.toLowerCase();
+          let source = "Direto";
+
+          if (urlParams.has('gclid') || (urlParams.has('utm_medium') && urlParams.get('utm_medium')?.includes('cpc'))) {
+            source = "Google Ads";
+          } else if (referrer.includes('google.com')) {
+            source = "Busca Google";
+          } else if (referrer.includes('openai.com') || referrer.includes('chatgpt') || referrer.includes('bing.com') || referrer.includes('perplexity')) {
+            source = "IA (ChatGPT/Bing)";
+          } else if (referrer.includes('instagram.com') || referrer.includes('l.instagram.com')) {
+            source = "Instagram";
+          } else if (referrer.includes('facebook') || referrer.includes('fb.com') || referrer.includes('t.co') || referrer.includes('linkedin')) {
+            source = "Rede Social";
+          }
+
+          let pageName = "CFTV Home";
+          if (location.pathname === '/tecnologia') pageName = "Tecnologia Folder";
+          if (location.pathname === '/tecnologia/vendas') pageName = "Pagina de Vendas";
+          if (location.pathname === '/parceria') pageName = "Parceria";
+
+          await addDoc(collection(db, 'visits'), {
+            timestamp: serverTimestamp(),
+            userAgent: ua,
+            device: device,
+            source: source,
+            utm_source: urlParams.get('utm_source') || null,
+            utm_medium: urlParams.get('utm_medium') || null,
+            utm_campaign: urlParams.get('utm_campaign') || null,
+            language: navigator.language,
+            screen: `${window.screen.width}x${window.screen.height}`,
+            referrer: rawReferrer || 'Direto',
+            page: pageName,
+            userEmail: authUser?.email || null,
+            userName: authUser?.displayName || null,
+            userProvider: authUser?.providerData[0]?.providerId || null
+          });
+          localStorage.setItem(sessionKey, today);
+        }
+      } catch (e) {
+        console.error('Error logging visit:', e);
+      }
+    };
+    logVisit();
+  }, [location.pathname, authUser]);
+
+  return null;
 }

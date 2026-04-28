@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, Plus, Search, ChevronRight, Phone, MapPin, 
   Settings, LogOut, Shield, Calendar, Camera, Bell,
-  PlusCircle, Trash2, CheckCircle2, Clock, QrCode,
+  PlusCircle, Trash2, CheckCircle2, Clock, QrCode, Target,
   Image as ImageIcon, Loader2, ArrowLeft, BarChart2, TrendingUp, Eye,
   Github, X, Smartphone, User as UserIcon
 } from 'lucide-react';
@@ -55,16 +55,23 @@ export const ServiceManager: React.FC = () => {
   const [installations, setInstallations] = useState<Installation[]>([]);
   const [maintenance, setMaintenance] = useState<Maintenance[]>([]);
   const [visits, setVisits] = useState<any[]>([]);
+  const [conversions, setConversions] = useState<any[]>([]);
   
   const [selectedVisit, setSelectedVisit] = useState<any | null>(null);
   
   // UI States
-  const [currentTab, setCurrentTab] = useState<'customers' | 'analytics'>('customers');
+  const [currentTab, setCurrentTab] = useState<'customers' | 'analytics'>('analytics');
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [showAddInstallation, setShowAddInstallation] = useState(false);
   const [showAddMaintenance, setShowAddMaintenance] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [globalLoading, setGlobalLoading] = useState(false);
+
+  const adsBudget = 120; // Reais
+  const googleAdsVisits = visits.filter(v => v.source === 'Google Ads').length;
+  const googleAdsLeads = conversions.filter(c => visits.some(v => v.id === c.visitId && v.source === 'Google Ads') || (c.page === 'CFTV Home' && googleAdsVisits > 0)).length; 
+  // Note: lead tracking is simplified for now to show the logic
+  const costPerLead = googleAdsLeads > 0 ? (adsBudget / googleAdsLeads).toFixed(2) : '0';
 
   const AUTHORIZED_EMAILS = [
     'maninhoneeto@gmail.com',
@@ -122,7 +129,15 @@ export const ServiceManager: React.FC = () => {
       }, (error) => {
         console.error('Firestore Error (Visits):', error);
       });
-      return () => unsubscribe();
+      
+      const convQ = query(collection(db, 'conversions'), orderBy('timestamp', 'desc'));
+      const unsubConv = onSnapshot(convQ, (snapshot) => {
+        setConversions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }, (error) => {
+        console.error('Firestore Error (Conversions):', error);
+      });
+
+      return () => { unsubscribe(); unsubConv(); };
     }
   }, [user, isAuthorized]);
 
@@ -454,40 +469,120 @@ export const ServiceManager: React.FC = () => {
                       <p className="text-slate-400 font-medium tracking-wide">Monitoramento de acessos e tráfego do site.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                       <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
                         <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center">
                           <Eye className="w-8 h-8 text-cyan-500" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Total de Acessos</p>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Acessos</p>
                           <h4 className="text-3xl font-black text-white leading-none mt-1">{visits.length}</h4>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
-                        <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
-                          <TrendingUp className="w-8 h-8 text-emerald-500" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Últimas 24h</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">
-                            {visits.filter(v => v.timestamp?.toDate ? v.timestamp.toDate() > new Date(Date.now() - 24 * 60 * 60 * 1000) : false).length}
-                          </h4>
                         </div>
                       </div>
 
                       <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
-                        <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center">
-                          <Plus className="w-8 h-8 text-purple-500" />
+                        <div className="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+                          <Target className="w-8 h-8 text-orange-500" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Sessões Únicas</p>
-                          <h4 className="text-3xl font-black text-white leading-none mt-1">
-                            {new Set(visits.map(v => v.userAgent)).size}
-                          </h4>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Leads (Zap)</p>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">{conversions.length}</h4>
                         </div>
                       </div>
+
+                      <div className="bg-slate-900 border border-white/5 p-8 rounded-[2rem] flex items-center gap-6">
+                        <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center">
+                          <TrendingUp className="w-8 h-8 text-amber-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Ads (Gclid)</p>
+                          <h4 className="text-3xl font-black text-white leading-none mt-1">{googleAdsVisits}</h4>
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-900 border border-emerald-500/30 p-8 rounded-[2rem] flex items-center gap-6 shadow-[0_0_50px_-12px_rgba(16,185,129,0.2)]">
+                        <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                          <PlusCircle className="w-8 h-8 text-emerald-500" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest leading-tight">Custo por Lead</p>
+                          <h4 className="text-2xl font-black text-white leading-none mt-1">R$ {costPerLead}</h4>
+                          <p className="text-[8px] text-slate-500 mt-1 uppercase font-bold">Base: R$ {adsBudget}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                       <div className="bg-slate-900 border border-white/5 p-8 rounded-[2.5rem]">
+                          <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-2">
+                             <TrendingUp className="w-5 h-5 text-cyan-500" />
+                             Fontes de Tráfego Ads
+                          </h3>
+                          <div className="space-y-4">
+                             {[
+                               { label: 'Google Ads', color: 'bg-amber-500' },
+                               { label: 'Busca Google', color: 'bg-emerald-500' },
+                               { label: 'Instagram', color: 'bg-rose-500' },
+                               { label: 'IA (ChatGPT/Bing)', color: 'bg-purple-500' },
+                               { label: 'Direto', color: 'bg-slate-500' }
+                             ].map(source => {
+                               const count = visits.filter(v => v.source === source.label).length;
+                               const total = visits.length || 1;
+                               const percentage = Math.round((count / total) * 100);
+                               return (
+                                 <div key={source.label}>
+                                   <div className="flex justify-between items-center mb-1">
+                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{source.label}</span>
+                                     <span className="text-xs font-black text-white">{count} ({percentage}%)</span>
+                                   </div>
+                                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                                     <motion.div 
+                                       initial={{ width: 0 }}
+                                       animate={{ width: `${percentage}%` }}
+                                       className={`h-full ${source.color}`}
+                                     />
+                                   </div>
+                                 </div>
+                               );
+                             })}
+                          </div>
+                       </div>
+
+                       <div className="bg-slate-900 border border-white/5 p-8 rounded-[2.5rem]">
+                          <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-2">
+                             <Target className="w-5 h-5 text-orange-500" />
+                             Performance por Página
+                          </h3>
+                          <div className="space-y-4">
+                             {[
+                               { label: 'CFTV Home', color: 'bg-cyan-500' },
+                               { label: 'Tecnologia Folder', color: 'bg-blue-500' },
+                               { label: 'Pagina de Vendas', color: 'bg-orange-500' },
+                               { label: 'Parceria', color: 'bg-purple-500' }
+                             ].map(page => {
+                               const vCount = visits.filter(v => v.page === page.label).length;
+                               const cCount = conversions.filter(c => c.page === page.label).length;
+                               return (
+                                 <div key={page.label} className="p-4 bg-white/2 rounded-2xl flex items-center justify-between border border-white/5 group hover:border-white/10 transition-colors">
+                                    <div className="flex items-center gap-3">
+                                       <div className={`w-2 h-2 rounded-full ${page.color}`} />
+                                       <span className="text-xs font-bold uppercase tracking-tight text-slate-300">{page.label}</span>
+                                    </div>
+                                    <div className="flex gap-4">
+                                       <div className="text-right">
+                                          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Acessos</p>
+                                          <p className="text-xs font-black text-white">{vCount}</p>
+                                       </div>
+                                       <div className="text-right">
+                                          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Leads</p>
+                                          <p className="text-xs font-black text-orange-500">{cCount}</p>
+                                       </div>
+                                    </div>
+                                 </div>
+                               );
+                             })}
+                          </div>
+                       </div>
                     </div>
 
                     <div className="bg-slate-900 border border-white/5 rounded-[2.5rem] overflow-hidden">
