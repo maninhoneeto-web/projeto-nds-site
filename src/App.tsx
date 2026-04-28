@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, Menu, X, ChevronDown, MessageCircle, 
@@ -12,6 +13,7 @@ import { db, auth } from './lib/firebase';
 import { IMAGES } from './constants/images';
 import { PartnerProgram } from './components/PartnerProgram';
 import { ServiceManager } from './components/ServiceManager';
+import { DigitalAgency } from './components/DigitalAgency';
 
 /* ============================
    DATA & CONFIG
@@ -114,46 +116,16 @@ function SectionTitle({ title, subtitle, light }: { title: string; subtitle?: st
    MAIN PAGE
    ============================ */
 
-export default function App() {
+/* ============================
+   MAIN PAGE COMPONENTS
+   ============================ */
+
+function CFTVSite({ authUser }: { authUser: User | null }) {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
-  const [view, setView] = useState<'home' | 'manager' | 'parceria'>('home');
-  const [authUser, setAuthUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const handleLocation = () => {
-      const hash = window.location.hash.toLowerCase();
-      const path = window.location.pathname.toLowerCase();
-      
-      if (
-        hash === '#ndsdashboard' || 
-        hash.includes('ndsdashboard') || 
-        path === '/ndsdashboard' || 
-        path.endsWith('/ndsdashboard')
-      ) {
-        setView('manager');
-      } else if (hash === '#parceria') {
-        setView('parceria');
-      } else {
-        setView('home');
-      }
-    };
-
-    handleLocation();
-    window.addEventListener('hashchange', handleLocation);
-    window.addEventListener('popstate', handleLocation);
-    return () => {
-      window.removeEventListener('hashchange', handleLocation);
-      window.removeEventListener('popstate', handleLocation);
-    };
-  }, []);
-
-  useEffect(() => {
-    return onAuthStateChanged(auth, (user) => {
-      setAuthUser(user);
-    });
-  }, []);
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
 
   const HERO_SLIDES = [
     {
@@ -173,8 +145,6 @@ export default function App() {
     }
   ];
 
-  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
-
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentHeroSlide((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -191,7 +161,7 @@ export default function App() {
   useEffect(() => {
     const logVisit = async () => {
       try {
-        const sessionKey = 'nds_visited_v5'; // Forçando novo log para novos campos
+        const sessionKey = 'nds_visited_v5';
         const lastVisit = localStorage.getItem(sessionKey);
         const today = new Date().toDateString();
 
@@ -201,38 +171,21 @@ export default function App() {
           if (/android/i.test(ua)) device = "Android";
           else if (/iPad|iPhone|iPod/.test(ua)) device = "iOS";
 
-          // --- Detecção de Origem Expandida ---
           const urlParams = new URLSearchParams(window.location.search);
           const rawReferrer = document.referrer;
           const referrer = rawReferrer.toLowerCase();
           let source = "Direto";
 
-          // 1. Google Ads (GCLID)
-          if (urlParams.has('gclid') || urlParams.has('utm_medium') && urlParams.get('utm_medium')?.includes('cpc')) {
+          if (urlParams.has('gclid') || (urlParams.has('utm_medium') && urlParams.get('utm_medium')?.includes('cpc'))) {
             source = "Google Ads";
-          } 
-          // 2. Google Search (Orgânico)
-          else if (referrer.includes('google.com')) {
+          } else if (referrer.includes('google.com')) {
             source = "Busca Google";
-          }
-          // 3. IAs (ChatGPT, Gemini, etc)
-          else if (referrer.includes('openai.com') || referrer.includes('chatgpt') || referrer.includes('bing.com') || referrer.includes('perplexity')) {
+          } else if (referrer.includes('openai.com') || referrer.includes('chatgpt') || referrer.includes('bing.com') || referrer.includes('perplexity')) {
             source = "IA (ChatGPT/Bing)";
-          }
-          // 4. Redes Sociais
-          else if (referrer.includes('instagram.com') || referrer.includes('l.instagram.com')) {
+          } else if (referrer.includes('instagram.com') || referrer.includes('l.instagram.com')) {
             source = "Instagram";
-          }
-          else if (referrer.includes('facebook') || referrer.includes('fb.com') || referrer.includes('t.co') || referrer.includes('linkedin')) {
+          } else if (referrer.includes('facebook') || referrer.includes('fb.com') || referrer.includes('t.co') || referrer.includes('linkedin')) {
             source = "Rede Social";
-          }
-          
-          // 5. Parâmetros UTM específicos (sobrescrevem detecção automática se presentes)
-          if (urlParams.get('utm_source')) {
-            const utm = urlParams.get('utm_source');
-            if (utm === 'google') source = "Busca Google";
-            else if (utm === 'ig' || utm === 'instagram') source = "Instagram";
-            else source = utm || source;
           }
 
           await addDoc(collection(db, 'visits'), {
@@ -246,7 +199,7 @@ export default function App() {
             language: navigator.language,
             screen: `${window.screen.width}x${window.screen.height}`,
             referrer: rawReferrer || 'Direto',
-            page: window.location.pathname === '/' ? (window.location.hash || 'home') : window.location.pathname,
+            page: 'CFTV Home',
             userEmail: authUser?.email || null,
             userName: authUser?.displayName || null,
             userProvider: authUser?.providerData[0]?.providerId || null
@@ -262,21 +215,12 @@ export default function App() {
 
   const openWhatsApp = () => {
     const phone = "5561998308655";
-    const msg = encodeURIComponent("Olá NDS! Vim pelo site e gostaria de um orçamento.");
+    const msg = encodeURIComponent("Olá NDS! Vim pelo site de CFTV e gostaria de um orçamento.");
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
 
-  if (view === '#parceria' || view === 'parceria') {
-    return <PartnerProgram />;
-  }
-
-  if (view === '#ndsdashboard' || view === 'ndsdashboard' || view === 'manager') {
-    return <ServiceManager />;
-  }
-
   return (
     <div className="min-h-screen bg-[#fafafa] flex flex-col selection:bg-cyan-500 selection:text-white">
-      
       {/* NAVBAR */}
       <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg py-3' : 'bg-slate-950 border-b border-white/5 py-5'}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
@@ -826,11 +770,11 @@ export default function App() {
              <div 
                className="cursor-help active:scale-95 transition-transform"
                onMouseDown={() => {
-                 (window as any)._ndsTimer = setTimeout(() => setView('manager'), 3000);
+                 (window as any)._ndsTimer = setTimeout(() => navigate('/ndsdashboard'), 3000);
                }}
                onMouseUp={() => clearTimeout((window as any)._ndsTimer)}
                onTouchStart={() => {
-                 (window as any)._ndsTimer = setTimeout(() => setView('manager'), 3000);
+                 (window as any)._ndsTimer = setTimeout(() => navigate('/ndsdashboard'), 3000);
                }}
                onTouchEnd={() => clearTimeout((window as any)._ndsTimer)}
              >
@@ -913,5 +857,28 @@ export default function App() {
       )}
 
     </div>
+  );
+}
+
+export default function App() {
+  const [authUser, setAuthUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (user) => {
+      setAuthUser(user);
+    });
+  }, []);
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<CFTVSite authUser={authUser} />} />
+        <Route path="/tecnologia" element={<DigitalAgency />} />
+        <Route path="/parceria" element={<PartnerProgram />} />
+        <Route path="/ndsdashboard" element={<ServiceManager />} />
+        {/* Fallbacks */}
+        <Route path="*" element={<CFTVSite authUser={authUser} />} />
+      </Routes>
+    </Router>
   );
 }
