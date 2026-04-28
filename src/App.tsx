@@ -126,6 +126,21 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+  const [logoClickTimer, setLogoClickTimer] = useState<any>(null);
+
+  const handleLogoDown = () => {
+    const timer = setTimeout(() => {
+      navigate('/ndsdashboard');
+    }, 3000);
+    setLogoClickTimer(timer);
+  };
+
+  const handleLogoUp = () => {
+    if (logoClickTimer) {
+      clearTimeout(logoClickTimer);
+      setLogoClickTimer(null);
+    }
+  };
 
   const HERO_SLIDES = [
     {
@@ -177,12 +192,18 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
       {/* NAVBAR */}
       <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg py-3' : 'bg-slate-950 border-b border-white/5 py-5'}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div 
+            className="flex items-center gap-4 cursor-pointer select-none"
+            onMouseDown={handleLogoDown}
+            onMouseUp={handleLogoUp}
+            onTouchStart={handleLogoDown}
+            onTouchEnd={handleLogoUp}
+          >
              <img 
                src={IMAGES.LOGO} 
                alt="NDS" 
                referrerPolicy="no-referrer"
-               className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl border-2 border-white/10" 
+               className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl border-2 border-white/10 active:scale-95 transition-transform" 
              />
              <div className="leading-none">
                <span className={`text-2xl md:text-3xl font-black tracking-tighter ${isScrolled ? 'text-slate-900' : 'text-white'}`}>NDS<span className="text-cyan-500">CFTV</span></span>

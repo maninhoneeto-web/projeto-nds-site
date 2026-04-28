@@ -67,26 +67,34 @@ export const ServiceManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [globalLoading, setGlobalLoading] = useState(false);
 
-  const adsBudget = 120; // Reais
+  const adsBudget = 150; // Reais (Total investido)
   const googleAdsVisits = visits.filter(v => v.source === 'Google Ads').length;
-  const googleAdsLeads = conversions.filter(c => visits.some(v => v.id === c.visitId && v.source === 'Google Ads') || (c.page === 'CFTV Home' && googleAdsVisits > 0)).length; 
+  
+  // Refined Lead Calculation: Only count conversions that have a visitId linked to a Google Ads visit
+  const googleAdsLeads = conversions.filter(c => {
+    const originalVisit = visits.find(v => v.id === c.visitId);
+    return originalVisit?.source === 'Google Ads';
+  }).length;
+  
   const costPerLead = googleAdsLeads > 0 ? (adsBudget / googleAdsLeads).toFixed(2) : '0';
 
   const AUTHORIZED_EMAILS = useMemo(() => [
     'maninhoneeto@gmail.com',
     'maninhoneeto-web@users.noreply.github.com',
-    'contato@ndscftv.com.br',
-    'maninhoneeto@gmail.com'.toLowerCase()
+    'contato@ndscftv.com.br'
   ], []);
 
   const isAuthorized = useMemo(() => {
     if (!user) return false;
     const email = user.email?.toLowerCase().trim() || '';
     const displayName = user.displayName?.toLowerCase().trim() || '';
-    const isManinho = email.includes('maninhoneeto') || 
-                      displayName.includes('maninhoneeto') || 
-                      AUTHORIZED_EMAILS.includes(email);
-    return isManinho;
+    
+    // Hardcoded allow for the owner
+    if (email === 'maninhoneeto@gmail.com') return true;
+    
+    return email.includes('maninhoneeto') || 
+           displayName.includes('maninhoneeto') || 
+           AUTHORIZED_EMAILS.includes(email);
   }, [user, AUTHORIZED_EMAILS]);
 
   useEffect(() => {
@@ -112,16 +120,21 @@ export const ServiceManager: React.FC = () => {
 
   useEffect(() => {
     if (user && isAuthorized) {
-      const q = query(collection(db, 'visits'), orderBy('timestamp', 'desc'));
-      const unsubscribeV = onSnapshot(q, (snapshot) => {
-        setVisits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      console.log('Fetching Analytics Data for Authorized User:', user.email);
+      const visitsQ = query(collection(db, 'visits'), orderBy('timestamp', 'desc'));
+      const unsubscribeV = onSnapshot(visitsQ, (snapshot) => {
+        const visitsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log('Visits loaded:', visitsData.length);
+        setVisits(visitsData);
       }, (error) => {
         console.error('Firestore Error (Visits):', error);
       });
       
       const convQ = query(collection(db, 'conversions'), orderBy('timestamp', 'desc'));
       const unsubscribeC = onSnapshot(convQ, (snapshot) => {
-        setConversions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const convData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log('Conversions loaded:', convData.length);
+        setConversions(convData);
       }, (error) => {
         console.error('Firestore Error (Conversions):', error);
       });
