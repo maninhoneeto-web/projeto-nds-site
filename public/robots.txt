@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /ndsdashboard
+Disallow: /manager
 
 Sitemap: https://nds-cftv-digital.com.br/sitemap.xml

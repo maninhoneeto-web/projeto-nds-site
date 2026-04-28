@@ -123,10 +123,15 @@ export default function App() {
 
   useEffect(() => {
     const handleLocation = () => {
-      const hash = window.location.hash || '';
-      const path = window.location.pathname || '/';
+      const hash = window.location.hash.toLowerCase();
+      const path = window.location.pathname.toLowerCase();
       
-      if (hash === '#ndsdashboard' || path === '/ndsdashboard' || path.endsWith('/ndsdashboard')) {
+      if (
+        hash === '#ndsdashboard' || 
+        hash.includes('ndsdashboard') || 
+        path === '/ndsdashboard' || 
+        path.endsWith('/ndsdashboard')
+      ) {
         setView('manager');
       } else if (hash === '#parceria') {
         setView('parceria');
@@ -818,12 +823,24 @@ export default function App() {
       <footer className="bg-slate-950 border-t border-white/5 py-12">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
-             <img 
-               src={IMAGES.LOGO} 
-               alt="NDS" 
-               referrerPolicy="no-referrer"
-               className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl" 
-             />
+             <div 
+               className="cursor-help active:scale-95 transition-transform"
+               onMouseDown={() => {
+                 (window as any)._ndsTimer = setTimeout(() => setView('manager'), 3000);
+               }}
+               onMouseUp={() => clearTimeout((window as any)._ndsTimer)}
+               onTouchStart={() => {
+                 (window as any)._ndsTimer = setTimeout(() => setView('manager'), 3000);
+               }}
+               onTouchEnd={() => clearTimeout((window as any)._ndsTimer)}
+             >
+               <img 
+                 src={IMAGES.LOGO} 
+                 alt="NDS" 
+                 referrerPolicy="no-referrer"
+                 className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl" 
+               />
+             </div>
              <div className="leading-none text-left">
                <span className="text-lg font-black tracking-tighter text-white">NDS<span className="text-cyan-500">CFTV</span></span>
                <p className="text-[8px] uppercase tracking-widest font-bold text-slate-500">Digital © 2026</p>
