@@ -12,7 +12,6 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { db, auth } from './lib/firebase';
 
 import { IMAGES } from './constants/images';
-import { PartnerProgram } from './components/PartnerProgram';
 import { ServiceManager } from './components/ServiceManager';
 
 /* ============================
@@ -183,6 +182,15 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
         visitId: currentVisitId,
         timestamp: serverTimestamp(),
       });
+      
+      // Trigger Google Ads conversion event
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'conversion', {
+          'send_to': 'AW-751907879/7oFYCNWjg58cEKfoxOYC',
+          'value': 1.0,
+          'currency': 'BRL'
+        });
+      }
     } catch (e) { console.error('Error logging conversion:', e); }
 
     const phone = "5561998308655";
@@ -846,7 +854,6 @@ export default function App() {
       <VisitLogger authUser={authUser} />
       <Routes>
         <Route path="/" element={<CFTVSite authUser={authUser} />} />
-        <Route path="/parceria" element={<PartnerProgram />} />
         <Route path="/manager" element={<ServiceManager />} />
         <Route path="/ndsdashboard" element={<ServiceManager />} />
         {/* Fallbacks */}
@@ -890,9 +897,7 @@ function VisitLogger({ authUser }: { authUser: User | null }) {
           }
 
           let pageName = "CFTV Home";
-          if (location.pathname === '/tecnologia') pageName = "Tecnologia Folder";
-          if (location.pathname === '/tecnologia/vendas') pageName = "Pagina de Vendas";
-          if (location.pathname === '/parceria') pageName = "Parceria";
+          if (location.pathname === '/manager' || location.pathname === '/ndsdashboard') pageName = "Service Manager";
 
           const isDev = window.location.hostname.includes('localhost') || 
                         window.location.hostname.includes('ais-dev');
