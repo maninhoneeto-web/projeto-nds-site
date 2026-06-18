@@ -14,6 +14,14 @@ import { db, auth } from './lib/firebase';
 import { IMAGES } from './constants/images';
 import { ServiceManager } from './components/ServiceManager';
 
+import { CftvInteligente } from './components/CftvInteligente';
+import { ControleAcesso } from './components/ControleAcesso';
+import { RedeEstruturada } from './components/RedeEstruturada';
+import { ProjetosCorporativos } from './components/ProjetosCorporativos';
+import { SegurancaBrasilia } from './components/SegurancaBrasilia';
+import { Blog } from './components/Blog';
+import { SEOHelper } from './components/SEOHelper';
+
 /* ============================
    DATA & CONFIG
    ============================ */
@@ -198,8 +206,42 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
 
+  const homeSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "name": "NDS CFTV Digital",
+        "image": IMAGES.LOGO,
+        "url": "https://nds-cftv-digital.com.br",
+        "telephone": "+55-61-99830-8655",
+        "priceRange": "$$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Brasília",
+          "addressRegion": "DF",
+          "addressCountry": "BR"
+        },
+        "description": "Projetos profissionais de CFTV inteligente, monitoramento remoto, controle de acesso e redes estruturadas de TI para empresas, condomínios e residências em Brasília."
+      },
+      {
+        "@type": "Organization",
+        "name": "NDS CFTV Digital",
+        "logo": IMAGES.LOGO,
+        "sameAs": [
+          "https://www.instagram.com/"
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-[#fafafa] flex flex-col selection:bg-cyan-500 selection:text-white">
+      <SEOHelper 
+        title="NDS CFTV Digital | Câmeras de Segurança e Redes em Brasília"
+        description="Líder em segurança eletrônica no Distrito Federal. Projetos sob medida de CFTV inteligente, monitoramento IP 4K, controle de acesso biométrico e redes estruturadas de alta performance."
+        schema={homeSchema}
+      />
       {/* NAVBAR */}
       <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg py-3' : 'bg-slate-950 border-b border-white/5 py-5'}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
@@ -659,6 +701,119 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
         </div>
       </section>
 
+      {/* POR QUE ESCOLHER A NDS & SEGMENTOS ATENDIDOS */}
+      <section className="py-24 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="grid lg:grid-cols-2 gap-16">
+            {/* Por que escolher a NDS */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-0.5 w-12 bg-cyan-500"></div>
+                <span className="text-cyan-600 font-black uppercase text-[10px] tracking-[0.3em]">Excelência Técnica</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-slate-900 mb-8 leading-none">
+                Por que escolher a NDS?
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {[
+                  { title: "Atendimento Consultivo", desc: "Verdadeira assessoria técnica prévia, mapeando pontos cegos antes de qualquer proposta comercial." },
+                  { title: "Equipe Especializada", desc: "Profissionais técnicos treinados e certificados periodicamente com o padrão de excelência Intelbras." },
+                  { title: "Projetos Personalizados", desc: "Elaboramos soluções sob medida de acordo com as necessidades e regras estéticas do seu imóvel." },
+                  { title: "Tecnologia Avançada", desc: "Trabalhamos com os melhores e mais modernos equipamentos eletroeletrônicos e softwares do mercado." },
+                  { title: "Monitoramento Remoto", desc: "Acesse e gerencie suas câmeras e alarmes de segurança ao vivo de qualquer lugar do mundo pelo app." },
+                  { title: "Inteligência Artificial", desc: "Sistemas providos de análise de vídeo inteligente para evitar disparos falsos e rastrear alvos." }
+                ].map((item, idx) => (
+                  <div key={idx} className="p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-cyan-500/30 transition-all hover:scale-[1.02]">
+                    <CheckCircle2 className="w-5 h-5 text-cyan-500 mb-3" />
+                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-xs mb-1">{item.title}</h4>
+                    <p className="text-slate-500 text-xs leading-relaxed">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Segmentos Atendidos */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-0.5 w-12 bg-cyan-500"></div>
+                <span className="text-cyan-600 font-black uppercase text-[10px] tracking-[0.3em]">Áreas de Atuação</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-slate-900 mb-8 leading-none">
+                Segmentos Atendidos
+              </h2>
+              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                Desenvolvemos projetos de monitoramento, alarmes, cabeamento estruturado e controle biométrico focados no alto nível exigido por:
+              </p>
+              
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  "Empresas e Escritórios",
+                  "Clínicas e Hospitais",
+                  "Condomínios Residenciais",
+                  "Galpões e CD Industrial",
+                  "Concessionárias de Veículos",
+                  "Residências de Alto Padrão",
+                  "Comércios e Lojas",
+                  "Escolas e Universidades"
+                ].map((segment, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-600">
+                      <Target className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-800 uppercase tracking-tight">{segment}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* REGÕES ATENDIDAS (LOCAL SEO SECTION) */}
+      <section className="py-20 bg-slate-50 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
+          <SectionTitle 
+            title="Selo de Atendimento no DF"
+            subtitle="Atendimento ágil de alta qualidade em todas as regiões nobres do Distrito Federal."
+          />
+          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto mt-8">
+            {[
+              "Asa Sul", "Asa Norte", "Lago Sul", "Lago Norte", "Park Way",
+              "Noroeste", "Sudoeste", "Guará", "Águas Claras", "Vicente Pires", "Jardim Botânico"
+            ].map((region, idx) => (
+              <span 
+                key={idx} 
+                className="px-5 py-2.5 bg-white text-slate-800 text-xs font-black uppercase tracking-widest rounded-full border border-slate-200/60 shadow-sm"
+              >
+                {region}
+              </span>
+            ))}
+          </div>
+          <p className="text-xs text-slate-500 uppercase tracking-widest font-bold mt-10">
+            Deseja atendimento exclusivo em sua localidade?{" "}
+            <button onClick={() => navigate('/seguranca-eletronica-brasilia')} className="text-cyan-600 hover:underline font-bold cursor-pointer">
+              Confira os detalhes sobre a cobertura de segurança em Brasília.
+            </button>
+          </p>
+        </div>
+      </section>
+
+      {/* FAQ HOMEPAGE SECTION */}
+      <section className="py-24 bg-slate-900 text-slate-100 border-b border-white/5">
+        <div className="max-w-4xl mx-auto px-6 md:px-12">
+          <SectionTitle 
+            light
+            title="Dúvidas Frequentes"
+            subtitle="Confira as respostas para as principais dúvidas sobre os nossos sistemas de segurança eletrônica com IA e redes cabeada."
+          />
+          <div className="mt-12 bg-slate-950/40 p-8 rounded-[2.5rem] border border-white/5 divide-y divide-white/5 text-left">
+            {FAQS.map((faq, idx) => (
+              <FaqItem key={idx} question={faq.q} answer={faq.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* MAINTENANCE CTA */}
       <section className="bg-cyan-600 py-20">
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -766,13 +921,32 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
              </div>
           </div>
           
-          <div className="flex gap-10">
-            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Instagram /></a>
-            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Phone /></a>
-            <a href="#" className="text-slate-400 hover:text-white transition-colors"><MapPin /></a>
+          {/* COLUNA DE LINKS ESTRATÉGICOS PARA SEO */}
+          <div className="grid grid-cols-2 gap-8 md:gap-12 text-left py-4 md:py-0">
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-2">Serviços e Soluções</p>
+              <ul className="space-y-1 text-xs text-slate-400 font-medium">
+                <li><button onClick={() => navigate('/cftv-inteligente')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">CFTV Inteligente com IA</button></li>
+                <li><button onClick={() => navigate('/controle-acesso')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Controle de Acesso</button></li>
+                <li><button onClick={() => navigate('/rede-estruturada')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Rede Estruturada de TI</button></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-2">Sitemap & Conteúdo</p>
+              <ul className="space-y-1 text-xs text-slate-400 font-medium">
+                <li><button onClick={() => navigate('/projetos-corporativos')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Projetos Corporativos</button></li>
+                <li><button onClick={() => navigate('/seguranca-eletronica-brasilia')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Segurança em Brasília</button></li>
+                <li><button onClick={() => navigate('/blog')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Blog Técnico</button></li>
+              </ul>
+            </div>
           </div>
 
           <div className="flex flex-col items-center md:items-end">
+            <div className="flex gap-4 mb-4">
+              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors"><Instagram className="w-4 h-4" /></a>
+              <a href="tel:+5561998308655" className="text-slate-400 hover:text-white transition-colors"><Phone className="w-4 h-4" /></a>
+              <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors"><MapPin className="w-4 h-4" /></a>
+            </div>
             <p className="text-[10px] uppercase font-bold tracking-widest text-slate-600 mb-1">Brasília - Distrito Federal</p>
             <p className="text-[8px] uppercase font-bold tracking-[0.2em] text-slate-700 mb-4 text-center md:text-right">Atendemos Águas Claras, Asas Sul/Norte, Lago Sul/Norte, Park Way, Guará e todas as regiões do DF</p>
             <button 
@@ -854,6 +1028,12 @@ export default function App() {
       <VisitLogger authUser={authUser} />
       <Routes>
         <Route path="/" element={<CFTVSite authUser={authUser} />} />
+        <Route path="/cftv-inteligente" element={<CftvInteligente />} />
+        <Route path="/controle-acesso" element={<ControleAcesso />} />
+        <Route path="/rede-estruturada" element={<RedeEstruturada />} />
+        <Route path="/projetos-corporativos" element={<ProjetosCorporativos />} />
+        <Route path="/seguranca-eletronica-brasilia" element={<SegurancaBrasilia />} />
+        <Route path="/blog" element={<Blog />} />
         <Route path="/manager" element={<ServiceManager />} />
         <Route path="/ndsdashboard" element={<ServiceManager />} />
         {/* Fallbacks */}
