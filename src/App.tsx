@@ -5,7 +5,7 @@ import {
   CheckCircle2, Menu, X, ChevronDown, MessageCircle, 
   Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench, HelpCircle,
   Smartphone, BellRing, ChevronRight, Phone, Instagram, MapPin, Award, Star,
-  TrendingUp, ArrowRight, Target
+  TrendingUp, ArrowRight, Target, Home, Video, Settings, LayoutGrid
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -511,13 +511,114 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
               whileInView={{ opacity: 1, x: 0 }}
               className="relative"
             >
-              <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl">
-                <img 
-                  src={IMAGES.INSTALACAO} 
-                  referrerPolicy="no-referrer"
-                  alt="Instalação Profissional" 
-                  className="w-full h-[500px] object-cover hover:scale-105 transition-transform duration-700"
-                />
+              <div className="relative z-10 w-full h-[500px] bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl flex items-center justify-center p-8">
+                {/* Abstract background elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+                
+                {/* Phone Frame - Classic White Samsung Style */}
+                <div className="relative w-[280px] h-[580px] bg-white rounded-[3rem] p-3 shadow-2xl border-[2px] border-slate-200 rotate-[-5deg] hover:rotate-0 transition-transform duration-500 z-10 flex-shrink-0 ring-1 ring-black/5">
+                  
+                  {/* Top Bezel (Speaker & Camera) */}
+                  <div className="absolute top-0 inset-x-0 h-14 flex flex-col items-center justify-center gap-2 z-20">
+                    <div className="flex items-center gap-4">
+                      <div className="w-2.5 h-2.5 rounded-full bg-slate-800"></div>
+                      <div className="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-slate-800"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Bottom Bezel (Physical Home Button) */}
+                  <div className="absolute bottom-0 inset-x-0 h-16 flex justify-center items-center z-20">
+                    <div className="w-16 h-6 bg-white border-2 border-slate-200 rounded-full shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)]"></div>
+                  </div>
+                  
+                  {/* Screen */}
+                  <div className="w-full h-[470px] mt-10 bg-white border-2 border-slate-800 overflow-hidden flex flex-col relative">
+                    {/* Status Bar */}
+                    <div className="h-6 w-full px-2 flex justify-end gap-1 items-center bg-slate-200 text-slate-800 z-20">
+                      <Wifi className="w-3 h-3" />
+                      <Zap className="w-3 h-3" />
+                      <span className="text-[10px] font-bold ml-1">15:30</span>
+                    </div>
+
+                    {/* App Header (Green) */}
+                    <div className="h-12 bg-[#00923f] flex justify-between items-center px-3 text-white">
+                      <span className="text-xs">Voltar</span>
+                      <span className="text-sm font-semibold">Casa</span>
+                      <div className="w-6 h-6 border border-white/50 rounded-full flex items-center justify-center">
+                        <Video className="w-3 h-3" />
+                      </div>
+                    </div>
+                    
+                    {/* Sub Header */}
+                    <div className="h-10 bg-slate-100 border-b border-slate-300 flex justify-between items-center px-3">
+                      <div className="bg-slate-500 text-white text-[10px] font-bold px-3 py-1 rounded shadow-inner">
+                        PTZ
+                      </div>
+                      <LayoutGrid className="w-4 h-4 text-slate-400" />
+                    </div>
+                                        
+                    {/* Active Video Feed */}
+                    <div className="relative w-full h-56 bg-black">
+                      <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800" referrerPolicy="no-referrer" className="w-full h-full object-cover" alt="Camera 1" />
+                      <div className="absolute bottom-1 right-2 flex items-center gap-1">
+                        <Camera className="w-3 h-3 text-white/50" />
+                      </div>
+                    </div>
+                    
+                    {/* Timeline UI */}
+                    <div className="flex-1 bg-white flex flex-col">
+                       {/* Date Header for Timeline */}
+                       <div className="text-center text-[9px] text-slate-500 py-1 border-b border-slate-200">
+                         2026-07-15 15:30:00
+                       </div>
+                       
+                       {/* Timeline Blocks */}
+                       <div className="h-24 bg-slate-800 w-full flex">
+                         {/* Green recorded block */}
+                         <div className="h-full w-1/2 bg-[#5d9e5d] border-r border-slate-900"></div>
+                         {/* Black empty block */}
+                         <div className="h-full w-1/2 bg-[#1a1a1a]"></div>
+                       </div>
+                       
+                       {/* Time labels below timeline */}
+                       <div className="flex justify-between px-2 text-[8px] text-slate-400 py-1 bg-slate-100">
+                         <span>15:00</span>
+                         <span>15:15</span>
+                         <span>15:30</span>
+                         <span>15:45</span>
+                         <span>16:00</span>
+                       </div>
+                       
+                       {/* Bottom Controls */}
+                       <div className="flex-1 bg-slate-100 flex items-center justify-between px-4 border-t border-slate-300">
+                         <div className="flex gap-2">
+                           <div className="bg-white border border-slate-300 px-3 py-1 text-[10px] text-slate-600 rounded">
+                             01/01
+                           </div>
+                           <div className="bg-white border border-slate-300 px-3 py-1 text-[10px] text-slate-600 rounded">
+                             00:00
+                           </div>
+                         </div>
+                         <div className="bg-white border border-slate-300 px-4 py-1 text-[10px] text-slate-600 rounded flex items-center gap-1">
+                           Play <ChevronDown className="w-3 h-3" />
+                         </div>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Floating Elements for design */}
+                <div className="absolute bottom-12 right-6 md:right-8 bg-slate-900/80 backdrop-blur-md border border-white/10 p-3 rounded-2xl shadow-2xl flex items-center gap-3 z-20 hover:scale-105 transition-transform cursor-default">
+                  <div className="w-10 h-10 bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-full flex items-center justify-center shadow-inner">
+                    <Video className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white text-sm font-bold leading-tight">Vigilância em Tempo Real</p>
+                    <p className="text-slate-400 text-[10px] uppercase tracking-wider">Acesse de qualquer lugar</p>
+                  </div>
+                </div>
               </div>
               <div className="absolute -top-10 -left-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl" />
             </motion.div>
