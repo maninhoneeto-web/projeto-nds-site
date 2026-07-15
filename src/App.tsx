@@ -611,7 +611,7 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
       </section>
 
       {/* GALLERY SECTION */}
-      <section className="py-24 bg-white overflow-hidden">
+      <section id="galeria" className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <SectionTitle title="Tecnologia em Ação" subtitle="Confira alguns dos equipamentos de última geração que utilizamos em nossos projetos." />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -628,9 +628,9 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.1 }}
-                className="h-48 lg:h-64 rounded-3xl overflow-hidden shadow-lg group"
+                className="h-48 lg:h-64 rounded-3xl overflow-hidden shadow-lg group border border-slate-100"
               >
-                <img src={img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Equipamento NDS" />
+                <img src={img} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Equipamento NDS" />
               </motion.div>
             ))}
           </div>
