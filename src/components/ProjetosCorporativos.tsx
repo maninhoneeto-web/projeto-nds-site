@@ -14,6 +14,13 @@ export function ProjetosCorporativos() {
   }, []);
 
   const openWhatsApp = () => {
+    // Trigger Google Ads conversion event
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'conversion', {
+        'send_to': 'AW-18323711854/SimhCIKn-tAcEO7OtqFE'
+      });
+    }
+
     const phone = "5561998308655";
     const msg = encodeURIComponent("Olá NDS! Vim pela página de Projetos Corporativos e gostaria de agendar uma visita técnica ou reunião.");
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');

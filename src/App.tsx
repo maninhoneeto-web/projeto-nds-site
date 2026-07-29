@@ -194,9 +194,7 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
       // Trigger Google Ads conversion event
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'conversion', {
-          'send_to': 'AW-751907879/7oFYCNWjg58cEKfoxOYC',
-          'value': 1.0,
-          'currency': 'BRL'
+          'send_to': 'AW-18323711854/SimhCIKn-tAcEO7OtqFE'
         });
       }
     } catch (e) { console.error('Error logging conversion:', e); }
