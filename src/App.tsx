@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  CheckCircle2, Menu, X, ChevronDown, MessageCircle, 
-  Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench, HelpCircle,
+  CheckCircle2, ChevronDown, MessageCircle, 
+  Shield, Camera, Server, Key, Zap, Power, Wifi, Wrench,
   Smartphone, BellRing, ChevronRight, Phone, Instagram, MapPin, Award, Star,
-  TrendingUp, ArrowRight, Target, Home, Video, Settings, LayoutGrid
+  ArrowRight, ShieldAlert, Cpu, Eye, Network, ZoomIn
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -14,6 +14,13 @@ import { db, auth } from './lib/firebase';
 import { IMAGES } from './constants/images';
 import { ServiceManager } from './components/ServiceManager';
 
+import { SegurancaEletronicaPage } from './components/SegurancaEletronicaPage';
+import { RedesComputadoresPage } from './components/RedesComputadoresPage';
+import { InstalacoesEletricasPage } from './components/InstalacoesEletricasPage';
+import { CercaEletricaPage } from './components/CercaEletricaPage';
+import { VideoPorteiroAutomacaoPage } from './components/VideoPorteiroAutomacaoPage';
+import { LinhaMiboPage } from './components/LinhaMiboPage';
+
 import { CftvInteligente } from './components/CftvInteligente';
 import { ControleAcesso } from './components/ControleAcesso';
 import { RedeEstruturada } from './components/RedeEstruturada';
@@ -21,64 +28,195 @@ import { ProjetosCorporativos } from './components/ProjetosCorporativos';
 import { SegurancaBrasilia } from './components/SegurancaBrasilia';
 import { Blog } from './components/Blog';
 import { SEOHelper } from './components/SEOHelper';
+import { SiteHeader } from './components/SiteHeader';
+import { SiteFooter } from './components/SiteFooter';
+import { ImageModal, ModalImageData } from './components/ImageModal';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 
 /* ============================
    DATA & CONFIG
    ============================ */
 
-const SERVICES = [
-  { id: 'ia', label: 'Monitoramento IA', icon: Zap, img: IMAGES.PORTFOLIO_PTZ, desc: 'Analíticos de vídeo avançados com Inteligência Artificial para detecção facial, leitura de placas e proteção de perímetro.' },
-  { id: 'cameras', label: 'Câmeras IP', icon: Camera, img: IMAGES.SERVICE_CAMERAS, desc: 'Monitoramento Intelbras em alta definição 4K. Câmeras de elite com visão noturna colorida e processamento de imagem.' },
-  { id: 'smart', label: 'Linha Mibo', icon: Smartphone, img: IMAGES.SERVICE_MIBO, desc: 'Câmeras inteligentes Wi-Fi Intelbras. Praticidade e segurança com acompanhamento inteligente via smartphone.' },
-  { id: 'videoporteiro', label: 'Vídeo Porteiros', icon: BellRing, img: IMAGES.SERVICE_PORTEIRO, desc: 'Sistemas Allo de vídeo interfonia com abertura de fechadura remota e imagem cristalina.' },
-  { id: 'dvr', label: 'Gravadores', icon: Server, img: IMAGES.SERVICE_DVR, desc: 'DVRs e NVRs Multi-HD Intelbras. Estabilidade total para o armazenamento das suas gravações 24h por dia.' },
-  { id: 'acesso', label: 'Biometria', icon: Key, img: IMAGES.SERVICE_ACESSO, desc: 'Controle de acesso seguro com tecnologia biométrica e reconhecimento facial de última geração.' },
-  { id: 'alarme', label: 'Alarmes Smart', icon: Shield, img: IMAGES.SERVICE_ALARME, desc: 'Centrais AMT 8000 totalmente sem fio. Notificações em tempo real e inteligência contra invasões.' },
-  { id: 'ti', label: 'Redes e TI', icon: Wifi, img: IMAGES.SERVICE_TI, desc: 'Infraestrutura de rede robusta e Wi-Fi de alta performance para suportar sistemas de segurança modernos.' },
+const CORE_SERVICES = [
+  {
+    id: 'seguranca',
+    title: 'Segurança Eletrônica',
+    path: '/seguranca-eletronica',
+    tag: 'CFTV IP & Analíticos de IA',
+    icon: Camera,
+    img: IMAGES.PORTFOLIO_PTZ,
+    desc: 'Câmeras IP 4K Intelbras, gravação em NVR/DVR 24h, inteligência artificial com detecção facial, leitura de placas e centrais de alarme AMT 8000.',
+    highlights: ['Câmeras Speed Dome e Bullet IP', 'Acesso pelo celular sem mensalidade', 'Gravação contínua 24h']
+  },
+  {
+    id: 'redes',
+    title: 'Redes de Computadores',
+    path: '/redes-computadores',
+    tag: 'TI & Infraestrutura',
+    icon: Network,
+    img: IMAGES.PORTFOLIO_RACK,
+    desc: 'Cabeamento estruturado Cat6 100% cobre, montagem e organização de racks de telecom, switches Gigabit PoE industriais e Wi-Fi de alta densidade.',
+    highlights: ['Racks e Patch Panels organizados', 'Switches PoE gerenciáveis Intelbras', 'Certificação de pontos de rede']
+  },
+  {
+    id: 'eletrica',
+    title: 'Instalações Elétricas',
+    path: '/instalacoes-eletricas',
+    tag: 'Residencial & Comercial',
+    icon: Zap,
+    img: IMAGES.SERVICE_ELETRICA,
+    desc: 'Montagem de quadros de distribuição QDC com DPS anti-raios e DR contra choques, circuitos dedicados para segurança, tomadas e iluminação técnica.',
+    highlights: ['Norma NBR 5410 com segurança total', 'Proteção DPS para não queimar CFTV', 'Correção de curtos e fiações antigas']
+  },
+  {
+    id: 'cerca',
+    title: 'Cerca Elétrica',
+    path: '/cerca-eletrica',
+    tag: 'Proteção Perimetral',
+    icon: ShieldAlert,
+    img: IMAGES.SERVICE_CERCA,
+    desc: 'Instalação e manutenção de cercas elétricas com centrais de choque Intelbras ELC High Power, hastes em alumínio reforçado, sirene de 120dB e sensores de barreira.',
+    highlights: ['Choque inibitório legalizado', 'Sirene de alta potência imediata', 'Hastes resistentes ao sol e chuva']
+  },
+  {
+    id: 'automacao',
+    title: 'Vídeo Porteiro & Automação',
+    path: '/video-porteiro-automacao',
+    tag: 'Interfonia & Fechaduras',
+    icon: BellRing,
+    img: IMAGES.PORTFOLIO_PORTEIRO,
+    desc: 'Vídeo porteiros inteligentes Intelbras Allo WT7 touchscreen para atender pelo celular, fechaduras digitais por biometria e motores rápidos para portões.',
+    highlights: ['Atenda e abra o portão pelo smartphone', 'Fechaduras biométricas sem chaves', 'Automatização rápida de portões']
+  }
 ];
 
-const PORTFOLIO = [
-  { id: 1, title: 'Speed Dome PTZ', model: 'VIP 8232', img: IMAGES.PORTFOLIO_PTZ },
-  { id: 2, title: 'Monitoramento IP', model: 'VIP 1130 B', img: IMAGES.PORTFOLIO_BULLET },
-  { id: 3, title: 'Central NVR', model: 'MHDX 1108', img: IMAGES.PORTFOLIO_NVR },
-  { id: 4, title: 'Fechadura Eletrônica', model: 'FR 201', img: IMAGES.PORTFOLIO_LOCK },
-  { id: 5, title: 'Vídeo Porteiro WT7', model: 'Allo Intelbras PoE', img: IMAGES.PORTFOLIO_PORTEIRO },
-  { id: 6, title: 'Rack TI', model: 'Infraestrutura', img: IMAGES.PORTFOLIO_RACK },
+const INTELBRAS_CATALOG: ModalImageData[] = [
+  {
+    title: 'Speed Dome VIP PTZ',
+    model: 'VIP 8232 SD IA Intelbras',
+    category: 'Câmera IP PTZ',
+    img: IMAGES.PORTFOLIO_PTZ,
+    description: 'Câmera PTZ profissional com zoom óptico de 32x e inteligência artificial para detecção de veículos e pessoas, rastreamento automático (autotracking) e proteção perimetral.',
+    features: ['Zoom óptico 32x 4K', 'Detecção facial e de placas', 'Visão noturna colorida Starlight']
+  },
+  {
+    title: 'Câmera Bullet IP Profissional',
+    model: 'VIP 1130 B Intelbras',
+    category: 'CFTV IP Externo',
+    img: IMAGES.PORTFOLIO_BULLET,
+    description: 'Câmera IP metálica com alimentação PoE e analíticos de linha e cerca virtual para condomínios e comércios no DF.',
+    features: ['Alimentação PoE no cabo de rede', 'Infravermelho 30m inteligente', 'Corpo metálico IP67']
+  },
+  {
+    title: 'Câmera Wi-Fi Interna Mibo',
+    model: 'iM3 / iM3 C Intelbras',
+    category: 'Linha Mibo Wi-Fi',
+    img: IMAGES.MIBO_IM3,
+    description: 'Câmera interna compacta com base magnética multi-ângulo, áudio bidirecional para falar e ouvir, e inteligência artificial para detecção de ruídos e pessoas.',
+    features: ['Base magnética multi-ângulo', 'Áudio bidirecional para falar e ouvir', 'Detecção de ruídos anormal']
+  },
+  {
+    title: 'Câmera Wi-Fi 360° Mibo',
+    model: 'iM4 / iM4 C Intelbras',
+    category: 'Linha Mibo Wi-Fi',
+    img: IMAGES.MIBO_IM4,
+    description: 'Rotação motorizada 360° horizontal e 90° vertical com rastreamento inteligente de pessoas (Auto-tracking) e modo privacidade.',
+    features: ['Visão 360° motorizada pelo app', 'Auto-tracking segue movimento', 'Modo privacidade da lente']
+  },
+  {
+    title: 'Câmera Wi-Fi Externa Mibo',
+    model: 'iM5 / iM5 S Intelbras',
+    category: 'Linha Mibo Wi-Fi',
+    img: IMAGES.MIBO_IM5,
+    description: 'Câmera externa com proteção IP67 para sol e chuva, duas antenas Wi-Fi potentes de alto ganho e inteligência artificial para detecção humana.',
+    features: ['Proteção IP67 à prova d\'água', 'Antenas duplas de alto ganho', 'Visão noturna até 30m']
+  },
+  {
+    title: 'Speed Dome Wi-Fi Full Color',
+    model: 'iM7 / iM7 Full Color Intelbras',
+    category: 'Linha Mibo Wi-Fi',
+    img: IMAGES.MIBO_IM7,
+    description: 'Giro 360° externo com holofotes LED para imagens coloridas à noite, sirene integrada e microfone para intimidação de invasores.',
+    features: ['Visão noturna colorida Full Color', 'Giro 360° panorâmico externo', 'Sirene de alarme integrada']
+  },
+  {
+    title: 'Gravador Digital Multi-HD',
+    model: 'MHDX 1108 / 1116 Intelbras',
+    category: 'Gravadores e NVRs',
+    img: IMAGES.PORTFOLIO_NVR,
+    description: 'Gravador de segurança com compressão de alta performance H.265+, reconhecimento facial e acesso criptografado via Intelbras Cloud.',
+    features: ['Compressão H.265+ econômica', 'Busca rápida por pessoa/veículo', 'Acesso remoto pelo celular']
+  },
+  {
+    title: 'Central de Alarme Sem Fio',
+    model: 'AMT 8000 Intelbras',
+    category: 'Alarmes e Sensores',
+    img: IMAGES.SERVICE_ALARME,
+    description: 'Central inteligente sem fios de longo alcance com teclado LCD, sensores PET que não disparam com animais e sirene potente.',
+    features: ['100% sem fios', 'Notificações instantâneas no smartphone', 'Bateria interna de emergência']
+  },
+  {
+    title: 'Central de Cerca Elétrica',
+    model: 'ELC 5002 High Power',
+    category: 'Cerca Elétrica',
+    img: IMAGES.SERVICE_CERCA,
+    description: 'Eletrificador de cerca perimetral com alta voltagem pulsativa, monitoramento de corte de fios e acionamento sonoro.',
+    features: ['Choque pulsativo inibitório', 'Detecção de corte e aterramento', 'Norma ABNT e IEC']
+  },
+  {
+    title: 'Vídeo Porteiro Wi-Fi Allo',
+    model: 'Allo WT7 Intelbras',
+    category: 'Vídeo Interfonia',
+    img: IMAGES.PORTFOLIO_PORTEIRO,
+    description: 'Vídeo porteiro com tela touchscreen de 7 polegadas e visualização remota no celular para atendimento e abertura remota.',
+    features: ['Tela touch colorida 7 polegadas', 'Abertura remota pelo smartphone', 'Gravação de fotos dos visitantes']
+  },
+  {
+    title: 'Fechadura Digital Biométrica',
+    model: 'FR 201 / FR 330 Touch',
+    category: 'Fechaduras Digitais',
+    img: IMAGES.PORTFOLIO_LOCK,
+    description: 'Fechadura eletrônica com leitor biométrico, teclado touch luminoso e abertura por cartão ou senha. Conforto total sem chaves.',
+    features: ['Abertura por biometria e senha', 'Travamento automático ao fechar', 'Alarme anti-arrombamento']
+  },
+  {
+    title: 'Switch Gigabit PoE Gerenciável',
+    model: 'SG 2404 PoE Intelbras',
+    category: 'Redes de TI',
+    img: IMAGES.SERVICE_TI,
+    description: 'Switch corporativo com portas PoE Gigabit para alimentação e transmissão de dados de câmeras IP e roteadores de alta performance.',
+    features: ['Portas Gigabit com PoE de alta potência', 'Proteção contra surtos elétricos', 'Gerenciamento de banda e VLAN']
+  },
+  {
+    title: 'Quadro Elétrico com DPS e DR',
+    model: 'QDC Padrão NBR 5410',
+    category: 'Instalações Elétricas',
+    img: IMAGES.SERVICE_ELETRICA,
+    description: 'Quadro de energia dimensionado com protetores DPS contra descargas atmosféricas e disjuntores termomagnéticos balanceados.',
+    features: ['DPS anti-raios para eletrônicos', 'Dispositivo DR salva-vidas', 'Fiação antichama identificada']
+  }
 ];
 
 const FAQS = [
-  { q: 'A NDS CFTV atende quais regiões?', a: 'Atendemos todas as regiões do Distrito Federal, incluindo Águas Claras, Asa Sul, Asa Norte, Guará, Lago Sul, Lago Norte, Park Way e demais localidades.' },
-  { q: 'Qual a garantia das instalações?', a: 'Equipamentos possuem 1 ano de garantia de fábrica. Nossa instalação possui garantia técnica de 90 dias.' },
-  { q: 'Posso ver as câmeras pelo celular?', a: 'Sim! Configuramos o acesso remoto em todos os seus dispositivos (celular, tablet e computador).' },
+  { q: 'A NDS CFTV atende quais regiões de Brasília?', a: 'Atendemos todo o Distrito Federal com equipes móveis, com destaque para Guará, Taguatinga, Asa Sul, Asa Norte, Lago Sul, Lago Norte, Park Way, Noroeste, Sudoeste e Águas Claras.' },
+  { q: 'Qual a garantia dos equipamentos e das instalações?', a: 'Todos os equipamentos originais Intelbras possuem garantia de fábrica de 1 ano. Nossos serviços contam com garantia técnica e suporte especializado no DF.' },
+  { q: 'Consigo ver minhas câmeras e abrir o portão pelo celular?', a: 'Sim! Deixamos todos os aplicativos oficiais configurados em seus celulares, tablets e computadores, permitindo visualizar imagens ao vivo e abrir portões de qualquer lugar do mundo.' },
+  { q: 'Vocês fazem manutenção em cercas elétricas e câmeras que já tenho?', a: 'Sim. Realizamos manutenção preventiva e corretiva, conserto de disparo em falso de cerca elétrica, troca de conectores oxidados e modernização de gravadores antigos.' },
+  { q: 'O orçamento tem custo?', a: 'Não! Elaboramos propostas comerciais e orçamentos técnicos detalhados com transparência e agilidade via WhatsApp.' }
 ];
 
-const TESTIMONIALS = [
-  { id: 1, name: 'Ricardo Santos', rating: 5, comment: 'Excelente atendimento. Instalaram as câmeras em casa com muita rapidez e o sistema ficou perfeito. Recomendo!', date: 'há 2 meses' },
-  { id: 2, name: 'Agropet', rating: 5, comment: 'Profissionais de alto nível. O sistema de monitoramento IP da Intelbras que colocaram aqui é fantástico. Visualização clara.', date: 'há 1 mês' },
-  { id: 3, name: 'Rodrigo Mendonça', rating: 5, comment: 'Sempre que precisamos de manutenção na cerca elétrica ou no interfone, a NDS nos atende prontamente. Serviço de confiança.', date: 'há 3 semanas' },
-  { id: 4, name: 'Maria Eduarda', rating: 5, comment: 'Amei a minha fechadura eletrônica! Instalação limpa e me explicaram tudo sobre como usar o app Mibo.', date: 'há 2 semanas' },
-];
-
-/* ============================
-   COMPONENTS
-   ============================ */
-
-interface FaqItemProps {
-  question: string;
-  answer: string;
-  key?: React.Key;
-}
-
-function FaqItem({ question, answer }: FaqItemProps) {
+function FaqItem({ question, answer }: { question: string; answer: string; key?: React.Key }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="border-b border-white/5 last:border-0">
+    <div className="border-b border-white/10 last:border-0">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full py-6 flex items-center justify-between text-left group"
+        className="w-full py-5 flex items-center justify-between text-left group cursor-pointer"
       >
-        <span className="text-lg font-medium text-slate-200 group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{question}</span>
-        <ChevronDown className={`w-5 h-5 text-cyan-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="text-base sm:text-lg font-bold text-slate-200 group-hover:text-cyan-400 transition-colors uppercase tracking-tight">
+          {question}
+        </span>
+        <ChevronDown className={`w-5 h-5 text-cyan-400 shrink-0 ml-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -88,7 +226,7 @@ function FaqItem({ question, answer }: FaqItemProps) {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <p className="pb-6 text-slate-400 leading-relaxed">{answer}</p>
+            <p className="pb-5 text-slate-400 text-sm leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -96,96 +234,20 @@ function FaqItem({ question, answer }: FaqItemProps) {
   );
 }
 
-function SectionTitle({ title, subtitle, light }: { title: string; subtitle?: string; light?: boolean }) {
-  return (
-    <div className="mb-12">
-      <motion.span 
-        initial={{ opacity: 0, x: -20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        className="text-cyan-500 font-black uppercase tracking-[0.4em] text-[10px] mb-3 block"
-      >
-        NDS CFTV Digital
-      </motion.span>
-      <motion.h2 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        className={`text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none ${light ? 'text-white' : 'text-slate-900'}`}
-      >
-        {title}
-      </motion.h2>
-      {subtitle && <p className={`mt-4 max-w-xl ${light ? 'text-slate-400' : 'text-slate-600'}`}>{subtitle}</p>}
-      <div className="h-1 w-12 bg-cyan-500 mt-6" />
-    </div>
-  );
-}
-
 /* ============================
-   MAIN PAGE
-   ============================ */
-
-/* ============================
-   MAIN PAGE COMPONENTS
+   MAIN HOMEPAGE COMPONENT
    ============================ */
 
 function CFTVSite({ authUser }: { authUser: User | null }) {
   const navigate = useNavigate();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedDetail, setSelectedDetail] = useState<null | { title: string; desc: string; img: string }>(null);
-  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
-  const [logoClickTimer, setLogoClickTimer] = useState<any>(null);
-  const [currentVisitId, setCurrentVisitId] = useState<string | null>(localStorage.getItem('nds_visit_id'));
+  const [selectedImage, setSelectedImage] = useState<ModalImageData | null>(null);
+  const [catalogFilter, setCatalogFilter] = useState<string>('todos');
 
-  const handleLogoDown = () => {
-    const timer = setTimeout(() => {
-      navigate('/ndsdashboard');
-    }, 3000);
-    setLogoClickTimer(timer);
-  };
-
-  const handleLogoUp = () => {
-    if (logoClickTimer) {
-      clearTimeout(logoClickTimer);
-      setLogoClickTimer(null);
-    }
-  };
-
-  // TRACKING LOGIC REMOVED - CONSOLIDATED IN VisitLogger
-  const HERO_SLIDES = [
-    {
-      image: IMAGES.SERVICE_MIBO,
-      title: 'Mibo iM5',
-      desc: '"Amei a minha fechadura eletrônica! Instalação limpa e me explicaram tudo sobre como usar o app Mibo." - Maria Eduarda'
-    },
-    {
-      image: IMAGES.SERVICE_CAMERAS,
-      title: 'Monitoramento 4K',
-      desc: '"Excelente atendimento. Instalaram as câmeras em casa com muita rapidez e o sistema ficou perfeito." - Ricardo Santos'
-    },
-    {
-      image: IMAGES.PORTFOLIO_PTZ,
-      title: 'Speed Dome PTZ',
-      desc: '"Profissionais de alto nível. O sistema de monitoramento IP da Intelbras é fantástico." - Agropet'
-    }
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentHeroSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [HERO_SLIDES.length]);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const openWhatsApp = async () => {
+  const openWhatsApp = async (customMessage?: string) => {
     try {
+      const currentVisitId = localStorage.getItem('nds_visit_id');
       await addDoc(collection(db, 'conversions'), {
-        page: 'CFTV Home',
+        page: 'Home Modernizada',
         type: 'WhatsApp Click',
         visitId: currentVisitId,
         timestamp: serverTimestamp(),
@@ -197,10 +259,14 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
           'send_to': 'AW-18323711854/SimhCIKn-tAcEO7OtqFE'
         });
       }
-    } catch (e) { console.error('Error logging conversion:', e); }
+    } catch (e) {
+      console.error('Error logging conversion:', e);
+    }
 
     const phone = "5561998308655";
-    const msg = encodeURIComponent("Olá NDS! Vim pelo site de CFTV e gostaria de um orçamento.");
+    const msg = encodeURIComponent(
+      customMessage || "Olá NDS! Vim pelo site e gostaria de solicitar um orçamento para meu projeto em Brasília."
+    );
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };
 
@@ -211,7 +277,7 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
         "@type": "LocalBusiness",
         "name": "NDS CFTV Digital",
         "image": IMAGES.LOGO,
-        "url": "https://nds-cftv-digital.com.br",
+        "url": "https://ndscftvdigital.com.br",
         "telephone": "+55-61-99830-8655",
         "priceRange": "$$$",
         "address": {
@@ -220,898 +286,497 @@ function CFTVSite({ authUser }: { authUser: User | null }) {
           "addressRegion": "DF",
           "addressCountry": "BR"
         },
-        "description": "Projetos profissionais de CFTV inteligente, monitoramento remoto, controle de acesso e redes estruturadas de TI para empresas, condomínios e residências em Brasília."
+        "description": "Projetos de CFTV Inteligente com equipamentos oficiais Intelbras, cabeamento estruturado de redes, instalações elétricas, cerca elétrica e vídeo porteiros no Distrito Federal."
       },
       {
         "@type": "Organization",
         "name": "NDS CFTV Digital",
         "logo": IMAGES.LOGO,
-        "sameAs": [
-          "https://www.instagram.com/"
-        ]
+        "url": "https://ndscftvdigital.com.br"
       }
     ]
   };
 
+  const DF_PRIORITY_CITIES = [
+    'Guará', 'Taguatinga', 'Asa Sul', 'Asa Norte',
+    'Lago Sul', 'Lago Norte', 'Park Way', 'Noroeste', 'Sudoeste', 'Águas Claras'
+  ];
+
+  const filteredCatalog = catalogFilter === 'todos' 
+    ? INTELBRAS_CATALOG 
+    : INTELBRAS_CATALOG.filter(item => {
+        if (catalogFilter === 'mibo') return item.category?.includes('Mibo');
+        if (catalogFilter === 'cftv') return item.category?.includes('Câmera') || item.category?.includes('CFTV');
+        if (catalogFilter === 'nvr') return item.category?.includes('Gravador');
+        if (catalogFilter === 'alarme') return item.category?.includes('Alarme') || item.category?.includes('Cerca');
+        if (catalogFilter === 'porteiro') return item.category?.includes('Interfonia') || item.category?.includes('Fechadura');
+        if (catalogFilter === 'redes') return item.category?.includes('Rede') || item.category?.includes('Elétrica');
+        return true;
+      });
+
   return (
-    <div className="min-h-screen bg-[#fafafa] flex flex-col selection:bg-cyan-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col selection:bg-cyan-500 selection:text-white">
       <SEOHelper 
-        title="NDS CFTV Digital | Câmeras de Segurança e Redes em Brasília"
-        description="Líder em segurança eletrônica no Distrito Federal. Projetos sob medida de CFTV inteligente, monitoramento IP 4K, controle de acesso biométrico e redes estruturadas de alta performance."
+        title="NDS CFTV Digital | Câmeras Intelbras, Redes e Segurança em Brasília"
+        description="Especialista em segurança eletrônica no DF. CFTV Inteligente Intelbras, Redes de TI, Elétrica, Cerca Elétrica e Vídeo Porteiros no Guará, Taguatinga, Asas e região."
         schema={homeSchema}
       />
-      {/* NAVBAR */}
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg py-3' : 'bg-slate-950 border-b border-white/5 py-5'}`}>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-          <div 
-            className="flex items-center gap-4 cursor-pointer select-none"
-            onMouseDown={handleLogoDown}
-            onMouseUp={handleLogoUp}
-            onTouchStart={handleLogoDown}
-            onTouchEnd={handleLogoUp}
-          >
-             <img 
-               src={IMAGES.LOGO} 
-               alt="NDS" 
-               referrerPolicy="no-referrer"
-               className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl border-2 border-white/10 active:scale-95 transition-transform" 
-             />
-             <div className="leading-none">
-               <span className={`text-2xl md:text-3xl font-black tracking-tighter ${isScrolled ? 'text-slate-900' : 'text-white'}`}>NDS<span className="text-cyan-500">CFTV</span></span>
-               <p className={`text-[10px] md:text-xs uppercase tracking-[0.4em] font-black ${isScrolled ? 'text-slate-500' : 'text-cyan-400'}`}>Digital</p>
-             </div>
-          </div>
 
-          {/* Links Desktop */}
-          <div className="hidden lg:flex items-center gap-8">
-            <a href="#serviços" className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
-              Serviços
-            </a>
-            <a href="#projetos" className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-slate-600 hover:text-cyan-500' : 'text-slate-600 md:text-white/80 md:hover:text-white'}`}>
-              Produtos
-            </a>
-            <a href="#tecnologia-ia" className="relative group">
-              <span className={`text-xs font-black uppercase tracking-widest transition-colors ${isScrolled ? 'text-cyan-600' : 'text-cyan-400'}`}>
-                Tecnologia IA
-              </span>
-              <span className="absolute -top-4 -right-4 px-1.5 py-0.5 bg-cyan-600 text-[8px] font-black text-white rounded-full animate-bounce">
-                NOVO
-              </span>
-            </a>
+      <SiteHeader />
 
-            <button 
-              onClick={openWhatsApp}
-              className="bg-cyan-600 hover:bg-cyan-500 text-white px-7 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ml-2"
-            >
-              Orçamento
-            </button>
-          </div>
-
-          <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-slate-900 p-2">
-            <Menu />
-          </button>
-        </div>
-      </nav>
-
-      {/* MOBILE NAV OVERLAY */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 z-[200] bg-white p-8 flex flex-col"
-          >
-            <div className="flex justify-between items-center mb-12">
-              <span className="text-2xl font-black tracking-tighter text-slate-900">NDS<span className="text-cyan-500">CFTV</span></span>
-              <button onClick={() => setMobileMenuOpen(false)} className="p-2"><X /></button>
-            </div>
-            <div className="flex flex-col gap-8">
-              <a href="#tecnologia-ia" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-cyan-600 uppercase tracking-tighter flex items-center justify-between">
-                Tecnologia IA
-                <span className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded-full">NOVO</span>
-              </a>
-              <a href="#serviços" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
-                Serviços
-              </a>
-              <a href="#projetos" onClick={() => setMobileMenuOpen(false)} className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
-                Produtos
-              </a>
-            </div>
-            <button onClick={openWhatsApp} className="mt-auto w-full bg-cyan-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-tighter">
-              Solicitar Orçamento
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center pt-40 overflow-hidden bg-slate-950">
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          {/* Floating Video 1 - Security */}
-          <motion.div
-            animate={{ 
-              y: [0, -30, 0],
-              rotate: [5, 2, 5],
-              scale: [1, 1.05, 1]
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/4 -left-20 w-96 aspect-video rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl skew-y-3 opacity-30 blur-[1px] hidden xl:block z-10"
-          >
-            <video 
-              src="https://assets.mixkit.co/videos/preview/mixkit-security-cameras-on-a-city-street-11440-large.mp4" 
-              autoPlay muted loop playsInline 
-              className="w-full h-full object-cover" 
-            />
-          </motion.div>
-
-          {/* Floating Video 2 - Data/Network */}
-          <motion.div
-            animate={{ 
-              y: [0, 30, 0],
-              rotate: [-5, -2, -5],
-              scale: [1, 0.95, 1]
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-1/4 -right-20 w-96 aspect-video rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl -skew-y-3 opacity-30 blur-[1px] hidden xl:block z-10"
-          >
-            <video 
-              src="https://assets.mixkit.co/videos/preview/mixkit-technology-server-room-rack-closet-4456-large.mp4" 
-              autoPlay muted loop playsInline 
-              className="w-full h-full object-cover" 
-            />
-          </motion.div>
-
-          <img 
-            src={IMAGES.HERO} 
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-30" 
-            alt="NDS CFTV Segurança Digital" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/70 to-slate-950" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent opacity-90" />
-        </div>
+      <main className="flex-grow pt-20">
         
-        <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-20 items-center">
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 px-4 py-2 rounded-full mb-8">
-              <Award className="w-4 h-4 text-cyan-400" />
-              <span className="text-cyan-400 text-[10px] uppercase font-black tracking-widest">Tecnologia NDS CFTV</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter uppercase mb-2">
-              NDS CFTV DIGITAL
-            </h1>
-            <h2 className="text-xl md:text-3xl font-black text-cyan-400 uppercase tracking-[0.2em] mb-8">
-              Segurança Eletrônica e Redes Cabeada
-            </h2>
-            <p className="text-slate-300 text-lg md:text-xl max-w-lg mb-10 leading-relaxed font-light">
-              Projetos personalizados de monitoramento, automação e proteção patrimonial no Distrito Federal. Tecnologia de ponta ao seu alcance.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button 
-                onClick={openWhatsApp}
-                className="bg-cyan-600 hover:bg-cyan-500 text-white px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-widest transition-all shadow-[0_10px_40px_rgba(6,182,212,0.3)] hover:-translate-y-1 active:translate-y-0"
-              >
-                Falar com Especialista
-              </button>
-              <a href="#serviços" className="border border-white/10 hover:bg-white/5 text-white px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-widest transition-all text-center">
-                Ver Catálogo
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Hero Slider */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4, duration: 1 }}
-            className="hidden lg:flex flex-col items-center relative"
-          >
-            <div className="w-[500px] h-[500px] bg-cyan-500/20 absolute -inset-20 blur-[100px] rounded-full" />
+        {/* HERO SECTION DE ALTO IMPACTO (AZUL-MARINHO, AZUL ELÉTRICO E AMARELO VIBRANTE) */}
+        <section className="relative min-h-[90vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-[#0A1128] via-slate-950 to-slate-950 border-b border-cyan-500/20">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(6,182,212,0.18),rgba(255,255,255,0))] pointer-events-none" />
+          
+          <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-12 gap-12 items-center">
             
-            <div className="relative z-10 w-full aspect-square max-w-[450px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentHeroSlide}
-                  initial={{ opacity: 0, x: 20, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -20, scale: 0.95 }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="absolute inset-0 flex flex-col items-center justify-center"
+            {/* TEXTOS E CTAs */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-black uppercase tracking-widest">
+                <Shield className="w-4 h-4 text-amber-400" /> Segurança Eletrônica & Infraestrutura no DF
+              </div>
+
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-tight">
+                Proteção Inteligente com <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-300">
+                  Tecnologia Oficial Intelbras
+                </span>
+              </h1>
+
+              <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                Projetos completos de <strong className="text-white">CFTV com Inteligência Artificial</strong>, cabeamento estruturado de redes, quadros elétricos seguros, cercas de alta proteção e vídeo porteiros para residências, condomínios e empresas em Brasília.
+              </p>
+
+              {/* BOTÕES DE CONVERSÃO */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 justify-center lg:justify-start">
+                <button
+                  onClick={() => openWhatsApp()}
+                  className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 font-black px-8 py-4 rounded-xl uppercase tracking-wider text-sm flex items-center justify-center gap-3 shadow-xl shadow-amber-400/20 transition-all cursor-pointer"
                 >
-                  <img 
-                    src={HERO_SLIDES[currentHeroSlide].image} 
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-contain drop-shadow-[0_0_50px_rgba(6,182,212,0.3)] mb-8" 
-                    alt={HERO_SLIDES[currentHeroSlide].title}
-                  />
-                  
-                  {/* Floating Review Card */}
-                  <motion.div 
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-2xl max-w-sm"
-                  >
-                    <div className="flex gap-1 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-cyan-400 text-cyan-400" />
-                      ))}
-                    </div>
-                    <p className="text-white text-sm font-medium italic leading-relaxed text-center">
-                      {HERO_SLIDES[currentHeroSlide].desc}
-                    </p>
-                  </motion.div>
-                </motion.div>
-              </AnimatePresence>
+                  <MessageCircle className="w-5 h-5 fill-slate-950" />
+                  <span>Solicitar Orçamento Grátis</span>
+                </button>
+
+                <a 
+                  href="#servicos-principais"
+                  className="w-full sm:w-auto border border-cyan-500/40 hover:bg-cyan-500/10 text-cyan-300 px-7 py-4 rounded-xl uppercase tracking-wider text-xs font-bold transition-all text-center"
+                >
+                  Conhecer os 5 Serviços
+                </a>
+              </div>
+
+              {/* SELOS DE CONFIANÇA */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-white/10 text-left">
+                <div className="flex items-center gap-2 text-xs text-slate-300">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span>Equipamentos 100% Homologados</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-300">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span>Atendimento em todo o DF</span>
+                </div>
+                <div className="col-span-2 sm:col-span-1 flex items-center gap-2 text-xs text-slate-300">
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Garantia e Suporte Técnico</span>
+                </div>
+              </div>
             </div>
 
-            {/* Slider Dots */}
-            <div className="flex gap-2 mt-20 z-20">
-              {HERO_SLIDES.map((_, i) => (
+            {/* FOTO HERO INTERATIVA INTELBRAS */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div 
+                className="relative group cursor-pointer max-w-md w-full"
+                onClick={() => setSelectedImage(INTELBRAS_CATALOG[0])}
+              >
+                <div className="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 to-amber-400 rounded-3xl blur-xl opacity-40 group-hover:opacity-75 transition duration-500" />
+                <div className="relative bg-slate-900 border border-cyan-500/40 p-6 rounded-3xl shadow-2xl">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                      Destaque em Brasília
+                    </span>
+                    <span className="text-cyan-400 text-xs font-bold flex items-center gap-1">
+                      <ZoomIn className="w-3.5 h-3.5" /> Clique p/ Zoom
+                    </span>
+                  </div>
+
+                  <img
+                    src={IMAGES.PORTFOLIO_PTZ}
+                    alt="Speed Dome VIP PTZ Intelbras"
+                    className="w-full h-64 sm:h-72 object-contain group-hover:scale-105 transition-transform duration-300"
+                  />
+
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <h3 className="text-lg font-black text-white uppercase">Câmera Speed Dome VIP 8232 SD IA</h3>
+                    <p className="text-slate-400 text-xs mt-1">Zoom óptico 32x com inteligência artificial para condomínios e perímetros no DF.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 5 PÁGINAS E SERVIÇOS PRINCIPAIS DA NDS */}
+        <section id="servicos-principais" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <span className="text-cyan-400 text-xs font-black uppercase tracking-[0.3em]">
+              Engenharia e Soluções Integradas
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white">
+              Nossos 5 Pilares de Serviços Especializados
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base">
+              Acesse a página individual de cada serviço para conferir especificações, fotografias de equipamentos Intelbras e solicitar sua proposta técnica.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {CORE_SERVICES.map((srv, index) => {
+              const IconComp = srv.icon;
+              return (
+                <motion.div
+                  key={srv.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-slate-900/90 border border-white/10 hover:border-cyan-500/50 rounded-3xl p-6 flex flex-col justify-between group transition-all hover:shadow-2xl hover:shadow-cyan-500/10"
+                >
+                  <div>
+                    {/* Imagem do Serviço */}
+                    <div className="relative bg-slate-950 rounded-2xl p-4 mb-6 border border-white/5 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src={srv.img} 
+                        alt={srv.title} 
+                        className="h-44 w-full object-contain group-hover:scale-105 transition-transform duration-300" 
+                      />
+                      <span className="absolute bottom-3 left-3 bg-cyan-950/90 text-cyan-300 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border border-cyan-500/40">
+                        {srv.tag}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        <IconComp className="w-5 h-5" />
+                      </div>
+                      <h3 className="text-xl font-black uppercase text-white group-hover:text-cyan-400 transition-colors">
+                        {srv.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-slate-400 text-xs leading-relaxed mb-4">
+                      {srv.desc}
+                    </p>
+
+                    <ul className="space-y-1.5 mb-6">
+                      {srv.highlights.map((h, i) => (
+                        <li key={i} className="flex items-center gap-2 text-xs text-slate-300">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+                    <Link
+                      to={srv.path}
+                      className="flex-1 bg-slate-800 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider text-center transition-colors flex items-center justify-center gap-2"
+                    >
+                      <span>Ver Página do Serviço</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </Link>
+
+                    <button
+                      onClick={() => openWhatsApp(`Gostaria de um orçamento para o serviço: ${srv.title}`)}
+                      className="bg-amber-400 hover:bg-amber-300 text-slate-950 p-3 rounded-xl shadow-md transition-colors"
+                      title="Orçamento no WhatsApp"
+                    >
+                      <MessageCircle className="w-4 h-4 fill-slate-950" />
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* DESTAQUE ESPECIAL: LINHA INTELBRAS MIBO CAM */}
+        <section className="py-20 bg-gradient-to-b from-slate-950 via-[#0A1633] to-slate-950 border-t border-cyan-500/20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-14 text-center lg:text-left">
+              <div className="space-y-3">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-black uppercase tracking-widest">
+                  <Wifi className="w-3.5 h-3.5 text-amber-400" /> Linha Mibo Cam Wi-Fi • Sem Fios e Sem Obras
+                </span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white">
+                  Câmeras Inteligentes Intelbras Mibo
+                </h2>
+                <p className="text-slate-300 text-sm sm:text-base max-w-2xl">
+                  Praticidade total para residências, apartamentos, clínicas e comércios no DF. Instalação rápida, áudio bidirecional, detecção inteligente de pessoas e controle completo no aplicativo <strong>Mibo Cam</strong>.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+                <Link
+                  to="/linha-mibo"
+                  className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all"
+                >
+                  <span>Ver Modelos Mibo</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
                 <button
-                  key={i}
-                  onClick={() => setCurrentHeroSlide(i)}
-                  className={`h-1.5 transition-all duration-500 rounded-full ${i === currentHeroSlide ? 'w-10 bg-cyan-500' : 'w-2 bg-white/20'}`}
-                />
+                  onClick={() => openWhatsApp("Gostaria de um orçamento para câmeras da Linha Mibo Wi-Fi")}
+                  className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4 fill-slate-950" />
+                  <span>Pedir Proposta Mibo</span>
+                </button>
+              </div>
+            </div>
+
+            {/* CARDS DOS 4 MODELOS MIBO */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  title: 'Mibo iM3 / iM3 C',
+                  tag: 'Interna Compacta',
+                  desc: 'Base magnética multi-ângulo, áudio bidirecional e alerta de ruído/choro.',
+                  img: IMAGES.MIBO_IM3,
+                  full: INTELBRAS_CATALOG.find(i => i.model?.includes('iM3'))!
+                },
+                {
+                  title: 'Mibo iM4 / iM4 C',
+                  tag: 'Visão 360° Pan-Tilt',
+                  desc: 'Rotação motorizada pelo app com auto-tracking que segue pessoas na sala.',
+                  img: IMAGES.MIBO_IM4,
+                  full: INTELBRAS_CATALOG.find(i => i.model?.includes('iM4'))!
+                },
+                {
+                  title: 'Mibo iM5 / iM5 S',
+                  tag: 'Externa com IA',
+                  desc: 'Resistência IP67 para sol e chuva, antenas potentes e visão noturna 30m.',
+                  img: IMAGES.MIBO_IM5,
+                  full: INTELBRAS_CATALOG.find(i => i.model?.includes('iM5'))!
+                },
+                {
+                  title: 'Mibo iM7 Full Color',
+                  tag: 'PTZ 360° Colorida',
+                  desc: 'Giro externo 360° com holofote LED colorido e sirene integrada.',
+                  img: IMAGES.MIBO_IM7,
+                  full: INTELBRAS_CATALOG.find(i => i.model?.includes('iM7'))!
+                }
+              ].map((miboItem, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setSelectedImage(miboItem.full)}
+                  className="bg-slate-900/90 border border-cyan-500/20 hover:border-cyan-400 rounded-2xl p-5 flex flex-col justify-between group cursor-pointer transition-all hover:scale-[1.02] shadow-xl"
+                >
+                  <div>
+                    <div className="relative bg-slate-950 rounded-xl p-4 mb-4 flex items-center justify-center overflow-hidden border border-white/5">
+                      <img 
+                        src={miboItem.img} 
+                        alt={miboItem.title} 
+                        className="h-36 w-full object-contain group-hover:scale-105 transition-transform duration-300" 
+                      />
+                      <span className="absolute top-2 right-2 bg-slate-900/90 text-cyan-400 p-1 rounded-md">
+                        <ZoomIn className="w-3.5 h-3.5" />
+                      </span>
+                      <span className="absolute bottom-2 left-2 bg-cyan-950/90 text-cyan-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">
+                        {miboItem.tag}
+                      </span>
+                    </div>
+
+                    <h4 className="text-base font-black uppercase text-white group-hover:text-cyan-400 transition-colors">
+                      {miboItem.title}
+                    </h4>
+                    <p className="text-slate-400 text-xs mt-2 leading-relaxed">
+                      {miboItem.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                      Ver Especificações <ArrowRight className="w-3 h-3" />
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openWhatsApp(`Gostaria de um orçamento para a câmera: ${miboItem.title}`);
+                      }}
+                      className="bg-amber-400 hover:bg-amber-300 text-slate-950 p-2 rounded-lg"
+                      title="Orçamento no WhatsApp"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 fill-slate-950" />
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SERVICES SECTION */}
-      <section id="serviços" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <SectionTitle title="Nossos Serviços" subtitle="Equipamentos testados e aprovados com o padrão de qualidade Intelbras." />
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {SERVICES.map((s, idx) => (
-              <motion.div 
-                key={s.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                onClick={() => setSelectedDetail({ title: s.label, desc: s.desc, img: s.img })}
-                className="group p-2 bg-[#f8fafc] rounded-[2.5rem] hover:bg-slate-900 transition-all duration-500 cursor-pointer overflow-hidden border border-slate-100"
-              >
-                <div className="relative h-48 rounded-[2rem] overflow-hidden mb-4">
-                  <img 
-                    src={s.img} 
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                    alt={s.label} 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
-                  <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-cyan-500 text-white rounded-xl flex items-center justify-center shadow-lg">
-                      <s.icon className="w-5 h-5" />
-                    </div>
-                  </div>
-                </div>
-                <div className="px-6 pb-6 pt-2">
-                  <h3 className="text-xl font-black text-slate-900 group-hover:text-white uppercase tracking-tighter mb-2">{s.label}</h3>
-                  <div className="flex items-center gap-2 text-cyan-600 font-bold text-[10px] uppercase tracking-widest">
-                    <span>Ver Detalhes</span>
-                    <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </motion.div>
-            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ABOUT US SECTION */}
-      <section id="sobrenós" className="py-24 bg-slate-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="relative"
-            >
-              <div className="relative z-10 w-full h-[500px] bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl flex items-center justify-center p-8">
-                {/* Abstract background elements */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-                
-                {/* Phone Frame - Classic White Samsung Style */}
-                <div className="relative w-[280px] h-[580px] bg-white rounded-[3rem] p-3 shadow-2xl border-[2px] border-slate-200 rotate-[-5deg] hover:rotate-0 transition-transform duration-500 z-10 flex-shrink-0 ring-1 ring-black/5">
-                  
-                  {/* Top Bezel (Speaker & Camera) */}
-                  <div className="absolute top-0 inset-x-0 h-14 flex flex-col items-center justify-center gap-2 z-20">
-                    <div className="flex items-center gap-4">
-                      <div className="w-2.5 h-2.5 rounded-full bg-slate-800"></div>
-                      <div className="w-12 h-1.5 bg-slate-300 rounded-full"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-slate-800"></div>
-                    </div>
-                  </div>
-                  
-                  {/* Bottom Bezel (Physical Home Button) */}
-                  <div className="absolute bottom-0 inset-x-0 h-16 flex justify-center items-center z-20">
-                    <div className="w-16 h-6 bg-white border-2 border-slate-200 rounded-full shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)]"></div>
-                  </div>
-                  
-                  {/* Screen */}
-                  <div className="w-full h-[470px] mt-10 bg-white border-2 border-slate-800 overflow-hidden flex flex-col relative">
-                    {/* Status Bar */}
-                    <div className="h-6 w-full px-2 flex justify-end gap-1 items-center bg-slate-200 text-slate-800 z-20">
-                      <Wifi className="w-3 h-3" />
-                      <Zap className="w-3 h-3" />
-                      <span className="text-[10px] font-bold ml-1">15:30</span>
-                    </div>
-
-                    {/* App Header (Green) */}
-                    <div className="h-12 bg-[#00923f] flex justify-between items-center px-3 text-white">
-                      <span className="text-xs">Voltar</span>
-                      <span className="text-sm font-semibold">Casa</span>
-                      <div className="w-6 h-6 border border-white/50 rounded-full flex items-center justify-center">
-                        <Video className="w-3 h-3" />
-                      </div>
-                    </div>
-                    
-                    {/* Sub Header */}
-                    <div className="h-10 bg-slate-100 border-b border-slate-300 flex justify-between items-center px-3">
-                      <div className="bg-slate-500 text-white text-[10px] font-bold px-3 py-1 rounded shadow-inner">
-                        PTZ
-                      </div>
-                      <LayoutGrid className="w-4 h-4 text-slate-400" />
-                    </div>
-                                        
-                    {/* Active Video Feed */}
-                    <div className="relative w-full h-56 bg-black">
-                      <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800" referrerPolicy="no-referrer" className="w-full h-full object-cover" alt="Camera 1" />
-                      <div className="absolute bottom-1 right-2 flex items-center gap-1">
-                        <Camera className="w-3 h-3 text-white/50" />
-                      </div>
-                    </div>
-                    
-                    {/* Timeline UI */}
-                    <div className="flex-1 bg-white flex flex-col">
-                       {/* Date Header for Timeline */}
-                       <div className="text-center text-[9px] text-slate-500 py-1 border-b border-slate-200">
-                         2026-07-15 15:30:00
-                       </div>
-                       
-                       {/* Timeline Blocks */}
-                       <div className="h-24 bg-slate-800 w-full flex">
-                         {/* Green recorded block */}
-                         <div className="h-full w-1/2 bg-[#5d9e5d] border-r border-slate-900"></div>
-                         {/* Black empty block */}
-                         <div className="h-full w-1/2 bg-[#1a1a1a]"></div>
-                       </div>
-                       
-                       {/* Time labels below timeline */}
-                       <div className="flex justify-between px-2 text-[8px] text-slate-400 py-1 bg-slate-100">
-                         <span>15:00</span>
-                         <span>15:15</span>
-                         <span>15:30</span>
-                         <span>15:45</span>
-                         <span>16:00</span>
-                       </div>
-                       
-                       {/* Bottom Controls */}
-                       <div className="flex-1 bg-slate-100 flex items-center justify-between px-4 border-t border-slate-300">
-                         <div className="flex gap-2">
-                           <div className="bg-white border border-slate-300 px-3 py-1 text-[10px] text-slate-600 rounded">
-                             01/01
-                           </div>
-                           <div className="bg-white border border-slate-300 px-3 py-1 text-[10px] text-slate-600 rounded">
-                             00:00
-                           </div>
-                         </div>
-                         <div className="bg-white border border-slate-300 px-4 py-1 text-[10px] text-slate-600 rounded flex items-center gap-1">
-                           Play <ChevronDown className="w-3 h-3" />
-                         </div>
-                       </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Floating Elements for design */}
-                <div className="absolute bottom-12 right-6 md:right-8 bg-slate-900/80 backdrop-blur-md border border-white/10 p-3 rounded-2xl shadow-2xl flex items-center gap-3 z-20 hover:scale-105 transition-transform cursor-default">
-                  <div className="w-10 h-10 bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-full flex items-center justify-center shadow-inner">
-                    <Video className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white text-sm font-bold leading-tight">Vigilância em Tempo Real</p>
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider">Acesse de qualquer lugar</p>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -top-10 -left-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl" />
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-0.5 w-12 bg-cyan-500"></div>
-                <span className="text-cyan-600 font-black uppercase text-[10px] tracking-[0.3em]">Conheça a NDS</span>
-              </div>
-              <SectionTitle 
-                title="Sobre Nós" 
-                subtitle="Liderando a segurança eletrônica no DF com inovação e confiança desde 2011." 
-              />
-              <div className="space-y-6 text-slate-600 leading-relaxed">
-                <p>
-                  A <span className="font-bold text-slate-900">NDS CFTV Digital</span> consolidou-se como referência absoluta em segurança eletrônica no Distrito Federal. Com uma trajetória iniciada <span className="text-cyan-600 font-bold px-1.5 py-0.5 bg-cyan-50 rounded-lg">+ de 13 anos</span> atrás, transformamos a forma como brasilienses protegem o que é mais valioso.
-                </p>
-                <p>
-                  Nossa expertise vai além da simples instalação; entregamos projetos estratégicos de <span className="text-cyan-600 font-bold">Monitoramento IP, Alarmes e Automação</span>. Somos parceiros autorizados das maiores marcas do mundo, com foco total na excelência dos equipamentos <span className="font-bold">Intelbras</span>.
-                </p>
-                <div className="grid grid-cols-2 gap-6 pt-6 mb-8">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Suporte Técnico 24h</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Equipe Certificada</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Atendimento em todo o DF</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-cyan-500 w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-bold text-slate-800 uppercase tracking-tighter">Garantia Total</span>
-                  </div>
-                </div>
-
-                {/* Trust Seal */}
-                <div className="flex items-center gap-4 p-6 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 max-w-xs transition-transform hover:scale-105">
-                  <div className="w-14 h-14 bg-gradient-to-tr from-cyan-600 to-blue-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                    <Award className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h4 className="text-2xl font-black text-slate-900 leading-none">13+ Anos</h4>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Selo de Confiança</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* PORTFOLIO SECTION */}
-      <section id="projetos" className="py-24 bg-[#fafafa]">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <SectionTitle title="Produtos de Elite" subtitle="As melhores câmeras e sistemas de segurança do mercado." />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PORTFOLIO.map((item) => (
-              <motion.div 
-                key={item.id} 
-                whileHover={{ y: -5 }} 
-                className="bg-white rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100 group cursor-pointer"
-                onClick={() => setSelectedDetail({ title: item.title, desc: `Equipamento Intelbras de alta performance para monitoramento profissional. Modelo: ${item.model}. Garantia de 1 ano.`, img: item.img })}
-              >
-                <div className="h-56 bg-white flex items-center justify-center p-8 overflow-hidden relative">
-                  <img 
-                    src={item.img} 
-                    referrerPolicy="no-referrer"
-                    className="max-h-full object-contain group-hover:scale-110 transition-transform duration-500" 
-                    alt={item.title} 
-                  />
-                  <div className="absolute inset-0 bg-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="bg-white text-cyan-600 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">Ver Detalhes</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h4 className="font-black text-slate-900 uppercase tracking-tighter">{item.title}</h4>
-                  <p className="text-[10px] font-bold text-cyan-600 uppercase tracking-widest mt-1">{item.model}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* GALLERY SECTION */}
-      <section id="galeria" className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <SectionTitle title="Tecnologia em Ação" subtitle="Confira alguns dos equipamentos de última geração que utilizamos em nossos projetos." />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              IMAGES.PORTFOLIO_PTZ,
-              IMAGES.SERVICE_MIBO,
-              IMAGES.SERVICE_PORTEIRO,
-              IMAGES.PORTFOLIO_BULLET,
-              IMAGES.SERVICE_DVR,
-              IMAGES.SERVICE_ACESSO
-            ].map((img, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="h-48 lg:h-64 rounded-3xl overflow-hidden shadow-lg group border border-slate-100"
-              >
-                <img src={img} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Equipamento NDS" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* TESTIMONIALS SECTION */}
-      <section className="py-24 bg-slate-50 border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <SectionTitle 
-            title="O que dizem nossos clientes" 
-            subtitle="Confira as avaliações de quem já protege o seu patrimônio com a NDS CFTV Digital no DF." 
-          />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-            {TESTIMONIALS.map((t, idx) => (
-              <motion.div 
-                key={t.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(t.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <p className="text-slate-600 italic leading-relaxed mb-6">"{t.comment}"</p>
-                </div>
-                <div className="pt-6 border-t border-slate-100">
-                  <p className="font-black text-slate-900 uppercase tracking-tighter">{t.name}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{t.date}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button 
-              onClick={() => window.open('https://www.google.com/search?q=NDS+CFTV+Digital+Google+Reviews', '_blank')}
-              className="inline-flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-cyan-500 text-slate-900 px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all group shadow-sm w-full sm:w-auto justify-center"
-            >
-              <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
-              <span>Ver todas as avaliações</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            <button 
-              onClick={() => window.open('https://g.page/r/CcJR2aqm4LV_EBE/review', '_blank')}
-              className="inline-flex items-center gap-3 bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all group shadow-lg shadow-cyan-500/20 w-full sm:w-auto justify-center"
-            >
-              <Star className="w-4 h-4 fill-white" />
-              <span>Deixe sua avaliação</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* PARTNERS SECTION */}
-      <section className="py-16 bg-slate-100 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 px-12 flex flex-wrap items-center justify-center gap-12 grayscale opacity-50 contrast-125">
-          <span className="text-2xl font-black text-slate-800 tracking-tighter uppercase grayscale">Intelbras</span>
-          <span className="text-2xl font-black text-slate-800 tracking-tighter uppercase grayscale">WD Purple</span>
-          <span className="text-2xl font-black text-slate-800 tracking-tighter uppercase grayscale">Hikvision</span>
-          <span className="text-2xl font-black text-slate-800 tracking-tighter uppercase grayscale">PPA</span>
-        </div>
-      </section>
-
-      {/* POR QUE ESCOLHER A NDS & SEGMENTOS ATENDIDOS */}
-      <section className="py-24 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid lg:grid-cols-2 gap-16">
-            {/* Por que escolher a NDS */}
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-0.5 w-12 bg-cyan-500"></div>
-                <span className="text-cyan-600 font-black uppercase text-[10px] tracking-[0.3em]">Excelência Técnica</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-slate-900 mb-8 leading-none">
-                Por que escolher a NDS?
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-6">
-                {[
-                  { title: "Atendimento Consultivo", desc: "Verdadeira assessoria técnica prévia, mapeando pontos cegos antes de qualquer proposta comercial." },
-                  { title: "Equipe Especializada", desc: "Profissionais técnicos treinados e certificados periodicamente com o padrão de excelência Intelbras." },
-                  { title: "Projetos Personalizados", desc: "Elaboramos soluções sob medida de acordo com as necessidades e regras estéticas do seu imóvel." },
-                  { title: "Tecnologia Avançada", desc: "Trabalhamos com os melhores e mais modernos equipamentos eletroeletrônicos e softwares do mercado." },
-                  { title: "Monitoramento Remoto", desc: "Acesse e gerencie suas câmeras e alarmes de segurança ao vivo de qualquer lugar do mundo pelo app." },
-                  { title: "Inteligência Artificial", desc: "Sistemas providos de análise de vídeo inteligente para evitar disparos falsos e rastrear alvos." }
-                ].map((item, idx) => (
-                  <div key={idx} className="p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-cyan-500/30 transition-all hover:scale-[1.02]">
-                    <CheckCircle2 className="w-5 h-5 text-cyan-500 mb-3" />
-                    <h4 className="font-black text-slate-900 uppercase tracking-tight text-xs mb-1">{item.title}</h4>
-                    <p className="text-slate-500 text-xs leading-relaxed">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Segmentos Atendidos */}
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-0.5 w-12 bg-cyan-500"></div>
-                <span className="text-cyan-600 font-black uppercase text-[10px] tracking-[0.3em]">Áreas de Atuação</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-slate-900 mb-8 leading-none">
-                Segmentos Atendidos
-              </h2>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                Desenvolvemos projetos de monitoramento, alarmes, cabeamento estruturado e controle biométrico focados no alto nível exigido por:
-              </p>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                {[
-                  "Empresas e Escritórios",
-                  "Clínicas e Hospitais",
-                  "Condomínios Residenciais",
-                  "Galpões e CD Industrial",
-                  "Concessionárias de Veículos",
-                  "Residências de Alto Padrão",
-                  "Comércios e Lojas",
-                  "Escolas e Universidades"
-                ].map((segment, idx) => (
-                  <div key={idx} className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-600">
-                      <Target className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-800 uppercase tracking-tight">{segment}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* REGÕES ATENDIDAS (LOCAL SEO SECTION) */}
-      <section className="py-20 bg-slate-50 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
-          <SectionTitle 
-            title="Selo de Atendimento no DF"
-            subtitle="Atendimento ágil de alta qualidade em todas as regiões nobres do Distrito Federal."
-          />
-          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto mt-8">
-            {[
-              "Asa Sul", "Asa Norte", "Lago Sul", "Lago Norte", "Park Way",
-              "Noroeste", "Sudoeste", "Guará", "Águas Claras", "Vicente Pires", "Jardim Botânico"
-            ].map((region, idx) => (
-              <span 
-                key={idx} 
-                className="px-5 py-2.5 bg-white text-slate-800 text-xs font-black uppercase tracking-widest rounded-full border border-slate-200/60 shadow-sm"
-              >
-                {region}
+        {/* CATÁLOGO INTERATIVO DE EQUIPAMENTOS INTELBRAS COM MODAL ZOOM */}
+        <section className="py-20 bg-slate-900/60 border-y border-white/10 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
+              <span className="text-cyan-400 text-xs font-black uppercase tracking-[0.3em]">
+                Fotografias & Equipamentos Oficiais
               </span>
-            ))}
-          </div>
-          <p className="text-xs text-slate-500 uppercase tracking-widest font-bold mt-10">
-            Deseja atendimento exclusivo em sua localidade?{" "}
-            <button onClick={() => navigate('/seguranca-eletronica-brasilia')} className="text-cyan-600 hover:underline font-bold cursor-pointer">
-              Confira os detalhes sobre a cobertura de segurança em Brasília.
-            </button>
-          </p>
-        </div>
-      </section>
+              <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white">
+                Galeria Interativa Intelbras
+              </h2>
+              <p className="text-slate-400 text-sm">
+                Selecione os equipamentos abaixo e clique na foto para abrir a ampliação em alta definição, especificações técnicas e pedir orçamento.
+              </p>
 
-      {/* FAQ HOMEPAGE SECTION */}
-      <section className="py-24 bg-slate-900 text-slate-100 border-b border-white/5">
-        <div className="max-w-4xl mx-auto px-6 md:px-12">
-          <SectionTitle 
-            light
-            title="Dúvidas Frequentes"
-            subtitle="Confira as respostas para as principais dúvidas sobre os nossos sistemas de segurança eletrônica com IA e redes cabeada."
-          />
-          <div className="mt-12 bg-slate-950/40 p-8 rounded-[2.5rem] border border-white/5 divide-y divide-white/5 text-left">
-            {FAQS.map((faq, idx) => (
-              <FaqItem key={idx} question={faq.q} answer={faq.a} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* MAINTENANCE CTA */}
-      <section className="bg-cyan-600 py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-8">
-            <Wrench className="w-10 h-10 text-white" />
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-6">Manutenção de Urgência?</h2>
-          <p className="text-cyan-100 text-lg mb-10 opacity-80">Sistemas de segurança não podem parar. Atendemos chamados de emergência em condomínios e empresas no DF com rapidez total.</p>
-          <button 
-            onClick={openWhatsApp}
-            className="bg-white text-cyan-700 px-12 py-5 rounded-2xl font-black uppercase text-sm tracking-widest shadow-2xl hover:scale-105 transition-all"
-          >
-            Chamar Suporte Imediato
-          </button>
-        </div>
-      </section>
-
-      {/* AI TECHNOLOGY SECTION */}
-      <section className="py-24 bg-slate-900 border-y border-white/5 relative overflow-hidden" id="tecnologia-ia">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(6,182,212,0.1),transparent)]" />
-        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-            >
-              <SectionTitle 
-                light
-                title="Segurança Potencializada por IA"
-                subtitle="Nossos sistemas não apenas gravam imagens, eles entendem o que está acontecendo em tempo real."
-              />
-              <div className="space-y-6">
+              {/* ABAS DE FILTRO */}
+              <div className="flex flex-wrap justify-center gap-2 pt-4">
                 {[
-                  { t: 'Reconhecimento Facial', d: 'Identificação instantânea de pessoas autorizadas e alerta para desconhecidos.' },
-                  { t: 'Analíticos de Comportamento', d: 'Detecção de intrusão, abandono de objetos e cruzamento de linha virtual.' },
-                  { t: 'Leitura de Placas (LPR)', d: 'Controle total de entrada e saída de veículos com registro automatizado.' },
-                  { t: 'Busca Inteligente', d: 'Encontre eventos específicos em segundos, filtrando por cor de roupa ou tipo de objeto.' }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
-                    <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0 group-hover:scale-110 transition-transform">
-                      <Zap className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-white font-bold uppercase tracking-tight text-sm mb-1">{item.t}</h4>
-                      <p className="text-slate-400 text-sm">{item.d}</p>
-                    </div>
-                  </div>
+                  { id: 'todos', label: 'Todos os Equipamentos' },
+                  { id: 'mibo', label: 'Linha Mibo Wi-Fi' },
+                  { id: 'cftv', label: 'Câmeras IP & IA' },
+                  { id: 'nvr', label: 'Gravadores NVR' },
+                  { id: 'alarme', label: 'Alarmes & Cerca' },
+                  { id: 'porteiro', label: 'Vídeo Porteiros & Fechaduras' },
+                  { id: 'redes', label: 'Redes & Elétrica' }
+                ].map(filter => (
+                  <button
+                    key={filter.id}
+                    onClick={() => setCatalogFilter(filter.id)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      catalogFilter === filter.id 
+                        ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20' 
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
                 ))}
               </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-            >
-              <img 
-                src={IMAGES.PORTFOLIO_PTZ} 
-                alt="Tecnologia IA" 
-                className="w-full h-full object-cover" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-              <div className="absolute bottom-8 left-8 right-8 p-6 backdrop-blur-xl bg-white/10 rounded-2xl border border-white/10">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-cyan-500 flex items-center justify-center animate-pulse">
-                    <Shield className="w-6 h-6 text-white" />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+              {filteredCatalog.map((item, index) => (
+                <div
+                  key={index}
+                  onClick={() => setSelectedImage(item)}
+                  className="bg-slate-950 border border-white/10 hover:border-cyan-500/50 rounded-2xl p-4 flex flex-col justify-between group cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl"
+                >
+                  <div className="relative bg-slate-900 rounded-xl p-3 mb-3 flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={item.img} 
+                      alt={item.title} 
+                      className="h-32 w-full object-contain group-hover:scale-105 transition-transform duration-300" 
+                    />
+                    <span className="absolute top-2 right-2 bg-slate-950/80 text-cyan-400 p-1 rounded-md">
+                      <ZoomIn className="w-3.5 h-3.5" />
+                    </span>
                   </div>
+
                   <div>
-                    <p className="text-cyan-400 text-[10px] uppercase font-black tracking-widest">IA ATIVA</p>
-                    <p className="text-white font-bold text-lg">Proteção 24/7 com análise preditiva</p>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-cyan-400">
+                      {item.category}
+                    </span>
+                    <h4 className="text-xs font-black uppercase text-white mt-1 group-hover:text-cyan-400 transition-colors line-clamp-1">
+                      {item.title}
+                    </h4>
+                    {item.model && (
+                      <p className="text-[10px] text-amber-400 font-bold mt-0.5 line-clamp-1">
+                        {item.model}
+                      </p>
+                    )}
                   </div>
+
+                  <span className="text-[10px] text-slate-500 font-bold mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
+                    <span>Clique p/ Ver</span>
+                    <ArrowRight className="w-3 h-3 text-cyan-400" />
+                  </span>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ SECTION */}
-      <footer className="bg-slate-950 border-t border-white/5 py-12">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-3">
-             <div 
-               className="cursor-help active:scale-95 transition-transform"
-               onMouseDown={() => {
-                 (window as any)._ndsTimer = setTimeout(() => navigate('/ndsdashboard'), 3000);
-               }}
-               onMouseUp={() => clearTimeout((window as any)._ndsTimer)}
-               onTouchStart={() => {
-                 (window as any)._ndsTimer = setTimeout(() => navigate('/ndsdashboard'), 3000);
-               }}
-               onTouchEnd={() => clearTimeout((window as any)._ndsTimer)}
-             >
-               <img 
-                 src={IMAGES.LOGO} 
-                 alt="NDS" 
-                 referrerPolicy="no-referrer"
-                 className="w-12 h-12 md:w-20 md:h-20 object-cover rounded-xl shadow-xl" 
-               />
-             </div>
-             <div className="leading-none text-left">
-               <span className="text-lg font-black tracking-tighter text-white">NDS<span className="text-cyan-500">CFTV</span></span>
-               <p className="text-[8px] uppercase tracking-widest font-bold text-slate-500">Digital © 2026</p>
-
-             </div>
-          </div>
-          
-          {/* COLUNA DE LINKS ESTRATÉGICOS PARA SEO */}
-          <div className="grid grid-cols-2 gap-8 md:gap-12 text-left py-4 md:py-0">
-            <div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-2">Serviços e Soluções</p>
-              <ul className="space-y-1 text-xs text-slate-400 font-medium">
-                <li><button onClick={() => navigate('/cftv-inteligente')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">CFTV Inteligente com IA</button></li>
-                <li><button onClick={() => navigate('/controle-acesso')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Controle de Acesso</button></li>
-                <li><button onClick={() => navigate('/rede-estruturada')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Rede Estruturada de TI</button></li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mb-2">Sitemap & Conteúdo</p>
-              <ul className="space-y-1 text-xs text-slate-400 font-medium">
-                <li><button onClick={() => navigate('/projetos-corporativos')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Projetos Corporativos</button></li>
-                <li><button onClick={() => navigate('/seguranca-eletronica-brasilia')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Segurança em Brasília</button></li>
-                <li><button onClick={() => navigate('/blog')} className="hover:text-cyan-400 transition-colors text-left cursor-pointer">Blog Técnico</button></li>
-              </ul>
+              ))}
             </div>
           </div>
+        </section>
 
-          <div className="flex flex-col items-center md:items-end">
-            <div className="flex gap-4 mb-4">
-              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors"><Instagram className="w-4 h-4" /></a>
-              <a href="tel:+5561998308655" className="text-slate-400 hover:text-white transition-colors"><Phone className="w-4 h-4" /></a>
-              <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors"><MapPin className="w-4 h-4" /></a>
+        {/* SEO LOCAL - REGIÕES DE ATENDIMENTO DE BRASÍLIA */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-cyan-500/30 rounded-3xl p-8 sm:p-12 text-center space-y-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-black uppercase tracking-widest">
+              <MapPin className="w-4 h-4" /> Cobertura Técnica Especializada no Distrito Federal
             </div>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-600 mb-1">Brasília - Distrito Federal</p>
-            <p className="text-[8px] uppercase font-bold tracking-[0.2em] text-slate-700 mb-4 text-center md:text-right">Atendemos Águas Claras, Asas Sul/Norte, Lago Sul/Norte, Park Way, Guará e todas as regiões do DF</p>
-            <button 
-              onClick={() => navigate('/ndsdashboard')}
-              className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-800 hover:text-cyan-500 transition-colors flex items-center gap-2"
-            >
-              <Shield className="w-3 h-3" /> Gerenciamento NDS
-            </button>
-          </div>
-        </div>
-      </footer>
 
-      {/* FLOATING WHATSAPP */}
-      <button 
-        onClick={openWhatsApp}
-        className="fixed bottom-8 right-8 z-[150] bg-green-500 text-white p-5 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group"
-      >
-        <MessageCircle className="w-8 h-8" />
-        <span className="absolute right-full mr-4 bg-white text-slate-900 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-tighter whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Fale no WhatsApp</span>
-      </button>
+            <h3 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white">
+              Atendimento Ágil com Equipes Móveis no DF
+            </h3>
 
-      {/* DETAIL MODAL - VERSÃO ULTRA ESTÁVEL */}
-      {selectedDetail && (
-        <div 
-          className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-sm"
-          onClick={() => setSelectedDetail(null)}
-        >
-          <div 
-            className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button 
-              onClick={() => setSelectedDetail(null)}
-              className="absolute top-4 right-4 z-50 bg-white shadow-lg p-2 rounded-full text-slate-900 border border-slate-200"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <p className="text-slate-300 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
+              Atendemos condomínios residenciais, comerciais, clínicas e residências de alto padrão nas principais regiões administrativas de Brasília. Visitas técnicas para orçamento e diagnóstico sem enrolação.
+            </p>
 
-            <div className="w-full md:w-1/2 bg-slate-100 flex items-center justify-center p-6">
-              <img 
-                src={selectedDetail.img} 
-                alt={selectedDetail.title} 
-                referrerPolicy="no-referrer"
-                className="max-w-full max-h-[300px] md:max-h-[500px] object-contain shadow-2xl rounded-lg" 
-              />
+            <div className="flex flex-wrap justify-center gap-2.5 max-w-4xl mx-auto pt-2">
+              {DF_PRIORITY_CITIES.map((city, idx) => (
+                <span
+                  key={idx}
+                  className="px-4 py-2 bg-slate-900 border border-cyan-500/20 text-cyan-300 font-black text-xs uppercase tracking-wider rounded-xl shadow-sm"
+                >
+                  {city}
+                </span>
+              ))}
             </div>
-            
-            <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-              <div className="w-10 h-1 bg-cyan-500 mb-6" />
-              <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter mb-4">{selectedDetail.title}</h2>
-              <p className="text-slate-600 leading-relaxed mb-8">{selectedDetail.desc}</p>
-              
-              <button 
-                onClick={openWhatsApp}
-                className="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-4 rounded-xl font-black uppercase tracking-widest transition-all"
+
+            <div className="pt-6">
+              <button
+                onClick={() => openWhatsApp()}
+                className="bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 font-black px-8 py-4 rounded-xl uppercase tracking-wider text-sm flex items-center justify-center gap-3 mx-auto shadow-xl shadow-amber-400/20 transition-all cursor-pointer"
               >
-                Solicitar via WhatsApp
+                <MessageCircle className="w-5 h-5 fill-slate-950" />
+                <span>Agendar Avaliação Técnica em Brasília</span>
               </button>
             </div>
           </div>
-        </div>
-      )}
+        </section>
 
+        {/* DÚVIDAS FREQUENTES (FAQ) */}
+        <section className="py-20 bg-slate-900/40 border-t border-white/10 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12 space-y-3">
+              <span className="text-cyan-400 text-xs font-black uppercase tracking-[0.3em]">
+                Tire suas Dúvidas
+              </span>
+              <h3 className="text-3xl font-black uppercase tracking-tight text-white">
+                Perguntas Frequentes
+              </h3>
+            </div>
+
+            <div className="bg-slate-950 border border-white/10 p-6 sm:p-8 rounded-3xl divide-y divide-white/10">
+              {FAQS.map((faq, idx) => (
+                <FaqItem key={idx} question={faq.q} answer={faq.a} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+
+
+      {/* MODAL DE AMPLIAÇÃO / ZOOM DO EQUIPAMENTO */}
+      <ImageModal
+        item={selectedImage}
+        onClose={() => setSelectedImage(null)}
+        onContactWhatsApp={(title) => openWhatsApp(`Gostaria de um orçamento para o equipamento: ${title}`)}
+      />
+
+      <SiteFooter />
     </div>
   );
 }
+
+/* ============================
+   ROUTER & APP ROOT
+   ============================ */
 
 export default function App() {
   const [authUser, setAuthUser] = useState<User | null>(null);
@@ -1125,8 +790,20 @@ export default function App() {
   return (
     <Router>
       <VisitLogger authUser={authUser} />
+      <FloatingWhatsApp />
       <Routes>
+        {/* HOMEPAGE MODERNIZADA */}
         <Route path="/" element={<CFTVSite authUser={authUser} />} />
+        
+        {/* OS 5 PILARES DE SERVIÇOS DEDICADOS & LINHA MIBO */}
+        <Route path="/seguranca-eletronica" element={<SegurancaEletronicaPage />} />
+        <Route path="/linha-mibo" element={<LinhaMiboPage />} />
+        <Route path="/redes-computadores" element={<RedesComputadoresPage />} />
+        <Route path="/instalacoes-eletricas" element={<InstalacoesEletricasPage />} />
+        <Route path="/cerca-eletrica" element={<CercaEletricaPage />} />
+        <Route path="/video-porteiro-automacao" element={<VideoPorteiroAutomacaoPage />} />
+
+        {/* ROTAS EXISTENTES PRESERVADAS */}
         <Route path="/cftv-inteligente" element={<CftvInteligente />} />
         <Route path="/controle-acesso" element={<ControleAcesso />} />
         <Route path="/rede-estruturada" element={<RedeEstruturada />} />
@@ -1135,12 +812,17 @@ export default function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/manager" element={<ServiceManager />} />
         <Route path="/ndsdashboard" element={<ServiceManager />} />
-        {/* Fallbacks */}
+        
+        {/* FALLBACK */}
         <Route path="*" element={<CFTVSite authUser={authUser} />} />
       </Routes>
     </Router>
   );
 }
+
+/* ============================
+   LOGGER DE VISITAS (FIREBASE PRESERVADO)
+   ============================ */
 
 function VisitLogger({ authUser }: { authUser: User | null }) {
   const location = useLocation();
@@ -1177,6 +859,7 @@ function VisitLogger({ authUser }: { authUser: User | null }) {
 
           let pageName = "CFTV Home";
           if (location.pathname === '/manager' || location.pathname === '/ndsdashboard') pageName = "Service Manager";
+          else if (location.pathname.length > 1) pageName = location.pathname.replace('/', '');
 
           const isDev = window.location.hostname.includes('localhost') || 
                         window.location.hostname.includes('ais-dev');

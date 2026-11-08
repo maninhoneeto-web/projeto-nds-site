@@ -64,25 +64,47 @@ export const IMAGES = {
   HERO: getImageUrl('hero-banner.jpg', 'https://images.unsplash.com/photo-1524140525911-30646c276325?auto=format&fit=crop&q=80&w=1200'),
   LOGO: 'https://i.ibb.co/mC43pD9m/logo-nds-png.jpg',
   
-  // Serviços
-  SERVICE_CAMERAS: getImageUrl('cam- ip.jpg.jfif', 'https://images.unsplash.com/photo-1521206698660-573b532bd2b0?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_MIBO: getImageUrl('im-4c.jpg.jpg', 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_PORTEIRO: getImageUrl('allo-box.jpg.jpg', 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_DVR: getImageUrl('dvr-intel.jpg.jfif', 'https://images.unsplash.com/photo-1558494949-ef010cbdcc4b?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_ACESSO: getImageUrl('bio-intel.jpg.webp', 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_CERCA: getImageUrl('cerca-elrt.jpg.jpg', 'https://images.unsplash.com/photo-1614030424754-02d1f9a0d8be?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_ALARME: getImageUrl('alrme-c.jpg.jpg', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=1200'),
-  SERVICE_TI: getImageUrl('SPEED/rack-rede.jpg.jfif', 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=1200'),
+  // Serviços com imagens de alta definição
+  SERVICE_CAMERAS: '/img/equip_bullet.jpg',
+  SERVICE_MIBO: '/img/equip_mibo.jpg',
+  SERVICE_PORTEIRO: '/img/equip_video_porteiro.jpg',
+  SERVICE_DVR: '/img/equip_nvr.jpg',
+  SERVICE_ACESSO: '/img/equip_fechadura.jpg',
+  SERVICE_CERCA: '/img/equip_cerca.jpg',
+  SERVICE_ALARME: '/img/equip_alarme.jpg',
+  SERVICE_TI: '/img/equip_switch.jpg',
+  SERVICE_ELETRICA: '/img/equip_quadro.jpg',
+  SERVICE_AUTOMACAO: '/img/equip_video_porteiro.jpg',
   
-  // Portfólio
-  PORTFOLIO_PTZ: getImageUrl('SPEED/spped-branca.jpg.jfif', 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=1200'),
-  PORTFOLIO_BULLET: getImageUrl('bullte-cm.jpg.jpg', 'https://images.unsplash.com/photo-1610473068541-cb689031c238?auto=format&fit=crop&q=80&w=1200'),
-  PORTFOLIO_NVR: getImageUrl('dvr-intel.jpg.jfif', 'https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&q=80&w=1200'),
-  PORTFOLIO_LOCK: getImageUrl('fechadura3- intelbras.jpg.webp', 'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&q=80&w=1200'),
-  PORTFOLIO_PORTEIRO: getImageUrl('SPEED/wt-7.jpg.jpg', 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?auto=format&fit=crop&q=80&w=1200'),
-  PORTFOLIO_RACK: getImageUrl('SPEED/rack-rede.jpg.jfif', 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=1200'),
+  // Portfólio com imagens de alta definição
+  PORTFOLIO_PTZ: '/img/equip_ptz.jpg',
+  PORTFOLIO_BULLET: '/img/equip_bullet.jpg',
+  PORTFOLIO_NVR: '/img/equip_nvr.jpg',
+  PORTFOLIO_LOCK: '/img/equip_fechadura.jpg',
+  PORTFOLIO_PORTEIRO: '/img/equip_video_porteiro.jpg',
+  PORTFOLIO_RACK: '/img/equip_switch.jpg',
+  PORTFOLIO_CERCA: '/img/equip_cerca.jpg',
+  PORTFOLIO_ELETRICA: '/img/equip_quadro.jpg',
   INSTALACAO: '/img/instalacao_cftv_premium.jpg',
   
+  // Equipamentos Oficiais Mapeados
+  EQUIP_VIP_PTZ: '/img/equip_ptz.jpg',
+  EQUIP_VIP_BULLET: '/img/equip_bullet.jpg',
+  EQUIP_MIBO_IM5: '/img/mibo_im5.jpg',
+  EQUIP_NVR_MULTIHD: '/img/equip_nvr.jpg',
+  EQUIP_ALARME_AMT: '/img/equip_alarme.jpg',
+  EQUIP_CERCA_ELC: '/img/equip_cerca.jpg',
+  EQUIP_ALLO_WT7: '/img/equip_video_porteiro.jpg',
+  EQUIP_FECHADURA_DIGITAL: '/img/equip_fechadura.jpg',
+  EQUIP_SWITCH_POE: '/img/equip_switch.jpg',
+  EQUIP_QUADRO_DISJUNTORES: '/img/equip_quadro.jpg',
+
+  // Linha Mibo Oficial Intelbras
+  MIBO_IM3: '/img/mibo_im3.jpg',
+  MIBO_IM4: '/img/mibo_im4.jpg',
+  MIBO_IM5: '/img/mibo_im5.jpg',
+  MIBO_IM7: '/img/mibo_im7.jpg',
+
   // Galeria de Instalações Reais e Imagens de IA Avançadas (Técnicos em Ação)
   GALLERY_TEAM_1: getImageUrl('equipe-nds-1.jpg', 'https://images.unsplash.com/photo-1521206698660-573b532bd2b0?auto=format&fit=crop&q=80&w=1200'),
   GALLERY_TEAM_2: getImageUrl('equipe-nds-2.jpg', 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=1200'),
