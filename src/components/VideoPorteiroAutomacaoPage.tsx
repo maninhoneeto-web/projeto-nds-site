@@ -30,37 +30,50 @@ export function VideoPorteiroAutomacaoPage() {
 
   const EQUIPMENTS: ModalImageData[] = [
     {
-      title: "Vídeo Porteiro Wi-Fi Inteligente",
-      model: "Allo WT7 Intelbras Touchscreen",
-      category: "Vídeo Interfonia",
+      title: "Vídeo Porteiro Wi-Fi Allo WT7",
+      model: "Intelbras Allo WT7 Touch 7''",
+      category: "Vídeo Interfonia Wi-Fi",
       img: IMAGES.PORTFOLIO_PORTEIRO,
-      description: "Vídeo porteiro de alta resolução com tela touch de 7 polegadas e módulo externo resistente à água. Atenda quem toca a campainha diretamente no seu smartphone de qualquer lugar do mundo.",
+      description: "Vídeo porteiro oficial Intelbras Allo WT7. Módulo externo em alumínio escovado com botão circular em LED azul e câmera HD, acompanhado do monitor interno de 7 polegadas touchscreen ultra fino. Atenda visitas e abra até 2 portões pelo app Allo Plus em qualquer lugar do mundo.",
       features: [
-        "Tela interna sensível ao toque colorida de alta resolução",
-        "Abertura de até 2 fechaduras diferentes (portão social e de garagem) via app",
-        "Câmera de ângulo amplo com visão noturna nítida",
-        "Gravação de fotos e vídeos automáticos de todos os visitantes que tocarem"
+        "Monitor interno touchscreen colorido de 7 polegadas com interface Allo",
+        "Abertura de até 2 fechaduras diferentes (portão social e de garagem) via smartphone",
+        "Módulo externo robusto em alumínio escovado com botão de campainha em aro LED azul",
+        "Gravação de fotos e vídeos automáticos de todos os visitantes que tocarem a campainha"
       ]
     },
     {
-      title: "Fechadura Digital Biométrica",
-      model: "FR 201 / FR 330 Touch Intelbras",
-      category: "Fechaduras Digitais",
-      img: IMAGES.PORTFOLIO_LOCK,
-      description: "Diga adeus às chaves perdidas. Fechadura digital inteligente com teclado touch luminoso, leitor biométrico de impressão digital e abertura por tags de aproximação RFID ou senha.",
+      title: "Fechadura Digital de Embutir com Maçaneta",
+      model: "Intelbras IFR 7000 / 7001 Smart",
+      category: "Fechadura de Embutir",
+      img: IMAGES.FECHADURA_EMBUTIR,
+      description: "Fechadura digital de embutir oficial Intelbras com maçaneta integrada preta fosca. Leitor biométrico de alta precisão localizado na própria maçaneta para abertura em um único toque, teclado touch luminoso e conectividade com aplicativo Mibo Smart.",
       features: [
-        "Cadastre biometrias e senhas individuais para familiares e funcionários",
+        "Leitor biométrico na própria maçaneta (destravamento instantâneo em um toque)",
+        "Teclado numérico touch screen luminoso com senhas configuráveis",
+        "Integração com app Mibo Smart para comandos remotos e relatórios de entrada",
+        "Mecanismo de embutir padrão ABNT com trinco rolete e alarme anti-arrombamento"
+      ]
+    },
+    {
+      title: "Fechadura Digital de Sobrepor",
+      model: "Intelbras FR 101 / FR 201 Touch",
+      category: "Fechadura de Sobrepor",
+      img: IMAGES.FECHADURA_SOBREPOR,
+      description: "Fechadura digital compacta de sobrepor oficial Intelbras. Instalação rápida e limpa sem precisar substituir a maçaneta existente. Painel preto espelhado com teclado touch numérico luminoso, abertura por senha ou chaveiro de aproximação RFID.",
+      features: [
+        "Instalação prática de sobrepor sem necessidade de trocar a maçaneta da porta",
+        "Abertura por senha de 4 a 12 dígitos ou chaveiros de aproximação RFID",
         "Travamento automático da porta assim que ela se fecha",
-        "Alarme sonoro em caso de tentativa de arrombamento ou digitação errada",
-        "Alimentação por pilhas comuns com aviso sonoro semanas antes de descarregar"
+        "Alarme sonoro em caso de tentativa de violação ou digitação errada"
       ]
     },
     {
       title: "Automatização de Portão e Controle de Acesso",
-      model: "Motor Rápido Fast & Interfonia",
+      model: "Motores Rápidos Fast Intelbras",
       category: "Automatização de Acessos",
       img: IMAGES.SERVICE_PORTEIRO,
-      description: "Automatizadores rápidos para portões deslizantes, basculantes e pivotantes. Abertura em poucos segundos para você não ficar exposto na rua, além de interfones coletivos prediais.",
+      description: "Automatizadores rápidos para portões deslizantes, basculantes e pivotantes. Abertura em até 4 segundos para você não ficar exposto na rua, além de interfones coletivos prediais.",
       features: [
         "Motores de alta durabilidade com destravamento manual com chave para falta de luz",
         "Placa eletrônica inteligente com parada suave e sensor anti-esmagamento",

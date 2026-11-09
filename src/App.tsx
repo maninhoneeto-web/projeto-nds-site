@@ -140,12 +140,12 @@ const INTELBRAS_CATALOG: ModalImageData[] = [
     features: ['Visão noturna colorida Full Color', 'Giro 360° panorâmico externo', 'Sirene de alarme integrada']
   },
   {
-    title: 'Gravador Digital Multi-HD',
-    model: 'MHDX 1108 / 1116 Intelbras',
+    title: 'Gravador Digital Multi-HD 16 Canais',
+    model: 'Intelbras MHDX 3116 Multi-HD',
     category: 'Gravadores e NVRs',
     img: IMAGES.PORTFOLIO_NVR,
-    description: 'Gravador de segurança com compressão de alta performance H.265+, reconhecimento facial e acesso criptografado via Intelbras Cloud.',
-    features: ['Compressão H.265+ econômica', 'Busca rápida por pessoa/veículo', 'Acesso remoto pelo celular']
+    description: 'Gravador oficial Intelbras MHDX 3116 com 16 canais Multi-HD, chassi 1U metálico para rack ou bancada, LEDs indicadores frontais (Power, Net, HDD), porta USB e inteligência artificial para detecção inteligente de pessoas e veículos.',
+    features: ['16 canais Multi-HD de alta definição', 'Chassi metálico 1U oficial Intelbras com LEDs de status', 'Compressão H.265+ e inteligência de busca forense']
   },
   {
     title: 'Central de Alarme Sem Fio',
@@ -164,20 +164,28 @@ const INTELBRAS_CATALOG: ModalImageData[] = [
     features: ['Choque pulsativo inibitório', 'Detecção de corte e aterramento', 'Norma ABNT e IEC']
   },
   {
-    title: 'Vídeo Porteiro Wi-Fi Allo',
-    model: 'Allo WT7 Intelbras',
+    title: 'Vídeo Porteiro Wi-Fi Allo WT7',
+    model: 'Intelbras Allo WT7 Touch 7\'\'',
     category: 'Vídeo Interfonia',
     img: IMAGES.PORTFOLIO_PORTEIRO,
-    description: 'Vídeo porteiro com tela touchscreen de 7 polegadas e visualização remota no celular para atendimento e abertura remota.',
-    features: ['Tela touch colorida 7 polegadas', 'Abertura remota pelo smartphone', 'Gravação de fotos dos visitantes']
+    description: 'Sistema oficial Intelbras Allo WT7: módulo externo em alumínio escovado com botão de chamada em anel LED azul e tela interna de 7" touchscreen colorida. Atendimento e abertura remota pelo app Allo Plus.',
+    features: ['Módulo slim em alumínio escovado e aro LED azul', 'Tela touch 7" capacitiva de alta resolução', 'Abertura remota de portões pelo smartphone']
   },
   {
-    title: 'Fechadura Digital Biométrica',
-    model: 'FR 201 / FR 330 Touch',
+    title: 'Fechadura Digital de Embutir com Maçaneta',
+    model: 'Intelbras IFR 7000 / 7001 Smart',
     category: 'Fechaduras Digitais',
-    img: IMAGES.PORTFOLIO_LOCK,
-    description: 'Fechadura eletrônica com leitor biométrico, teclado touch luminoso e abertura por cartão ou senha. Conforto total sem chaves.',
-    features: ['Abertura por biometria e senha', 'Travamento automático ao fechar', 'Alarme anti-arrombamento']
+    img: IMAGES.FECHADURA_EMBUTIR,
+    description: 'Fechadura de embutir oficial Intelbras com maçaneta integrada, leitor biométrico ultra-rápido na própria maçaneta para abertura em 1 toque e teclado touch com senhas.',
+    features: ['Biometria ultra-rápida no próprio puxador', 'Mecanismo embutido de máxima resistência', 'Compatível com app Mibo Smart e senhas temporárias']
+  },
+  {
+    title: 'Fechadura Digital de Sobrepor',
+    model: 'Intelbras FR 101 / FR 201 Touch',
+    category: 'Fechaduras Digitais',
+    img: IMAGES.FECHADURA_SOBREPOR,
+    description: 'Fechadura digital de sobrepor compacta com acabamento black piano de alto brilho, teclado touch numérico luminoso, abertura por senha ou chaveiro RFID e travamento automático.',
+    features: ['Instalação sobreposta sem precisar trocar a maçaneta', 'Abertura rápida por senha ou chaveiros RFID', 'Travamento instantâneo ao fechar a porta']
   },
   {
     title: 'Switch Gigabit PoE Gerenciável',

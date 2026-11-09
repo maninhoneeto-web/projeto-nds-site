@@ -69,16 +69,16 @@ export function SegurancaEletronicaPage() {
       ]
     },
     {
-      title: "Gravador Digital NVR Multi-HD",
-      model: "MHDX 1108 / 1116 Intelbras",
+      title: "Gravador Digital Multi-HD 16 Canais",
+      model: "Intelbras MHDX 3116 Multi-HD",
       category: "Gravadores e Centrais",
       img: IMAGES.PORTFOLIO_NVR,
-      description: "NVR/DVR inteligente com reconhecimento facial e inteligência artificial perimetral. Gravação contínua 24h com acesso remoto criptografado via Intelbras Cloud.",
+      description: "Gravador oficial Intelbras MHDX 3116 com 16 canais Multi-HD, chassi 1U metálico para rack ou bancada com aletas de refrigeração, LEDs frontais (Power, Net, HDD), porta USB e inteligência artificial perimetral. Gravação contínua 24h com acesso remoto criptografado via Intelbras Cloud e iSIC Lite.",
       features: [
+        "16 canais Multi-HD oficiais Intelbras em chassi metálico 1U",
         "Compressão H.265+ que economiza até 70% de espaço em disco",
-        "Suporte a múltiplos canais IP e analógicos de alta resolução",
-        "Busca forense inteligente por pessoas ou veículos gravados",
-        "Acesso rápido via aplicativo celular iSIC Lite"
+        "LEDs frontais de diagnóstico (Power, Net, HDD) e porta USB para backup",
+        "Busca forense inteligente por pessoas ou veículos gravados"
       ]
     },
     {
